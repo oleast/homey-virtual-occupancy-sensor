@@ -1,0 +1,5 @@
+IMPLEMENTATION_SUMMARY.md
+TESTING.md
+.github/
+*.log
+.DS_Store
