@@ -138,7 +138,7 @@ npm run lint -- --fix
 
 - **Platform**: This app is designed for Homey's `local` platform
 - **SDK Version**: Uses Homey SDK v3
-- **TypeScript Version**: Currently using v5.9.3 (note: @typescript-eslint officially supports TypeScript <5.4.0, but newer versions generally work with warnings)
+- **TypeScript Version**: Currently using v5.9.3
 - **Generated Files**: Never manually edit `app.json` - it's auto-generated from `.homeycompose/`
 - **Dependencies**: Keep Homey SDK types aligned with the SDK version in use
 
