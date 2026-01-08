@@ -5,15 +5,16 @@ This Homey app provides a virtual occupancy sensor that intelligently detects ro
 ## Features
 
 - **Smart Occupancy Detection**: Determines room occupancy based on door and motion sensor events
+- **Automatic Room Detection**: Automatically detects and monitors all door and motion sensors in the same room/zone
 - **Multiple States**: Tracks four occupancy states:
   - Empty: No one is in the room
   - Occupied: Someone is in the room
   - Door Open: A door to the room is open
   - Checking: Waiting to detect motion after door closes
+- **Auto-Correction**: If motion is detected when the room is marked as "Empty", it automatically corrects to "Occupied"
 - **Configurable Timeout**: Set how long to wait for motion after door closes
 - **Flow Integration**: Trigger flows based on occupancy state changes
 - **Zone Activity**: Acts as a motion sensor for Homey Zone Activity
-- **Two Integration Methods**: Use device settings for automatic monitoring OR use flow cards for manual control
 
 ## How It Works
 
@@ -21,23 +22,37 @@ This Homey app provides a virtual occupancy sensor that intelligently detects ro
 2. When all doors close, the sensor enters "Checking" state
 3. If motion is detected within the configured timeout, the sensor enters "Occupied" state
 4. If no motion is detected within the timeout, the sensor enters "Empty" state
+5. If motion is detected while "Empty", it automatically changes to "Occupied"
 
 ## Setup
 
-### Method 1: Automatic Monitoring (Recommended)
+### Automatic Room Detection (Recommended)
+
+1. Add a Virtual Occupancy Sensor device
+2. **Assign the device to a room/zone** in Homey
+3. The sensor will automatically detect and monitor:
+   - All door sensors (devices with `alarm_contact` capability) in the same room
+   - All motion sensors (devices with `alarm_motion` capability) in the same room
+4. Configure the motion detection timeout in device settings (default: 30 seconds)
+5. Done! The sensor will automatically track room occupancy
+
+**Important**: Make sure to assign the virtual sensor to the correct room/zone, as it will only monitor sensors in that room.
+
+### Manual Sensor Configuration (Optional)
+
+If you want to monitor sensors from other rooms or have specific requirements:
 
 1. Add a Virtual Occupancy Sensor device
 2. Go to device settings
-3. Enter the device IDs of your door sensors (comma-separated)
-4. Enter the device IDs of your motion sensors (comma-separated)
+3. Enter the device IDs of your door sensors (comma-separated) - OPTIONAL
+4. Enter the device IDs of your motion sensors (comma-separated) - OPTIONAL
 5. Configure the motion detection timeout
-6. The virtual sensor will automatically monitor these devices and update its state
 
 To find device IDs:
 - Go to the device settings of each sensor
 - Look for the device ID (usually shown in advanced settings)
 
-### Method 2: Manual Control via Flows
+### Manual Control via Flows (Alternative)
 
 1. Add a Virtual Occupancy Sensor device
 2. Configure the motion detection timeout in device settings
@@ -67,10 +82,18 @@ To find device IDs:
 
 ## Example Flows
 
-### Using Automatic Monitoring
-Simply configure the sensor device IDs in settings, and the virtual sensor will automatically track room occupancy.
+### Using Automatic Room Detection
+Simply assign the virtual sensor to a room/zone in Homey, and it will automatically detect and monitor all door and motion sensors in that room!
 
-### Using Flow Cards
+**Flow Example: Turn on Lights When Occupied**
+- WHEN: Virtual Occupancy Sensor → Room became occupied
+- THEN: Turn on lights in the room
+
+**Flow Example: Turn off Lights When Empty**
+- WHEN: Virtual Occupancy Sensor → Room became empty
+- THEN: Turn off lights after 5 minutes
+
+### Using Manual Flow Cards (If Not Using Auto-Detection)
 **Flow 1: Front Door Opens**
 - WHEN: Front door sensor opens
 - THEN: Virtual Occupancy Sensor → Door opened
@@ -83,13 +106,16 @@ Simply configure the sensor device IDs in settings, and the virtual sensor will 
 - WHEN: Living room motion sensor detects motion
 - THEN: Virtual Occupancy Sensor → Motion detected
 
-**Flow 4: Turn on Lights When Occupied**
-- WHEN: Virtual Occupancy Sensor → Room became occupied
-- THEN: Turn on lights
+## Troubleshooting
 
-**Flow 5: Turn off Lights When Empty**
-- WHEN: Virtual Occupancy Sensor → Room became empty
-- THEN: Turn off lights
+### Virtual sensor not detecting room sensors
+- Make sure the virtual sensor is assigned to a room/zone in Homey
+- Verify that door and motion sensors are also assigned to the same room/zone
+- Check that sensors have the correct capabilities (`alarm_contact` for doors, `alarm_motion` for motion)
+- Look at device logs for auto-detection messages
+
+### Moving the sensor to a different room
+If you move the virtual sensor to a different room/zone, it will automatically re-detect sensors in the new room on the next state update or when settings are changed.
 
 ## Support
 

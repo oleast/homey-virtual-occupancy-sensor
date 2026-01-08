@@ -65,7 +65,7 @@
       {
         "type": "group",
         "label": {
-          "en": "Door Sensors"
+          "en": "Manual Sensor Configuration (Optional)"
         },
         "children": [
           {
@@ -75,18 +75,10 @@
               "en": "Door sensor device IDs (comma-separated)"
             },
             "hint": {
-              "en": "Enter device IDs of door sensors to monitor. Find device IDs in device settings."
+              "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify door sensors from other rooms."
             },
             "value": ""
-          }
-        ]
-      },
-      {
-        "type": "group",
-        "label": {
-          "en": "Motion Sensors"
-        },
-        "children": [
+          },
           {
             "id": "motion_sensors",
             "type": "text",
@@ -94,7 +86,7 @@
               "en": "Motion sensor device IDs (comma-separated)"
             },
             "hint": {
-              "en": "Enter device IDs of motion sensors to monitor. Find device IDs in device settings."
+              "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify motion sensors from other rooms."
             },
             "value": ""
           }

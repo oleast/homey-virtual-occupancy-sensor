@@ -4,6 +4,12 @@ import Homey from 'homey';
 
 type OccupancyState = 'empty' | 'occupied' | 'door_open' | 'checking';
 
+interface HomeyDevice {
+  zone?: string;
+  name?: string;
+  capabilitiesObj?: Record<string, { value: boolean }>;
+}
+
 module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
 
   private checkingTimeout: NodeJS.Timeout | null = null;
@@ -12,7 +18,8 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
   private devicesApi: Homey.Api | null = null;
   private doorSensorIds: string[] = [];
   private motionSensorIds: string[] = [];
-  private deviceUpdateListener: ((data: { id: string; capabilitiesObj?: Record<string, { value: boolean }> }) => void) | null = null;
+  private deviceUpdateListener: ((data: { id: string; capabilitiesObj?: Record<string, { value: boolean }>; zone?: string }) => void) | null = null;
+  private currentZoneId: string | null = null;
 
   /**
    * onInit is called when the device is initialized.
@@ -45,7 +52,7 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
   }
 
   /**
-   * Setup listeners for door and motion sensors from settings
+   * Setup listeners for door and motion sensors from the same room
    */
   async setupDeviceListeners() {
     if (!this.devicesApi) {
@@ -58,20 +65,62 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
       this.deviceUpdateListener = null;
     }
 
-    // Get sensor IDs from settings
-    this.doorSensorIds = this.getSensorIds('door_sensors');
-    this.motionSensorIds = this.getSensorIds('motion_sensors');
-
-    this.log('Setting up listeners for door sensors:', this.doorSensorIds);
-    this.log('Setting up listeners for motion sensors:', this.motionSensorIds);
-
-    // Get all devices to check initial states
+    // Get all devices and filter by zone
     try {
-      const devices = await this.devicesApi.get('/device');
+      const allDevices = await this.devicesApi.get('/device');
+
+      // Get the virtual sensor's own device info to find its zone
+      const virtualSensorData = this.getData();
+      const virtualSensorId = virtualSensorData.id;
+      const virtualDevice = allDevices[virtualSensorId];
+
+      if (!virtualDevice || !virtualDevice.zone) {
+        this.log('Virtual sensor has no zone assigned, cannot auto-detect room sensors');
+        this.currentZoneId = null;
+        // Fall back to manual configuration from settings if available
+        this.doorSensorIds = this.getSensorIds('door_sensors');
+        this.motionSensorIds = this.getSensorIds('motion_sensors');
+      } else {
+        const myZoneId = virtualDevice.zone;
+        this.currentZoneId = myZoneId;
+        this.log('Virtual sensor is in zone:', myZoneId);
+
+        // Reset sensor ID arrays
+        this.doorSensorIds = [];
+        this.motionSensorIds = [];
+
+        // Find all devices in the same zone
+        for (const [deviceId, device] of Object.entries(allDevices)) {
+          // Skip self
+          if (deviceId === virtualSensorId) {
+            continue;
+          }
+
+          // Type assertion for device
+          const deviceObj = device as HomeyDevice;
+
+          // Check if device is in same zone
+          if (deviceObj.zone === myZoneId) {
+            // Check if it's a door sensor (has alarm_contact capability)
+            if (deviceObj.capabilitiesObj && deviceObj.capabilitiesObj.alarm_contact) {
+              this.doorSensorIds.push(deviceId);
+              this.log('Found door sensor in same zone:', deviceObj.name, deviceId);
+            }
+
+            // Check if it's a motion sensor (has alarm_motion capability)
+            if (deviceObj.capabilitiesObj && deviceObj.capabilitiesObj.alarm_motion) {
+              this.motionSensorIds.push(deviceId);
+              this.log('Found motion sensor in same zone:', deviceObj.name, deviceId);
+            }
+          }
+        }
+
+        this.log(`Auto-detected ${this.doorSensorIds.length} door sensors and ${this.motionSensorIds.length} motion sensors in the same room`);
+      }
 
       // Check initial door states
       for (const deviceId of this.doorSensorIds) {
-        const device = devices[deviceId];
+        const device = allDevices[deviceId];
         if (device && device.capabilitiesObj && device.capabilitiesObj.alarm_contact) {
           const isOpen = device.capabilitiesObj.alarm_contact.value === true;
           if (isOpen) {
@@ -86,7 +135,7 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
     }
 
     // Create and store listener for device capability updates
-    this.deviceUpdateListener = (data: { id: string; capabilitiesObj?: Record<string, { value: boolean }> }) => {
+    this.deviceUpdateListener = (data: { id: string; capabilitiesObj?: Record<string, { value: boolean }>; zone?: string }) => {
       // Handle async operations without blocking
       this.handleDeviceUpdate(data).catch((error) => {
         this.error('Error handling device update:', error);
@@ -99,8 +148,19 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
   /**
    * Handle device update events
    */
-  async handleDeviceUpdate(data: { id: string; capabilitiesObj?: Record<string, { value: boolean }> }) {
-    const { id, capabilitiesObj } = data;
+  async handleDeviceUpdate(data: { id: string; capabilitiesObj?: Record<string, { value: boolean }>; zone?: string }) {
+    const { id, capabilitiesObj, zone } = data;
+
+    // Check if this is the virtual sensor itself and zone changed
+    const virtualSensorData = this.getData();
+    const virtualSensorId = virtualSensorData.id;
+
+    if (id === virtualSensorId && zone !== undefined && zone !== this.currentZoneId) {
+      this.log(`Virtual sensor moved to new zone: ${zone}, re-detecting room sensors`);
+      this.currentZoneId = zone;
+      await this.setupDeviceListeners();
+      return;
+    }
 
     // Check if this is a door sensor we're monitoring
     if (this.doorSensorIds.includes(id)) {
