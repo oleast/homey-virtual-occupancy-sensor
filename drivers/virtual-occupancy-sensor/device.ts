@@ -12,6 +12,7 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
   private devicesApi: Homey.Api | null = null;
   private doorSensorIds: string[] = [];
   private motionSensorIds: string[] = [];
+  private deviceUpdateListener: ((data: { id: string; capabilitiesObj?: Record<string, { value: boolean }> }) => void) | null = null;
 
   /**
    * onInit is called when the device is initialized.
@@ -51,6 +52,12 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
       return;
     }
 
+    // Remove existing listener if any
+    if (this.deviceUpdateListener) {
+      this.devicesApi.off('device.update', this.deviceUpdateListener);
+      this.deviceUpdateListener = null;
+    }
+
     // Get sensor IDs from settings
     this.doorSensorIds = this.getSensorIds('door_sensors');
     this.motionSensorIds = this.getSensorIds('motion_sensors');
@@ -78,13 +85,15 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
       this.error('Failed to get initial device states:', error);
     }
 
-    // Listen for device capability updates
-    this.devicesApi.on('device.update', (data: { id: string; capabilitiesObj?: Record<string, { value: boolean }> }) => {
+    // Create and store listener for device capability updates
+    this.deviceUpdateListener = (data: { id: string; capabilitiesObj?: Record<string, { value: boolean }> }) => {
       // Handle async operations without blocking
       this.handleDeviceUpdate(data).catch((error) => {
         this.error('Error handling device update:', error);
       });
-    });
+    };
+
+    this.devicesApi.on('device.update', this.deviceUpdateListener);
   }
 
   /**
@@ -160,40 +169,32 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
     // Register action card: door_opened
     const doorOpenedAction = this.homey.flow.getActionCard('door_opened_action');
     if (doorOpenedAction) {
-      doorOpenedAction.registerRunListener(async (args) => {
-        if (args.device.id === this.getData().id) {
-          await this.handleDoorOpened();
-        }
+      doorOpenedAction.registerRunListener(async () => {
+        await this.handleDoorOpened();
       });
     }
 
     // Register action card: door_closed
     const doorClosedAction = this.homey.flow.getActionCard('door_closed_action');
     if (doorClosedAction) {
-      doorClosedAction.registerRunListener(async (args) => {
-        if (args.device.id === this.getData().id) {
-          await this.handleDoorClosed();
-        }
+      doorClosedAction.registerRunListener(async () => {
+        await this.handleDoorClosed();
       });
     }
 
     // Register action card: motion_detected
     const motionDetectedAction = this.homey.flow.getActionCard('motion_detected_action');
     if (motionDetectedAction) {
-      motionDetectedAction.registerRunListener(async (args) => {
-        if (args.device.id === this.getData().id) {
-          await this.handleMotionDetected();
-        }
+      motionDetectedAction.registerRunListener(async () => {
+        await this.handleMotionDetected();
       });
     }
 
     // Register action card: reset_state
     const resetStateAction = this.homey.flow.getActionCard('reset_state_action');
     if (resetStateAction) {
-      resetStateAction.registerRunListener(async (args) => {
-        if (args.device.id === this.getData().id) {
-          await this.setOccupancyState('empty');
-        }
+      resetStateAction.registerRunListener(async () => {
+        await this.setOccupancyState('empty');
       });
     }
   }
@@ -373,11 +374,14 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
       this.checkingTimeout = null;
     }
 
-    // Unregister devices API
-    if (this.devicesApi) {
-      this.devicesApi.unregister();
-      this.devicesApi = null;
+    // Remove device update listener
+    if (this.devicesApi && this.deviceUpdateListener) {
+      this.devicesApi.off('device.update', this.deviceUpdateListener);
+      this.deviceUpdateListener = null;
     }
+
+    // Clear API reference
+    this.devicesApi = null;
   }
 
 };
