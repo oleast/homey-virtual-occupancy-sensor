@@ -52,6 +52,30 @@ This runs ESLint with the Athom Homey app configuration. The project follows Ath
 npm install
 ```
 
+### Validating the Homey App
+
+```bash
+npx homey app validate
+```
+
+This validates the Homey app against the Homey Apps Store requirements. The command checks:
+- App structure and configuration
+- Required assets (icons, images)
+- TypeScript compilation
+- SDK compatibility
+
+**Validation Levels:**
+- `debug` - Basic validation for development
+- `publish` - Default level for app store publishing (requires all assets)
+- `verified` - Strictest validation for verified apps
+
+To validate at a specific level:
+```bash
+npx homey app validate --level verified
+```
+
+**Note**: This project currently does not pass validation due to missing required image assets in `/assets/images/`. The app requires `small.png`, `large.png`, and `xlarge.png` as defined in `.homeycompose/app.json`.
+
 ## Code Standards
 
 ### ESLint Configuration
@@ -106,7 +130,7 @@ When making changes:
 1. **Minimal changes**: Only modify what's necessary to fix the issue
 2. **No reformatting**: Don't change whitespace or formatting of unrelated code
 3. **Follow conventions**: Match the existing code style
-4. **Test locally**: Build and lint before committing
+4. **Test locally**: Build, lint, and validate before committing
 5. **Squash commits**: Keep PR history clean
 
 Refer to `CONTRIBUTING.md` for detailed contribution guidelines.
@@ -119,6 +143,7 @@ Refer to `CONTRIBUTING.md` for detailed contribution guidelines.
 2. Implement feature in `app.ts` or new TypeScript files
 3. Run `npm run build` to compile
 4. Run `npm run lint` to ensure code quality
+5. Run `npx homey app validate` to ensure app store compatibility
 
 ### Fixing Linting Errors
 
