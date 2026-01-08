@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
+<g>
+	<!-- Person icon -->
+	<circle cx="250" cy="150" r="60" fill="#4A90E2"/>
+	<path d="M250,230c-70,0-120,40-120,100v50h240v-50C370,270,320,230,250,230z" fill="#4A90E2"/>
+	
+	<!-- Motion waves -->
+	<path d="M100,250c0-80,70-150,150-150" fill="none" stroke="#4A90E2" stroke-width="10" opacity="0.3"/>
+	<path d="M400,250c0-80-70-150-150-150" fill="none" stroke="#4A90E2" stroke-width="10" opacity="0.3"/>
+	<path d="M50,250c0-110,90-200,200-200" fill="none" stroke="#4A90E2" stroke-width="8" opacity="0.2"/>
+	<path d="M450,250c0-110-90-200-200-200" fill="none" stroke="#4A90E2" stroke-width="8" opacity="0.2"/>
+</g>
+</svg>

@@ -1,0 +1,41 @@
+{
+  "occupancy_state": {
+    "type": "enum",
+    "title": {
+      "en": "Occupancy State"
+    },
+    "desc": {
+      "en": "Current occupancy state of the room"
+    },
+    "values": [
+      {
+        "id": "empty",
+        "title": {
+          "en": "Empty"
+        }
+      },
+      {
+        "id": "occupied",
+        "title": {
+          "en": "Occupied"
+        }
+      },
+      {
+        "id": "door_open",
+        "title": {
+          "en": "Door Open"
+        }
+      },
+      {
+        "id": "checking",
+        "title": {
+          "en": "Checking"
+        }
+      }
+    ],
+    "getable": true,
+    "setable": false,
+    "uiComponent": "sensor",
+    "icon": "/assets/occupancy_state.svg"
+  }
+}
