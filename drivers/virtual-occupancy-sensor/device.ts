@@ -72,7 +72,7 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
       // Get the virtual sensor's own device info to find its zone
       const virtualSensorData = this.getData();
       const virtualSensorId = virtualSensorData.id;
-      const virtualDevice = allDevices[virtualSensorId];
+      const virtualDevice = allDevices[virtualSensorId] as HomeyDevice;
 
       if (!virtualDevice || !virtualDevice.zone) {
         this.log('Virtual sensor has no zone assigned, cannot auto-detect room sensors');
@@ -120,7 +120,7 @@ module.exports = class VirtualOccupancySensorDevice extends Homey.Device {
 
       // Check initial door states
       for (const deviceId of this.doorSensorIds) {
-        const device = allDevices[deviceId];
+        const device = allDevices[deviceId] as HomeyDevice;
         if (device && device.capabilitiesObj && device.capabilitiesObj.alarm_contact) {
           const isOpen = device.capabilitiesObj.alarm_contact.value === true;
           if (isOpen) {
