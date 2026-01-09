@@ -1,0 +1,208 @@
+{
+  "triggers": [
+    {
+      "id": "occupancy_state_changed",
+      "title": {
+        "en": "Occupancy state changed"
+      },
+      "tokens": [
+        {
+          "name": "state",
+          "type": "string",
+          "title": {
+            "en": "State"
+          },
+          "example": {
+            "en": "occupied"
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=virtual-occupancy-sensor"
+        }
+      ]
+    },
+    {
+      "id": "became_occupied",
+      "title": {
+        "en": "Room became occupied"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=virtual-occupancy-sensor"
+        }
+      ]
+    },
+    {
+      "id": "became_empty",
+      "title": {
+        "en": "Room became empty"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=virtual-occupancy-sensor"
+        }
+      ]
+    },
+    {
+      "id": "door_opened",
+      "title": {
+        "en": "Door opened"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=virtual-occupancy-sensor"
+        }
+      ]
+    },
+    {
+      "id": "checking_started",
+      "title": {
+        "en": "Started checking for motion"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=virtual-occupancy-sensor"
+        }
+      ]
+    }
+  ],
+  "conditions": [
+    {
+      "id": "is_occupied",
+      "title": {
+        "en": "Room is !{{occupied|not occupied}}"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=virtual-occupancy-sensor"
+        }
+      ]
+    },
+    {
+      "id": "occupancy_state_is",
+      "title": {
+        "en": "Occupancy state !{{is|is not}}"
+      },
+      "titleFormatted": {
+        "en": "Occupancy state !{{is|is not}} [[state]]"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=virtual-occupancy-sensor"
+        },
+        {
+          "name": "state",
+          "type": "dropdown",
+          "values": [
+            {
+              "id": "empty",
+              "label": {
+                "en": "Empty"
+              }
+            },
+            {
+              "id": "occupied",
+              "label": {
+                "en": "Occupied"
+              }
+            },
+            {
+              "id": "door_open",
+              "label": {
+                "en": "Door Open"
+              }
+            },
+            {
+              "id": "checking",
+              "label": {
+                "en": "Checking"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "id": "door_opened_action",
+      "title": {
+        "en": "Door opened"
+      },
+      "titleFormatted": {
+        "en": "Door was opened"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=virtual-occupancy-sensor"
+        }
+      ]
+    },
+    {
+      "id": "door_closed_action",
+      "title": {
+        "en": "Door closed"
+      },
+      "titleFormatted": {
+        "en": "Door was closed"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=virtual-occupancy-sensor"
+        }
+      ]
+    },
+    {
+      "id": "motion_detected_action",
+      "title": {
+        "en": "Motion detected"
+      },
+      "titleFormatted": {
+        "en": "Motion was detected"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=virtual-occupancy-sensor"
+        }
+      ]
+    },
+    {
+      "id": "reset_state_action",
+      "title": {
+        "en": "Reset to empty state"
+      },
+      "titleFormatted": {
+        "en": "Reset occupancy to empty"
+      },
+      "args": [
+        {
+          "name": "device",
+          "type": "device",
+          "filter": "driver_id=virtual-occupancy-sensor"
+        }
+      ]
+    }
+  ]
+}

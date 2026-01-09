@@ -11,12 +11,15 @@
     "en": "Virtual Occupancy Sensor"
   },
   "description": {
-    "en": "Adds support for MyBrand devices."
+    "en": "Create virtual occupancy sensors that intelligently detect room occupancy based on door and motion sensors."
   },
   "category": [
     "tools"
   ],
-  "permissions": [],
+  "permissions": [
+    "homey:manager:api"
+  ],
+  "brandColor": "#4A90E2",
   "images": {
     "small": "/assets/images/small.png",
     "large": "/assets/images/large.png",
@@ -25,5 +28,144 @@
   "author": {
     "name": "Ole Anders Stokker",
     "email": "olestokk@gmail.com"
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Virtual Occupancy Sensor"
+      },
+      "class": "sensor",
+      "capabilities": [
+        "alarm_motion",
+        "occupancy_state"
+      ],
+      "capabilitiesOptions": {
+        "alarm_motion": {
+          "title": {
+            "en": "Motion"
+          }
+        }
+      },
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [],
+      "images": {
+        "small": "/drivers/virtual-occupancy-sensor/assets/images/small.png",
+        "large": "/drivers/virtual-occupancy-sensor/assets/images/large.png",
+        "xlarge": "/drivers/virtual-occupancy-sensor/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "settings": [
+        {
+          "type": "group",
+          "label": {
+            "en": "Detection Settings"
+          },
+          "children": [
+            {
+              "id": "motion_timeout",
+              "type": "number",
+              "label": {
+                "en": "Motion detection timeout (seconds)"
+              },
+              "hint": {
+                "en": "Time to wait for motion after door closes before marking room as empty"
+              },
+              "value": 30,
+              "min": 5,
+              "max": 300,
+              "units": {
+                "en": "seconds"
+              }
+            }
+          ]
+        },
+        {
+          "type": "group",
+          "label": {
+            "en": "Manual Sensor Configuration (Optional)"
+          },
+          "children": [
+            {
+              "id": "door_sensors",
+              "type": "text",
+              "label": {
+                "en": "Door sensor device IDs (comma-separated)"
+              },
+              "hint": {
+                "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify door sensors from other rooms."
+              },
+              "value": ""
+            },
+            {
+              "id": "motion_sensors",
+              "type": "text",
+              "label": {
+                "en": "Motion sensor device IDs (comma-separated)"
+              },
+              "hint": {
+                "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify motion sensors from other rooms."
+              },
+              "value": ""
+            }
+          ]
+        }
+      ],
+      "id": "virtual-occupancy-sensor"
+    }
+  ],
+  "capabilities": {
+    "occupancy_state": {
+      "type": "enum",
+      "title": {
+        "en": "Occupancy State"
+      },
+      "desc": {
+        "en": "Current occupancy state of the room"
+      },
+      "values": [
+        {
+          "id": "empty",
+          "title": {
+            "en": "Empty"
+          }
+        },
+        {
+          "id": "occupied",
+          "title": {
+            "en": "Occupied"
+          }
+        },
+        {
+          "id": "door_open",
+          "title": {
+            "en": "Door Open"
+          }
+        },
+        {
+          "id": "checking",
+          "title": {
+            "en": "Checking"
+          }
+        }
+      ],
+      "getable": true,
+      "setable": false,
+      "uiComponent": "sensor",
+      "icon": "/assets/occupancy_state.svg"
+    }
   }
 }
