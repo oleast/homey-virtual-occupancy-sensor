@@ -1,0 +1,16 @@
+{
+  "id": "became_occupied",
+  "title": {
+    "en": "Became occupied"
+  },
+  "titleFormatted": {
+    "en": "Became occupied"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "id": "occupancy_state_is",
+  "title": {
+    "en": "Occupancy state is"
+  },
+  "titleFormatted": {
+    "en": "Occupancy state !{{is|is not}} [[state]]"
+  },
+  "hint": {
+    "en": "Checks if the room occupancy state matches the selected state."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    },
+    {
+      "name": "state",
+      "type": "dropdown",
+      "values": [
+        {
+          "id": "empty",
+          "label": {
+            "en": "Empty"
+          }
+        },
+        {
+          "id": "occupied",
+          "label": {
+            "en": "Occupied"
+          }
+        },
+        {
+          "id": "door_open",
+          "label": {
+            "en": "Door Open"
+          }
+        },
+        {
+          "id": "checking",
+          "label": {
+            "en": "Checking"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "became_empty",
+  "title": {
+    "en": "Became empty"
+  },
+  "titleFormatted": {
+    "en": "Became empty"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    }
+  ]
+}

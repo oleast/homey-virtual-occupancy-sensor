@@ -1,0 +1,19 @@
+{
+  "id": "is_occupied",
+  "title": {
+    "en": "Is occupied"
+  },
+  "titleFormatted": {
+    "en": "!{{Is|Is not}} occupied"
+  },
+  "hint": {
+    "en": "Checks if the room is currently occupied."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    }
+  ]
+}

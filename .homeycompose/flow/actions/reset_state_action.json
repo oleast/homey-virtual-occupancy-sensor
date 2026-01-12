@@ -1,0 +1,19 @@
+{
+  "id": "reset_state_action",
+  "title": {
+    "en": "Reset State"
+  },
+  "titleFormatted": {
+    "en": "Reset state"
+  },
+  "hint": {
+    "en": "Resets the occupancy state to Empty."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    }
+  ]
+}

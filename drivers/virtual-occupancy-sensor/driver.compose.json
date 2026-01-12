@@ -58,6 +58,28 @@
           "units": {
             "en": "seconds"
           }
+        },
+        {
+          "id": "active_on_door_open",
+          "type": "checkbox",
+          "label": {
+            "en": "Zone active when door is open"
+          },
+          "hint": {
+            "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while the door is open."
+          },
+          "value": true
+        },
+        {
+          "id": "active_on_checking",
+          "type": "checkbox",
+          "label": {
+            "en": "Zone active when checking"
+          },
+          "hint": {
+            "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while checking for motion after door closes."
+          },
+          "value": false
         }
       ]
     },

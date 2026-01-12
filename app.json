@@ -29,6 +29,259 @@
     "name": "Ole Anders Stokker",
     "email": "olestokk@gmail.com"
   },
+  "flow": {
+    "triggers": [
+      {
+        "id": "became_empty",
+        "title": {
+          "en": "Became empty"
+        },
+        "titleFormatted": {
+          "en": "Became empty"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "became_occupied",
+        "title": {
+          "en": "Became occupied"
+        },
+        "titleFormatted": {
+          "en": "Became occupied"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "checking_started",
+        "title": {
+          "en": "Started checking"
+        },
+        "titleFormatted": {
+          "en": "Started checking for motion"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "door_opened",
+        "title": {
+          "en": "Door opened"
+        },
+        "titleFormatted": {
+          "en": "Door opened"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "occupancy_state_changed",
+        "title": {
+          "en": "Occupancy state changed"
+        },
+        "titleFormatted": {
+          "en": "Occupancy state changed to [[state]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "empty",
+                "label": {
+                  "en": "Empty"
+                }
+              },
+              {
+                "id": "occupied",
+                "label": {
+                  "en": "Occupied"
+                }
+              },
+              {
+                "id": "door_open",
+                "label": {
+                  "en": "Door Open"
+                }
+              },
+              {
+                "id": "checking",
+                "label": {
+                  "en": "Checking"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "is_occupied",
+        "title": {
+          "en": "Is occupied"
+        },
+        "titleFormatted": {
+          "en": "!{{Is|Is not}} occupied"
+        },
+        "hint": {
+          "en": "Checks if the room is currently occupied."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "occupancy_state_is",
+        "title": {
+          "en": "Occupancy state is"
+        },
+        "titleFormatted": {
+          "en": "Occupancy state !{{is|is not}} [[state]]"
+        },
+        "hint": {
+          "en": "Checks if the room occupancy state matches the selected state."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "values": [
+              {
+                "id": "empty",
+                "label": {
+                  "en": "Empty"
+                }
+              },
+              {
+                "id": "occupied",
+                "label": {
+                  "en": "Occupied"
+                }
+              },
+              {
+                "id": "door_open",
+                "label": {
+                  "en": "Door Open"
+                }
+              },
+              {
+                "id": "checking",
+                "label": {
+                  "en": "Checking"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "door_closed_action",
+        "title": {
+          "en": "Door Closed"
+        },
+        "titleFormatted": {
+          "en": "Door closed"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "door_opened_action",
+        "title": {
+          "en": "Door Opened"
+        },
+        "titleFormatted": {
+          "en": "Door opened"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "motion_detected_action",
+        "title": {
+          "en": "Motion Detected"
+        },
+        "titleFormatted": {
+          "en": "Motion detected"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "reset_state_action",
+        "title": {
+          "en": "Reset State"
+        },
+        "titleFormatted": {
+          "en": "Reset state"
+        },
+        "hint": {
+          "en": "Resets the occupancy state to Empty."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      }
+    ]
+  },
   "drivers": [
     {
       "name": {
@@ -90,6 +343,28 @@
               "units": {
                 "en": "seconds"
               }
+            },
+            {
+              "id": "active_on_door_open",
+              "type": "checkbox",
+              "label": {
+                "en": "Zone active when door is open"
+              },
+              "hint": {
+                "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while the door is open."
+              },
+              "value": true
+            },
+            {
+              "id": "active_on_checking",
+              "type": "checkbox",
+              "label": {
+                "en": "Zone active when checking"
+              },
+              "hint": {
+                "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while checking for motion after door closes."
+              },
+              "value": false
             }
           ]
         },
