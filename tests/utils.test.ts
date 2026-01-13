@@ -1,8 +1,9 @@
 import {
   describe, it, expect, vi,
 } from 'vitest';
+import { HomeyAPIV3Local } from 'homey-api';
 import { findVirtualDevice, findSensorsInZone, isAnyCapabilityActive } from '../lib/utils';
-import { HomeyDevice, ManagerDevicesWithConnect } from '../lib/types';
+import { ManagerDevicesWithConnect } from '../lib/types';
 
 // Helper to create a mock device
 const createMockDevice = (
@@ -10,7 +11,7 @@ const createMockDevice = (
   zone: string,
   capabilities: Record<string, boolean> = {},
   dataId?: string,
-): HomeyDevice => ({
+): HomeyAPIV3Local.ManagerDevices.Device => ({
   id,
   name: `Device ${id}`,
   zone,
@@ -20,7 +21,7 @@ const createMockDevice = (
     return acc;
   }, {} as Record<string, { value: boolean }>),
   data: dataId ? { id: dataId } : undefined,
-} as unknown as HomeyDevice);
+} as unknown as HomeyAPIV3Local.ManagerDevices.Device);
 
 describe('utils', () => {
   describe('findVirtualDevice', () => {
