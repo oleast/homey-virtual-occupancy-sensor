@@ -1,6 +1,6 @@
-import { OccupancyState } from "../../lib/types";
+import { OccupancyState } from '../../lib/types';
 
-export type StateChangeCallback = (state: OccupancyState) => Promise<void>;
+export type StateChangeCallback = (state: OccupancyState) => void;
 export type TimerCallback = (durationMs: number) => void;
 export type CancelTimerCallback = () => void;
 
@@ -14,14 +14,14 @@ export class VirtualOccupancySensorController {
   private log: (message: string) => void;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private error: (message: string, error?: unknown) => void;
-  private motionTimeoutMs: number = 30000; // Default 30s
+  private motionTimeoutMs: number = 30 * 1000; // Default 30s
 
   constructor(
     onStateChange: StateChangeCallback,
     startTimer: TimerCallback,
     cancelTimer: CancelTimerCallback,
     log: (message: string) => void,
-    error: (message: string, error?: unknown) => void
+    error: (message: string, error?: unknown) => void,
   ) {
     this.onStateChange = onStateChange;
     this.startTimer = startTimer;
@@ -50,6 +50,8 @@ export class VirtualOccupancySensorController {
       case 'checking':
         this.handleEventInChecking(eventType);
         break;
+      default:
+        this.error(`Unknown state: ${this.currentState}`);
     }
   }
 
@@ -57,11 +59,11 @@ export class VirtualOccupancySensorController {
     await this.transitionTo(state);
   }
 
-  private async transitionTo(newState: OccupancyState) {
+  private transitionTo(newState: OccupancyState) {
     if (this.currentState === newState) return;
     this.log(`Transitioning from ${this.currentState} to ${newState}`);
     this.currentState = newState;
-    await this.onStateChange(newState);
+    this.onStateChange(newState);
   }
 
   // --- State Handlers ---

@@ -6,6 +6,7 @@ import { parseSensorIdsSetting } from '../../lib/utils';
 import { getDevicesWithCapability } from '../../lib/homey/device-api';
 import { BaseHomeyDevice } from '../../lib/homey/device';
 
+/* eslint-disable camelcase */
 export interface DeviceSettings {
   motion_timeout: number;
   active_on_door_open: boolean;
@@ -13,6 +14,7 @@ export interface DeviceSettings {
   door_sensors: string;
   motion_sensors: string;
 }
+/* eslint-enable camelcase */
 
 export interface OnSettingsEvent {
   oldSettings: DeviceSettings;
@@ -29,8 +31,8 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
   async onInit() {
     this.log('VirtualOccupancySensorDevice has been initialized');
-    this.initCapabilities();
-    this.setInitialCapabilityStates();
+    await this.initCapabilities();
+    await this.setInitialCapabilityStates();
     this.initController();
     await this.initSensorRegistries();
   }
@@ -48,37 +50,39 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     if (changedKeys.includes('motion_timeout')) {
       this.controller.setMotionTimeout(newSettings.motion_timeout);
     }
-    
+
     if (changedKeys.includes('door_sensors')) {
       this.log('Door sensor settings changed, updating registry');
       const doorSensorIds = await this.getContactSensorsFromSettings(newSettings);
-      this.contactSensorRegistry?.updateDeviceIds(doorSensorIds);
+      await this.contactSensorRegistry?.updateDeviceIds(doorSensorIds);
     }
     if (changedKeys.includes('motion_sensors')) {
       this.log('Motion sensor settings changed, updating registry');
       const motionSensorIds = await this.getMotionsSensorsFromSettings(newSettings);
-      this.motionSensorRegistry?.updateDeviceIds(motionSensorIds);
+      await this.motionSensorRegistry?.updateDeviceIds(motionSensorIds);
     }
 
     const currentOccupancyState = this.getCapabilityValue('occupancy_state') as OccupancyState;
     this.log(`Current occupancy state while changing settings: ${currentOccupancyState}`);
-    if (changedKeys.includes("active_on_checking") && currentOccupancyState === "checking") {
-      this.log("Setting active_on_checking changed while in checking state, updating alarm_motion");
-      this.setCapabilityValue('alarm_motion', newSettings.active_on_checking);
-    };
-    if (changedKeys.includes("active_on_door_open") && currentOccupancyState === "door_open") {
-      this.log("Setting active_on_door_open changed while in door_open state, updating alarm_motion");
-      this.setCapabilityValue('alarm_motion', newSettings.active_on_door_open);
+    if (changedKeys.includes('active_on_checking') && currentOccupancyState === 'checking') {
+      this.log('Setting active_on_checking changed while in checking state, updating alarm_motion');
+      await this.setCapabilityValue('alarm_motion', newSettings.active_on_checking);
+    }
+    if (changedKeys.includes('active_on_door_open') && currentOccupancyState === 'door_open') {
+      this.log('Setting active_on_door_open changed while in door_open state, updating alarm_motion');
+      await this.setCapabilityValue('alarm_motion', newSettings.active_on_door_open);
     }
   }
 
   private initController() {
     this.controller = new VirtualOccupancySensorController(
-      this.onStateChange.bind(this),
+      (state: OccupancyState) => {
+        this.onStateChange(state).catch(this.error);
+      },
       this.startTimer.bind(this),
       this.cancelTimer.bind(this),
       this.log.bind(this),
-      this.error.bind(this)
+      this.error.bind(this),
     );
     this.controller.setMotionTimeout(this.getSettings().motion_timeout);
   }
@@ -103,6 +107,8 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       case 'checking':
         alarmState = settings.active_on_checking;
         break;
+      default:
+        this.error(`Unknown occupancy state: ${state}`);
     }
 
     await this.setCapabilityValue('alarm_motion', alarmState).catch(this.error);
@@ -114,7 +120,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     this.__timer = this.homey.setTimeout(async () => {
       this.log('Timer expired, checking for active motion...');
       const isMotionActive = await this.motionSensorRegistry?.isAnySensorActive();
-      
+
       if (isMotionActive) {
         this.log('Motion is still active, treating as motion event');
         this.controller.registerEvent('motion');
@@ -161,7 +167,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       doorSensorIds,
       this.handleContactSensorEvent.bind(this),
       this.log.bind(this),
-      this.error.bind(this)
+      this.error.bind(this),
     );
 
     const motionSensorIds = await this.getMotionsSensorsFromSettings();
@@ -170,7 +176,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       motionSensorIds,
       this.handleMotionSensorEvent.bind(this),
       this.log.bind(this),
-      this.error.bind(this)
+      this.error.bind(this),
     );
   }
 
@@ -179,41 +185,41 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       this.log(`Ignoring non-boolean contact sensor value from ${deviceId}: ${value}`);
       return;
     }
-    const eventType = value ? "door_open" : "door_close";
+    const eventType = value ? 'door_open' : 'door_close';
     this.log(`Door event detected on sensor ${deviceId}: ${eventType}`);
     this.controller.registerEvent(eventType, deviceId);
   }
 
   private async handleMotionSensorEvent(deviceId: string, value: boolean | number | string): Promise<void> {
-    if (typeof value !== "undefined") {
+    if (typeof value !== 'undefined') {
       this.log(`Got non-undefined motion sensor value from ${deviceId}: ${value}, continuing anyway`);
     }
     this.log(`Motion detected on sensor ${deviceId}`);
-    this.controller.registerEvent("motion", deviceId);
+    this.controller.registerEvent('motion', deviceId);
   }
 
   private async getContactSensorsInZone(): Promise<string[]> {
     const api = await this.getApi();
     const zoneId = await this.getZoneId();
     const allContactDevices = await getDevicesWithCapability(api, 'alarm_contact');
-    const allContactDevicesInZone = allContactDevices.filter(device => device.zone === zoneId && device.id !== this.deviceId);
-    this.log(`Found ${allContactDevicesInZone.length} contact sensors in zone ${zoneId}. Named: ${allContactDevicesInZone.map(d => d.name).join(', ')}`);
-    return allContactDevicesInZone.map(device => device.id);
+    const allContactDevicesInZone = allContactDevices.filter((device) => device.zone === zoneId && device.id !== this.deviceId);
+    this.log(`Found ${allContactDevicesInZone.length} contact sensors in zone ${zoneId}. Named: ${allContactDevicesInZone.map((d) => d.name).join(', ')}`);
+    return allContactDevicesInZone.map((device) => device.id);
   }
 
   private async getMotionSensorsInZone(): Promise<string[]> {
     const api = await this.getApi();
     const zoneId = await this.getZoneId();
     const allMotionDevices = await getDevicesWithCapability(api, 'alarm_motion');
-    const allMotionDevicesInZone = allMotionDevices.filter(device => device.zone === zoneId && device.id !== this.deviceId);
-    this.log(`Found ${allMotionDevicesInZone.length} motion sensors in zone ${zoneId}. Named: ${allMotionDevicesInZone.map(d => d.name).join(', ')}`);
-    return allMotionDevicesInZone.map(device => device.id);
+    const allMotionDevicesInZone = allMotionDevices.filter((device) => device.zone === zoneId && device.id !== this.deviceId);
+    this.log(`Found ${allMotionDevicesInZone.length} motion sensors in zone ${zoneId}. Named: ${allMotionDevicesInZone.map((d) => d.name).join(', ')}`);
+    return allMotionDevicesInZone.map((device) => device.id);
   }
 
   private async getMotionsSensorsFromSettings(settings: DeviceSettings = this.getSettings()): Promise<string[]> {
     let motionSensorIds = parseSensorIdsSetting(settings.motion_sensors);
     if (motionSensorIds.length === 0) {
-      this.log("Not motion sensor ids configured, using automatic zone detection");
+      this.log('Not motion sensor ids configured, using automatic zone detection');
       motionSensorIds = await this.getMotionSensorsInZone();
       this.log(`Auto-detected motion sensors in zone: ${motionSensorIds.join(', ')}`);
     }
@@ -246,5 +252,4 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   public async setOccupancyState(state: OccupancyState) {
     await this.controller.setOccupancyState(state);
   }
-};
-
+}

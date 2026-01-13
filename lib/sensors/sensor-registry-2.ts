@@ -30,8 +30,8 @@ export class SensorRegistry2 {
 
   public async updateDeviceIds(deviceIds: string[]): Promise<void> {
     const newIds = new Set(deviceIds);
-    const removedIds = new Set<string>([...this.deviceIds].filter(x => !newIds.has(x)));
-    const addedIds = new Set<string>([...newIds].filter(x => !this.deviceIds.has(x)));
+    const removedIds = new Set<string>([...this.deviceIds].filter((x) => !newIds.has(x)));
+    const addedIds = new Set<string>([...newIds].filter((x) => !this.deviceIds.has(x)));
 
     for (const id of removedIds) {
       this.log(`Removing listener for device ${id}`);
@@ -83,7 +83,7 @@ export class SensorRegistry2 {
       }
 
       const instance = device.makeCapabilityInstance(this.capabilityId, (value) => {
-        this.handleDeviceEvent(deviceId, value).catch(err => {
+        this.handleDeviceEvent(deviceId, value).catch((err) => {
           this.error(`Error handling capability event for device ${deviceId}`, err);
         });
       });

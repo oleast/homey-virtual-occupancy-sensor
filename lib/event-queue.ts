@@ -1,3 +1,5 @@
+import { HomeyInstance } from 'homey-api';
+
 export type EventType = 'door_open' | 'door_close' | 'motion';
 
 export interface Event {
@@ -7,6 +9,7 @@ export interface Event {
 }
 
 export class EventQueue {
+  private readonly homey: HomeyInstance;
   private CUTOFF_TIME_MS = 5 * 60 * 1000; // 5 minutes
   private _queue: Array<Event> = [];
 
@@ -14,16 +17,17 @@ export class EventQueue {
     return this._queue.toSorted((a, b) => a.timestamp - b.timestamp);
   }
 
-  constructor() {
+  constructor(homey: HomeyInstance) {
+    this.homey = homey;
     this.startCleanupInterval();
   }
 
   private startCleanupInterval(): void {
     const weakRef = new WeakRef(this);
-    const interval = setInterval(() => {
+    const interval = this.homey.setInterval(() => {
       const self = weakRef.deref();
       if (!self) {
-        clearInterval(interval);
+        this.homey.clearInterval(interval);
       } else {
         self.cleanup();
       }

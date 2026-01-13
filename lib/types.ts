@@ -1,5 +1,4 @@
 import { HomeyAPIV3Local } from 'homey-api';
-import Homey from 'homey';
 
 export type OccupancyState = 'empty' | 'occupied' | 'door_open' | 'checking';
 

@@ -1,14 +1,14 @@
-import { Device } from "homey";
-import { getAllDevices } from "./device-api";
-import { getHomeyAPI } from "./api";
-import { Homey } from "homey/lib/Device";
-import { HomeyAPIV3Local } from "homey-api";
+/* eslint-disable import/prefer-default-export */
+import { Device } from 'homey';
+import { HomeyAPIV3Local } from 'homey-api';
+import { getAllDevices } from './device-api';
+import { getHomeyAPI } from './api';
 
-export class BaseHomeyDevice  extends Device {
+export class BaseHomeyDevice extends Device {
   get deviceId(): string {
     const data = this.getData();
     if (!data.id) {
-      this.log(`Device data has no ID field`);
+      this.log('Device data has no ID field');
     }
     return data.id;
   }
@@ -29,6 +29,6 @@ export class BaseHomeyDevice  extends Device {
   }
 
   protected async getApi(): Promise<HomeyAPIV3Local> {
-    return await getHomeyAPI(this.homey);
+    return getHomeyAPI(this.homey);
   }
 }

@@ -1,4 +1,4 @@
-import { HomeyAPIV3Local } from "homey-api";
+import { HomeyAPIV3Local } from 'homey-api';
 
 export async function findDeviceById(homeyApi: HomeyAPIV3Local, id: string): Promise<HomeyAPIV3Local.ManagerDevices.Device | null> {
   try {
@@ -19,7 +19,7 @@ export async function getDevicesWithCapability(
   capabilityId: string,
 ): Promise<HomeyAPIV3Local.ManagerDevices.Device[]> {
   const allDevices = await homeyApi.devices.getDevices();
-  return Object.values(allDevices).filter(device => device.capabilities.includes(capabilityId));
+  return Object.values(allDevices).filter((device) => device.capabilities.includes(capabilityId));
 }
 
 export async function deviceHasCapability(

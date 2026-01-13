@@ -28,13 +28,14 @@ vi.mock('homey-api', () => {
     devices = {
       getDevices: vi.fn().mockResolvedValue({}),
     };
+
     static createLocalAPI() {
       return new MockHomeyAPI();
     }
   }
   return {
-    HomeyAPIV3Local: MockHomeyAPI
-  }
+    HomeyAPIV3Local: MockHomeyAPI,
+  };
 });
 
 vi.mock('homey', async () => {

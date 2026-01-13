@@ -32,13 +32,14 @@ vi.mock('homey-api', () => {
     devices = {
       getDevices: vi.fn().mockResolvedValue({}),
     };
+
     static createLocalAPI() {
       return new MockHomeyAPI();
     }
   }
   return {
-    HomeyAPIV3Local: MockHomeyAPI
-  }
+    HomeyAPIV3Local: MockHomeyAPI,
+  };
 });
 
 vi.mock('homey', async () => {
@@ -112,7 +113,7 @@ vi.mock('../lib/sensors/motion-sensor-registry', () => {
       destroy = vi.fn();
       updateDeviceIds = vi.fn();
       isAnySensorActive = mocks.monitorIsAnyMotionActive;
-    }
+    },
   };
 });
 
@@ -122,7 +123,7 @@ vi.mock('../lib/sensors/contact-sensor-registry', () => {
       destroy = vi.fn();
       updateDeviceIds = vi.fn();
       isAnySensorActive = vi.fn().mockResolvedValue(false);
-    }
+    },
   };
 });
 

@@ -1,8 +1,9 @@
-import { HomeyInstance } from "homey-api";
-import { DeviceEvent, SensorRegistry2 } from "./sensor-registry-2";
+/* eslint-disable import/prefer-default-export */
+import { HomeyInstance } from 'homey-api';
+import { DeviceEvent, SensorRegistry2 } from './sensor-registry-2';
 
 export class ContactSensorRegistry extends SensorRegistry2 {
-    constructor(
+  constructor(
     homey: HomeyInstance,
     deviceIds: string[],
     handleDeviceEvent: DeviceEvent,
@@ -10,5 +11,5 @@ export class ContactSensorRegistry extends SensorRegistry2 {
     error: (message: string, error?: unknown) => void,
   ) {
     super(homey, deviceIds, 'alarm_contact', handleDeviceEvent, log, error);
-  };
-};
+  }
+}

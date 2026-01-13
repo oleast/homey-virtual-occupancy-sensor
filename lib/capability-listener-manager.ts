@@ -1,4 +1,3 @@
-// capability-listener-manager.ts
 import { CapabilityInstance, MonitorCallbacks } from './types';
 
 type EventHandler = (
