@@ -1,10 +1,12 @@
-import { HomeyAPIV3, HomeyInstance } from 'homey-api';
+import { HomeyAPIV3, HomeyInstance, HomeyAPIV3Local } from 'homey-api';
 import { deviceHasCapability, findDeviceById } from '../homey/device-api';
+import { getHomeyAPI } from '../homey/api';
 
 export type DeviceEvent = (deviceId: string, value: boolean | string | number) => Promise<void>;
 
-export class SensorRegistry2 {
+export class SensorRegistry {
   protected homey: HomeyInstance;
+  protected api: HomeyAPIV3Local | null = null;
   protected deviceIds: Set<string> = new Set();
   protected capabilityId: string;
   protected listeners: Map<string, HomeyAPIV3.ManagerDevices.Device.DeviceCapability> = new Map();
@@ -59,8 +61,9 @@ export class SensorRegistry2 {
   }
 
   public async isAnySensorActive(): Promise<boolean> {
+    const api = await this.getApi();
     for (const deviceId of this.deviceIds) {
-      const device = await findDeviceById(this.homey, deviceId);
+      const device = await findDeviceById(api, deviceId);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (device && (device as any).capabilitiesObj && (device as any).capabilitiesObj[this.capabilityId]?.value) {
         return true;
@@ -71,7 +74,8 @@ export class SensorRegistry2 {
 
   private async addListener(deviceId: string): Promise<void> {
     try {
-      const device = await findDeviceById(this.homey, deviceId);
+      const api = await this.getApi();
+      const device = await findDeviceById(api, deviceId);
       if (!device) {
         this.error(`Could not find device instance for ${deviceId}`);
         return;
@@ -103,5 +107,12 @@ export class SensorRegistry2 {
       this.listeners.delete(deviceId);
       this.log(`Stopped listening to ${deviceId}`);
     }
+  }
+
+  private async getApi(): Promise<HomeyAPIV3Local> {
+    if (!this.api) {
+      this.api = await getHomeyAPI(this.homey);
+    }
+    return this.api;
   }
 }

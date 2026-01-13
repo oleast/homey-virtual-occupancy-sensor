@@ -1,8 +1,8 @@
 /* eslint-disable import/prefer-default-export */
 import { HomeyInstance } from 'homey-api';
-import { DeviceEvent, SensorRegistry2 } from './sensor-registry-2';
+import { DeviceEvent, SensorRegistry } from './sensor-registry';
 
-export class MotionSensorRegistry extends SensorRegistry2 {
+export class MotionSensorRegistry extends SensorRegistry {
   constructor(
     homey: HomeyInstance,
     deviceIds: string[],

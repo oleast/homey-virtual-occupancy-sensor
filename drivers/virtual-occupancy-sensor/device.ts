@@ -164,20 +164,22 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     const doorSensorIds = await this.getContactSensorsFromSettings();
     this.contactSensorRegistry = new ContactSensorRegistry(
       this.homey,
-      doorSensorIds,
+      [], // Initialize empty so that updateDeviceIds actually registers listeners
       this.handleContactSensorEvent.bind(this),
       this.log.bind(this),
       this.error.bind(this),
     );
+    await this.contactSensorRegistry.updateDeviceIds(doorSensorIds);
 
     const motionSensorIds = await this.getMotionsSensorsFromSettings();
     this.motionSensorRegistry = new MotionSensorRegistry(
       this.homey,
-      motionSensorIds,
+      [], // Initialize empty so that updateDeviceIds actually registers listeners
       this.handleMotionSensorEvent.bind(this),
       this.log.bind(this),
       this.error.bind(this),
     );
+    await this.motionSensorRegistry.updateDeviceIds(motionSensorIds);
   }
 
   private async handleContactSensorEvent(deviceId: string, value: boolean | number | string): Promise<void> {
@@ -234,22 +236,5 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       this.log(`Auto-detected door sensors in zone: ${doorSensorIds.join(', ')}`);
     }
     return doorSensorIds;
-  }
-
-  // Helper methods for testing and external triggers
-  public async handleDoorOpened() {
-    this.controller.registerEvent('door_open');
-  }
-
-  public async handleDoorClosed() {
-    this.controller.registerEvent('door_close');
-  }
-
-  public async handleMotionDetected(deviceId: string) {
-    this.controller.registerEvent('motion', deviceId);
-  }
-
-  public async setOccupancyState(state: OccupancyState) {
-    await this.controller.setOccupancyState(state);
   }
 }
