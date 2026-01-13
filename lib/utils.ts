@@ -1,4 +1,4 @@
-import { HomeyAPIV3Local } from 'homey-api';
+import { HomeyAPIV3Local, ManagerDevicesWithConnect } from 'homey-api';
 
 /**
  * Find the virtual device instance in the list of all devices
@@ -39,9 +39,11 @@ export function findSensorsInZone(
 
     const deviceObj = device as unknown as HomeyAPIV3Local.ManagerDevices.Device;
     if (deviceObj.zone === zoneId) {
+      // @ts-expect-error CapabilitiesObj may not be defined
       if (deviceObj.capabilitiesObj?.alarm_contact) {
         doorSensorIds.push(deviceId);
       }
+      // @ts-expect-error CapabilitiesObj may not be defined
       if (deviceObj.capabilitiesObj?.alarm_motion) {
         motionSensorIds.push(deviceId);
       }
@@ -65,6 +67,7 @@ export async function isAnyCapabilityActive(
 
   for (const id of deviceIds) {
     const device = devices[id];
+    // @ts-expect-error CapabilitiesObj may not be defined
     if (device?.capabilitiesObj?.[capabilityId]?.value === true) {
       return true;
     }

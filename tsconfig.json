@@ -6,6 +6,7 @@
     "lib": ["ES2023"]
   },
   "exclude": [
+    "generated",
     "node_modules",
     "**/*.test.ts",
     "vitest.config.ts"
