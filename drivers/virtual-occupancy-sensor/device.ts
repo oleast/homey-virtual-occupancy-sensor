@@ -5,6 +5,7 @@ import { ContactSensorRegistry } from '../../lib/sensors/contact-sensor-registry
 import { parseSensorIdsSetting } from '../../lib/utils';
 import { getDevicesWithCapability } from '../../lib/homey/device-api';
 import { BaseHomeyDevice } from '../../lib/homey/device';
+import { CheckingSensorRegistry } from '../../lib/sensors/checking-sensor-registry';
 
 /* eslint-disable camelcase */
 export interface DeviceSettings {
@@ -22,7 +23,7 @@ export interface OnSettingsEvent {
   changedKeys: Array<keyof DeviceSettings>;
 }
 
-export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
+module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
   private controller!: VirtualOccupancySensorController;
   private motionSensorRegistry: MotionSensorRegistry | null = null;
@@ -79,8 +80,6 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       (state: OccupancyState) => {
         this.onStateChange(state).catch(this.error);
       },
-      this.startTimer.bind(this),
-      this.cancelTimer.bind(this),
       this.log.bind(this),
       this.error.bind(this),
     );
@@ -105,6 +104,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
         alarmState = settings.active_on_door_open;
         break;
       case 'checking':
+        this.handleCheckingState();
         alarmState = settings.active_on_checking;
         break;
       default:
@@ -114,21 +114,24 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     await this.setCapabilityValue('alarm_motion', alarmState).catch(this.error);
   }
 
-  private startTimer(durationMs: number) {
-    this.log(`Starting timer for ${durationMs}ms`);
+  private handleCheckingState() {
+    this.log('Handling checking state');
     this.cancelTimer();
-    this.__timer = this.homey.setTimeout(async () => {
-      this.log('Timer expired, checking for active motion...');
-      const isMotionActive = await this.motionSensorRegistry?.isAnySensorActive();
+    const isAnyMotionActive = this.motionSensorRegistry?.isAnyBooleanStateTrue() ?? false;
+    if (!isAnyMotionActive) {
+      this.log('No active motion sensors during checking state, transitioning to empty');
+      this.controller.registerEvent('timeout', 'system');
+      return;
+    }
 
-      if (isMotionActive) {
-        this.log('Motion is still active, treating as motion event');
-        this.controller.registerEvent('motion');
-      } else {
-        this.log('No motion active, sending timeout');
-        this.controller.registerEvent('timeout');
-      }
-    }, durationMs);
+    const deviceConfigs = this.motionSensorRegistry?.getDeviceConfigs() || [];
+    const checkingSensors = new CheckingSensorRegistry(
+      this.homey,
+      deviceConfigs,
+      () => this.controller.registerEvent('timeout', 'system'),
+      this.log.bind(this),
+      this.error.bind(this),
+    );
   }
 
   private cancelTimer() {
@@ -164,22 +167,21 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     const doorSensorIds = await this.getContactSensorsFromSettings();
     this.contactSensorRegistry = new ContactSensorRegistry(
       this.homey,
-      [], // Initialize empty so that updateDeviceIds actually registers listeners
+      doorSensorIds,
       this.handleContactSensorEvent.bind(this),
       this.log.bind(this),
       this.error.bind(this),
     );
-    await this.contactSensorRegistry.updateDeviceIds(doorSensorIds);
 
     const motionSensorIds = await this.getMotionsSensorsFromSettings();
     this.motionSensorRegistry = new MotionSensorRegistry(
       this.homey,
-      [], // Initialize empty so that updateDeviceIds actually registers listeners
+      this.getSettings().motion_timeout * 1000,
+      motionSensorIds,
       this.handleMotionSensorEvent.bind(this),
       this.log.bind(this),
       this.error.bind(this),
     );
-    await this.motionSensorRegistry.updateDeviceIds(motionSensorIds);
   }
 
   private async handleContactSensorEvent(deviceId: string, value: boolean | number | string): Promise<void> {
@@ -187,33 +189,48 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       this.log(`Ignoring non-boolean contact sensor value from ${deviceId}: ${value}`);
       return;
     }
-    const eventType = value ? 'door_open' : 'door_close';
-    this.log(`Door event detected on sensor ${deviceId}: ${eventType}`);
-    this.controller.registerEvent(eventType, deviceId);
+    this.log(`Door event triggered on sensor ${deviceId}, native value:${value}`);
+
+    if (value) {
+      this.log(`Door opened event triggered on sensor ${deviceId}`);
+      this.controller.registerEvent('any_door_open', deviceId);
+    } else {
+      const allDoorsClosed = this.contactSensorRegistry?.isAllBooleanStateFalse() ?? false;
+      if (!allDoorsClosed) {
+        this.log(`Not all doors are closed after door close on sensor ${deviceId}, ignoring event`);
+      } else {
+        this.log(`Door closed on sensor ${deviceId}, all doors closed: ${allDoorsClosed}`);
+        this.controller.registerEvent('all_doors_closed', deviceId);
+      }
+    }
   }
 
   private async handleMotionSensorEvent(deviceId: string, value: boolean | number | string): Promise<void> {
-    if (typeof value !== 'undefined') {
-      this.log(`Got non-undefined motion sensor value from ${deviceId}: ${value}, continuing anyway`);
+    if (typeof value !== 'boolean') {
+      this.log(`Got non-boolean motion sensor value from ${deviceId}: ${value}`);
+      return;
     }
-    this.log(`Motion detected on sensor ${deviceId}`);
-    this.controller.registerEvent('motion', deviceId);
+    this.log(`Motion event triggered on sensor ${deviceId}, native value: ${value}`);
+    const eventType = value ? 'motion_detected' : 'motion_timeout';
+    this.controller.registerEvent(eventType, deviceId);
   }
 
   private async getContactSensorsInZone(): Promise<string[]> {
     const api = await this.getApi();
+    const deviceId = await this.getDeviceId();
     const zoneId = await this.getZoneId();
     const allContactDevices = await getDevicesWithCapability(api, 'alarm_contact');
-    const allContactDevicesInZone = allContactDevices.filter((device) => device.zone === zoneId && device.id !== this.deviceId);
+    const allContactDevicesInZone = allContactDevices.filter((device) => device.zone === zoneId && device.id !== deviceId);
     this.log(`Found ${allContactDevicesInZone.length} contact sensors in zone ${zoneId}. Named: ${allContactDevicesInZone.map((d) => d.name).join(', ')}`);
     return allContactDevicesInZone.map((device) => device.id);
   }
 
   private async getMotionSensorsInZone(): Promise<string[]> {
     const api = await this.getApi();
+    const deviceId = await this.getDeviceId();
     const zoneId = await this.getZoneId();
     const allMotionDevices = await getDevicesWithCapability(api, 'alarm_motion');
-    const allMotionDevicesInZone = allMotionDevices.filter((device) => device.zone === zoneId && device.id !== this.deviceId);
+    const allMotionDevicesInZone = allMotionDevices.filter((device) => device.zone === zoneId && device.id !== deviceId);
     this.log(`Found ${allMotionDevicesInZone.length} motion sensors in zone ${zoneId}. Named: ${allMotionDevicesInZone.map((d) => d.name).join(', ')}`);
     return allMotionDevicesInZone.map((device) => device.id);
   }
@@ -221,7 +238,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   private async getMotionsSensorsFromSettings(settings: DeviceSettings = this.getSettings()): Promise<string[]> {
     let motionSensorIds = parseSensorIdsSetting(settings.motion_sensors);
     if (motionSensorIds.length === 0) {
-      this.log('Not motion sensor ids configured, using automatic zone detection');
+      this.log('No motion sensor ids configured, using automatic zone detection');
       motionSensorIds = await this.getMotionSensorsInZone();
       this.log(`Auto-detected motion sensors in zone: ${motionSensorIds.join(', ')}`);
     }
@@ -237,4 +254,4 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     }
     return doorSensorIds;
   }
-}
+};

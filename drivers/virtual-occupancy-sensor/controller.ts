@@ -4,13 +4,11 @@ export type StateChangeCallback = (state: OccupancyState) => void;
 export type TimerCallback = (durationMs: number) => void;
 export type CancelTimerCallback = () => void;
 
-type EventType = 'door_open' | 'door_close' | 'motion' | 'timeout';
+type EventType = 'any_door_open' | 'all_doors_closed' | 'motion_detected' | 'motion_timeout' | 'timeout';
 
 export class VirtualOccupancySensorController {
   private currentState: OccupancyState = 'empty';
   private onStateChange: StateChangeCallback;
-  private startTimer: TimerCallback;
-  private cancelTimer: CancelTimerCallback;
   private log: (message: string) => void;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   private error: (message: string, error?: unknown) => void;
@@ -18,14 +16,10 @@ export class VirtualOccupancySensorController {
 
   constructor(
     onStateChange: StateChangeCallback,
-    startTimer: TimerCallback,
-    cancelTimer: CancelTimerCallback,
     log: (message: string) => void,
     error: (message: string, error?: unknown) => void,
   ) {
     this.onStateChange = onStateChange;
-    this.startTimer = startTimer;
-    this.cancelTimer = cancelTimer;
     this.log = log;
     this.error = error;
   }
@@ -34,7 +28,7 @@ export class VirtualOccupancySensorController {
     this.motionTimeoutMs = seconds * 1000;
   }
 
-  public registerEvent(eventType: EventType, deviceId?: string) {
+  public registerEvent(eventType: EventType, deviceId: string) {
     this.log(`Received event: ${eventType} from ${deviceId || 'system'}. Current state: ${this.currentState}`);
 
     switch (this.currentState) {
@@ -69,26 +63,25 @@ export class VirtualOccupancySensorController {
   // --- State Handlers ---
 
   private handleEventInEmpty(event: EventType) {
-    if (event === 'motion') {
+    if (event === 'motion_detected') {
       this.transitionTo('occupied');
-    } else if (event === 'door_open') {
+    } else if (event === 'any_door_open') {
       this.transitionTo('door_open');
     }
   }
 
   private handleEventInOccupied(event: EventType) {
-    if (event === 'door_open') {
+    if (event === 'any_door_open') {
       this.transitionTo('door_open');
     }
     // Ignore motion in occupied state (already occupied)
   }
 
   private handleEventInDoorOpen(event: EventType) {
-    if (event === 'door_close') {
+    if (event === 'all_doors_closed') {
       // Ambiguous state: Did user leave or stay?
       // Logic: Transition to checking to verify presence.
       this.transitionTo('checking');
-      this.startTimer(this.motionTimeoutMs);
     }
     // Keep internal track of motion? Not effectively needed if we always go to checking upon close.
     // The previous implementation tried to guess immediately.
@@ -96,15 +89,13 @@ export class VirtualOccupancySensorController {
   }
 
   private handleEventInChecking(event: EventType) {
-    if (event === 'motion') {
+    if (event === 'motion_detected') {
       // Motion confirmed: User stayed.
-      this.cancelTimer();
       this.transitionTo('occupied');
-    } else if (event === 'door_open') {
+    } else if (event === 'any_door_open') {
       // Door opened again: Reset checking logic.
-      this.cancelTimer();
       this.transitionTo('door_open');
-    } else if (event === 'timeout') {
+    } else if (event === 'timeout' || event === 'motion_timeout') {
       // No motion detected within window: User left.
       this.transitionTo('empty');
     }

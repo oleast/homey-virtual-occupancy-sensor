@@ -5,24 +5,33 @@ import { getAllDevices } from './device-api';
 import { getHomeyAPI } from './api';
 
 export class BaseHomeyDevice extends Device {
-  get deviceId(): string {
+  protected async getDeviceId(): Promise<string> {
     const data = this.getData();
     if (!data.id) {
       this.log('Device data has no ID field');
     }
-    return data.id;
+
+    const api = await getHomeyAPI(this.homey);
+    const allDevices = await getAllDevices(api);
+    // @ts-expect-error - data.id exists
+    const thisDevice = Object.values(allDevices).find((device) => device.data.id === data.id);
+    if (!thisDevice) {
+      this.error(`Device with ID ${data.id} not found in Homey devices`);
+    }
+    return thisDevice?.id ?? '';
   }
 
   protected async getZoneId(): Promise<string | null> {
+    const deviceId = await this.getDeviceId();
     const api = await getHomeyAPI(this.homey);
     const allDevices = await getAllDevices(api);
-    const device = allDevices[this.deviceId];
+    const device = allDevices[deviceId];
     if (!device) {
-      this.error(`Current device with ID ${this.deviceId} not found in Homey devices`);
+      this.error(`Current device with ID ${deviceId} not found in Homey devices`);
       return null;
     }
     if (!device.zone) {
-      this.error(`Current device with ID ${this.deviceId} has no zone assigned`);
+      this.error(`Current device with ID ${deviceId} has no zone assigned`);
       return null;
     }
     return device.zone;

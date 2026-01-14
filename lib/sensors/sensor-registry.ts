@@ -1,16 +1,19 @@
 import { HomeyAPIV3, HomeyInstance, HomeyAPIV3Local } from 'homey-api';
 import { deviceHasCapability, findDeviceById } from '../homey/device-api';
 import { getHomeyAPI } from '../homey/api';
+import { CapabilityCallback, Homey } from 'homey/lib/Device';
 
 export type DeviceEvent = (deviceId: string, value: boolean | string | number) => Promise<void>;
 
-export class SensorRegistry {
+export class SensorRegistry<TCapabilityType extends number | string | boolean> {
   protected homey: HomeyInstance;
   protected api: HomeyAPIV3Local | null = null;
   protected deviceIds: Set<string> = new Set();
   protected capabilityId: string;
+  protected capabilityType!: 'boolean' | 'string' | 'number';
   protected listeners: Map<string, HomeyAPIV3.ManagerDevices.Device.DeviceCapability> = new Map();
-  protected handleDeviceEvent: DeviceEvent;
+  protected capabilityState: Map<string, TCapabilityType> = new Map();
+  protected onDeviceEvent: DeviceEvent;
   protected log: (message: string) => void;
   protected error: (message: string, error?: unknown) => void;
 
@@ -18,16 +21,24 @@ export class SensorRegistry {
     homey: HomeyInstance,
     deviceIds: string[],
     capabilityId: string,
-    handleDeviceEvent: DeviceEvent,
+    capabilityType: 'boolean' | 'string' | 'number',
+    onDeviceEvent: DeviceEvent,
     log: (message: string) => void,
     error: (message: string, error?: unknown) => void,
   ) {
+    const deviceIdsSet = new Set(deviceIds);
     this.homey = homey;
-    this.deviceIds = new Set(deviceIds);
+    this.deviceIds = deviceIdsSet;
     this.capabilityId = capabilityId;
-    this.handleDeviceEvent = handleDeviceEvent;
+    this.capabilityType = capabilityType;
+    this.onDeviceEvent = onDeviceEvent;
     this.log = log;
     this.error = error;
+
+    for (const id of deviceIdsSet) {
+      this.log(`Adding listener for device ${id}`);
+      this.addListener(id);
+    }
   }
 
   public async updateDeviceIds(deviceIds: string[]): Promise<void> {
@@ -60,16 +71,34 @@ export class SensorRegistry {
     return this.deviceIds.has(deviceId);
   }
 
-  public async isAnySensorActive(): Promise<boolean> {
-    const api = await this.getApi();
-    for (const deviceId of this.deviceIds) {
-      const device = await findDeviceById(api, deviceId);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if (device && (device as any).capabilitiesObj && (device as any).capabilitiesObj[this.capabilityId]?.value) {
-        return true;
-      }
+  get capabilityStates(): Array<TCapabilityType> {
+    return Array.from(this.capabilityState.values());
+  }
+
+  public isAnyBooleanStateTrue(): boolean {
+    return this.capabilityStates.some((value) => value === true);
+  }
+
+  public isAllBooleanStateTrue(): boolean {
+    return this.capabilityStates.every((value) => value === true);
+  }
+
+  public isAnyBooleanStateFalse(): boolean {
+    return this.capabilityStates.some((value) => value === false);
+  }
+
+  public isAllBooleanStateFalse(): boolean {
+    console.log('Capability states:', this.capabilityState, this.capabilityStates.every((value) => value === false)); // Debug log
+    return this.capabilityStates.every((value) => value === false);
+  }
+
+  private async handleDeviceEvent(deviceId: string, value: boolean | string | number): Promise<void> {
+    if (typeof value !== this.capabilityType) {
+      this.error(`Received value of incorrect type for device ${deviceId}: expected ${typeof this.capabilityType}, got ${typeof value}`);
+      return;
     }
-    return false;
+    this.capabilityState.set(deviceId, value as TCapabilityType);
+    await this.onDeviceEvent(deviceId, value);
   }
 
   private async addListener(deviceId: string): Promise<void> {
@@ -90,6 +119,11 @@ export class SensorRegistry {
         this.handleDeviceEvent(deviceId, value).catch((err) => {
           this.error(`Error handling capability event for device ${deviceId}`, err);
         });
+      });
+
+      const capabilitiesObj = device.capabilitiesObj as Record<string, HomeyAPIV3Local.ManagerDevices.CapabilityObj>;
+      this.handleDeviceEvent(deviceId, capabilitiesObj[this.capabilityId].value).catch((err) => {
+        this.error(`Error handling initial capability state for device ${deviceId}`, err);
       });
 
       this.listeners.set(deviceId, instance);

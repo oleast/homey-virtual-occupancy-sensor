@@ -37,7 +37,21 @@ declare module 'homey-api' {
           [key: string]: any
         };
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        capabilitiesObj?: Record<string, any>;
+        capabilitiesObj?: Record<string, CapabilityObj>;
+      }
+
+      export interface CapabilityObj {
+        id: string,
+        type: 'boolean' | 'string' | 'number',
+        iconObj: null,
+        title: string,
+        getable: boolean,
+        setable: boolean,
+        insights: boolean,
+        insightsTitleTrue: string,
+        insightsTitleFalse: string,
+        value: boolean | string | number,
+        lastUpdated: string
       }
     }
   }
