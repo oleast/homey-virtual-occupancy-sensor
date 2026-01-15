@@ -1,5 +1,6 @@
 /* eslint-disable max-classes-per-file */
 /* eslint-disable homey-app/global-timers */
+/* eslint-disable no-console */
 // tests/__mocks__/homey.ts
 import { EventEmitter } from 'events';
 

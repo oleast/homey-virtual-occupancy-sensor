@@ -5,7 +5,7 @@ import {
 
 // Import Device (CJS export)
 // @ts-expect-error - Device import handles the Homey 'module.exports' pattern which TS doesn't like for default checking
-import { VirtualOccupancySensorDevice } from '../drivers/virtual-occupancy-sensor/device';
+import VirtualOccupancySensorDevice from '../drivers/virtual-occupancy-sensor/device';
 
 // --- Mock Setup ---
 const mocks = vi.hoisted(() => {

@@ -27,19 +27,6 @@ declare module 'homey-api' {
     export namespace ManagerDevices {
       export type DeviceCapability = unknown;
 
-      export interface Device {
-        id: string;
-        name: string;
-        capabilities: string[];
-        data: {
-          id: string;
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          [key: string]: any
-        };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        capabilitiesObj?: Record<string, CapabilityObj>;
-      }
-
       export interface CapabilityObj {
         id: string,
         type: 'boolean' | 'string' | 'number',
@@ -52,6 +39,19 @@ declare module 'homey-api' {
         insightsTitleFalse: string,
         value: boolean | string | number,
         lastUpdated: string
+      }
+
+      export interface Device {
+        id: string;
+        name: string;
+        capabilities: string[];
+        data: {
+          id: string;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          [key: string]: any
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        capabilitiesObj?: Record<string, CapabilityObj>;
       }
     }
   }

@@ -1,6 +1,6 @@
 import { HomeyInstance } from 'homey-api';
 
-export class VirtualCheckingSensor {
+export default class VirtualCheckingSensor {
   private homey: HomeyInstance;
   private callback: () => void;
   private timeoutMs: number;

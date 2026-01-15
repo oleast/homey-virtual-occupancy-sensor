@@ -28,7 +28,7 @@ module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   private controller!: VirtualOccupancySensorController;
   private motionSensorRegistry: MotionSensorRegistry | null = null;
   private contactSensorRegistry: ContactSensorRegistry | null = null;
-  private __timer: NodeJS.Timeout | null = null;
+  private checkingSensorRegistry: CheckingSensorRegistry | null = null;
 
   async onInit() {
     this.log('VirtualOccupancySensorDevice has been initialized');
@@ -42,7 +42,6 @@ module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     this.log('VirtualOccupancySensorDevice has been deleted');
     this.motionSensorRegistry?.destroy();
     this.contactSensorRegistry?.destroy();
-    this.cancelTimer();
   }
 
   // @ts-expect-error - Homey onSettings typing is incorrect
@@ -116,7 +115,6 @@ module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
   private handleCheckingState() {
     this.log('Handling checking state');
-    this.cancelTimer();
     const isAnyMotionActive = this.motionSensorRegistry?.isAnyBooleanStateTrue() ?? false;
     if (!isAnyMotionActive) {
       this.log('No active motion sensors during checking state, transitioning to empty');
@@ -125,21 +123,13 @@ module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     }
 
     const deviceConfigs = this.motionSensorRegistry?.getDeviceConfigs() || [];
-    const checkingSensors = new CheckingSensorRegistry(
+    this.checkingSensorRegistry = new CheckingSensorRegistry(
       this.homey,
       deviceConfigs,
       () => this.controller.registerEvent('timeout', 'system'),
       this.log.bind(this),
       this.error.bind(this),
     );
-  }
-
-  private cancelTimer() {
-    if (this.__timer) {
-      this.log('Cancelling timer');
-      this.homey.clearTimeout(this.__timer);
-      this.__timer = null;
-    }
   }
 
   private async initCapabilities() {

@@ -1,5 +1,6 @@
 /* eslint-disable node/no-unsupported-features/es-syntax */
 /* eslint-disable max-classes-per-file */
+/* eslint-disable no-console */
 import {
   describe, it, expect, beforeEach, afterEach, vi,
 } from 'vitest';
@@ -9,7 +10,7 @@ import * as HomeyAPIModuleMock from '../__mocks__/homey-api';
 import { Device as MockDevice } from '../__mocks__/homey'; // Auto-mock from root __mocks__
 
 // Import Class Under Test
-import { DeviceSettings, VirtualOccupancySensorDevice } from '../drivers/virtual-occupancy-sensor/device';
+import VirtualOccupancySensorDevice, { DeviceSettings } from '../drivers/virtual-occupancy-sensor/device';
 import { OccupancyState } from '../lib/types';
 
 // Setup Mocks

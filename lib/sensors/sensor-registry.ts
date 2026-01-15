@@ -1,7 +1,6 @@
 import { HomeyAPIV3, HomeyInstance, HomeyAPIV3Local } from 'homey-api';
 import { deviceHasCapability, findDeviceById } from '../homey/device-api';
 import { getHomeyAPI } from '../homey/api';
-import { CapabilityCallback, Homey } from 'homey/lib/Device';
 
 export type DeviceEvent = (deviceId: string, value: boolean | string | number) => Promise<void>;
 
@@ -37,6 +36,7 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
 
     for (const id of deviceIdsSet) {
       this.log(`Adding listener for device ${id}`);
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.addListener(id);
     }
   }
@@ -88,11 +88,11 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
   }
 
   public isAllBooleanStateFalse(): boolean {
-    console.log('Capability states:', this.capabilityState, this.capabilityStates.every((value) => value === false)); // Debug log
     return this.capabilityStates.every((value) => value === false);
   }
 
   private async handleDeviceEvent(deviceId: string, value: boolean | string | number): Promise<void> {
+    // eslint-disable-next-line valid-typeof
     if (typeof value !== this.capabilityType) {
       this.error(`Received value of incorrect type for device ${deviceId}: expected ${typeof this.capabilityType}, got ${typeof value}`);
       return;

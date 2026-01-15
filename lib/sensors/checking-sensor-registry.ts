@@ -1,5 +1,5 @@
 import { HomeyInstance } from 'homey-api';
-import { VirtualCheckingSensor } from './checking-sensor';
+import VirtualCheckingSensor from './checking-sensor';
 
 export type DeviceEvent = () => void;
 
@@ -32,7 +32,9 @@ export class CheckingSensorRegistry {
 
     for (const config of deviceConfigs) {
       this.log(`Adding listener for device ${config.id}`);
-      this.addListener(config);
+      this.addListener(config).catch((err) => {
+        this.error(`Failed to add listener for device ${config.id}`, err);
+      });
     }
   }
 
@@ -79,14 +81,14 @@ export class CheckingSensorRegistry {
     return this.deviceConfigs.some((config) => config.id === deviceId);
   }
 
-  private async handleDeviceEventCallback(deviceId: string): Promise<void> {
+  private handleDeviceEventCallback(deviceId: string): void {
     this.triggeredDevices.add(deviceId);
     this.log(`Device ${deviceId} triggered (${this.triggeredDevices.size}/${this.listeners.size} devices triggered)`);
 
     // Only fire the callback when ALL devices have triggered
     if (this.triggeredDevices.size >= this.listeners.size) {
       this.log('All devices have triggered, firing callback');
-      await this.handleDeviceEvent();
+      this.handleDeviceEvent();
       this.triggeredDevices.clear();
       for (const config of this.deviceConfigs) {
         this.removeListener(config);
@@ -95,7 +97,8 @@ export class CheckingSensorRegistry {
   }
 
   private async addListener(deviceConfig: DeviceConfig): Promise<void> {
-    const device = new VirtualCheckingSensor(this.homey, () => this.handleDeviceEventCallback(deviceConfig.id),
+    const callback = () => this.handleDeviceEventCallback(deviceConfig.id);
+    const device = new VirtualCheckingSensor(this.homey, callback,
       deviceConfig.timeoutMs,
       this.log,
       this.error);
