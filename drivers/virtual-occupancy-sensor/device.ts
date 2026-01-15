@@ -115,13 +115,11 @@ module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
   private handleCheckingState() {
     this.log('Handling checking state');
-    const isAnyMotionActive = this.motionSensorRegistry?.isAnyBooleanStateTrue() ?? false;
-    if (!isAnyMotionActive) {
-      this.log('No active motion sensors during checking state, transitioning to empty');
-      this.controller.registerEvent('timeout', 'system');
-      return;
-    }
 
+    // Always set up the CheckingSensorRegistry to wait for the full timeout period.
+    // Don't short-circuit to empty based on current motion sensor state, because:
+    // 1. Motion sensor may have timed out while door was still open (user lingered)
+    // 2. User may be sitting still and will move again within the timeout period
     const deviceConfigs = this.motionSensorRegistry?.getDeviceConfigs() || [];
     this.checkingSensorRegistry = new CheckingSensorRegistry(
       this.homey,

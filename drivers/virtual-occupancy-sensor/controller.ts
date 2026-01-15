@@ -95,9 +95,14 @@ export class VirtualOccupancySensorController {
     } else if (event === 'any_door_open') {
       // Door opened again: Reset checking logic.
       this.transitionTo('door_open');
-    } else if (event === 'timeout' || event === 'motion_timeout') {
-      // No motion detected within window: User left.
+    } else if (event === 'timeout') {
+      // Checking timeout elapsed without motion: User left.
+      // Note: We intentionally ignore 'motion_timeout' here because:
+      // 1. The motion sensor's internal timeout doesn't mean nobody is there
+      // 2. User may be sitting still and will move again shortly
+      // 3. Only the CheckingSensorRegistry timeout should trigger this transition
       this.transitionTo('empty');
     }
+    // 'motion_timeout' is ignored in checking state - wait for the full checking timeout
   }
 }
