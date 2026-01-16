@@ -49,12 +49,19 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     await this.initCapabilities();
     await this.setInitialCapabilityStates();
     await this.initSensorRegistries();
+    await this.subscribeToDeviceUpdates();
   }
 
   async onDeleted() {
     this.log('VirtualOccupancySensorDevice has been deleted');
+    this.unsubscribeFromDeviceUpdates();
     this.motionSensorRegistry?.destroy();
     this.contactSensorRegistry?.destroy();
+  }
+
+  protected onZoneChanged(): void {
+    this.log('Zone changed, refreshing auto-detected sensors');
+    this.refreshAutoDetectedSensors().catch(this.error);
   }
 
   // @ts-expect-error - Homey onSettings typing is incorrect
@@ -207,6 +214,22 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       this.log.bind(this),
       this.error.bind(this),
     );
+  }
+
+  private async refreshAutoDetectedSensors() {
+    const settings = this.getSettings() as DeviceSettings;
+
+    if (settings.auto_detect_door_sensors) {
+      this.log('Refreshing auto-detected door sensors after zone change');
+      const doorSensorIds = await this.getContactSensorsFromSettings(settings);
+      await this.contactSensorRegistry?.updateDeviceIds(doorSensorIds);
+    }
+
+    if (settings.auto_detect_motion_sensors) {
+      this.log('Refreshing auto-detected motion sensors after zone change');
+      const motionSensorIds = await this.getMotionsSensorsFromSettings(settings);
+      await this.motionSensorRegistry?.updateDeviceIds(motionSensorIds);
+    }
   }
 
   private async handleContactSensorEvent(deviceId: string, value: boolean | number | string): Promise<void> {

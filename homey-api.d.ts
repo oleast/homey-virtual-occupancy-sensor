@@ -61,6 +61,7 @@ declare module 'homey-api' {
       export interface Device {
         id: string;
         name: string;
+        zone: string;
         capabilities: string[];
         data: {
           id: string;
@@ -69,6 +70,12 @@ declare module 'homey-api' {
         };
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         capabilitiesObj?: Record<string, CapabilityObj>;
+        connect(): Promise<void>;
+        disconnect(): Promise<void>;
+        on(event: 'update', callback: (device: Device, info: { zone?: boolean }) => void): void;
+        on(event: 'delete', callback: () => void): void;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        removeListener(event: string, callback: (...args: any[]) => void): void;
       }
     }
   }
