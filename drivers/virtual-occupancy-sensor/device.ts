@@ -5,12 +5,17 @@ import { ContactSensorRegistry } from '../../lib/sensors/contact-sensor-registry
 import { parseSensorIdsSetting } from '../../lib/utils';
 import { getDevicesWithCapability } from '../../lib/homey/device-api';
 import { BaseHomeyDevice } from '../../lib/homey/device';
+import { getAllZones, getZoneIdsForSearch } from '../../lib/homey/zone-api';
 import { CheckingSensorRegistry } from '../../lib/sensors/checking-sensor-registry';
 
 /* eslint-disable camelcase */
 export interface DeviceSettings {
   motion_timeout: number;
   auto_learn_timeout: boolean;
+  auto_detect_motion_sensors: boolean;
+  auto_detect_door_sensors: boolean;
+  include_child_zones_motion: boolean;
+  include_child_zones_contact: boolean;
   active_on_occupied: boolean;
   active_on_empty: boolean;
   active_on_door_open: boolean;
@@ -56,13 +61,21 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   async onSettings({ newSettings, changedKeys }: OnSettingsEvent): Promise<void> {
     this.log('Updating VirtualOccupancySensorDevice settings');
 
-    if (changedKeys.includes('door_sensors')) {
-      this.log('Door sensor settings changed, updating registry');
+    // Check if we need to reload sensors due to zone or sensor configuration changes
+    const needsContactSensorReload = changedKeys.includes('door_sensors')
+      || changedKeys.includes('auto_detect_door_sensors')
+      || changedKeys.includes('include_child_zones_contact');
+    const needsMotionSensorReload = changedKeys.includes('motion_sensors')
+      || changedKeys.includes('auto_detect_motion_sensors')
+      || changedKeys.includes('include_child_zones_motion');
+
+    if (needsContactSensorReload) {
+      this.log('Door sensor or zone settings changed, updating registry');
       const doorSensorIds = await this.getContactSensorsFromSettings(newSettings);
       await this.contactSensorRegistry?.updateDeviceIds(doorSensorIds);
     }
-    if (changedKeys.includes('motion_sensors')) {
-      this.log('Motion sensor settings changed, updating registry');
+    if (needsMotionSensorReload) {
+      this.log('Motion sensor or zone settings changed, updating registry');
       const motionSensorIds = await this.getMotionsSensorsFromSettings(newSettings);
       await this.motionSensorRegistry?.updateDeviceIds(motionSensorIds);
     }
@@ -227,43 +240,67 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     this.controller.registerEvent(eventType, deviceId);
   }
 
-  private async getContactSensorsInZone(): Promise<string[]> {
+  private async getContactSensorsInZone(includeChildZones: boolean = false): Promise<string[]> {
     const api = await this.getApi();
     const deviceId = await this.getDeviceId();
     const zoneId = await this.getZoneId();
+    if (!zoneId) return [];
+
+    const allZones = await getAllZones(api);
+    const zoneIds = getZoneIdsForSearch(allZones, zoneId, includeChildZones);
+
     const allContactDevices = await getDevicesWithCapability(api, 'alarm_contact');
-    const allContactDevicesInZone = allContactDevices.filter((device) => device.zone === zoneId && device.id !== deviceId);
-    this.log(`Found ${allContactDevicesInZone.length} contact sensors in zone ${zoneId}. Named: ${allContactDevicesInZone.map((d) => d.name).join(', ')}`);
-    return allContactDevicesInZone.map((device) => device.id);
+    const matchingDevices = allContactDevices.filter(
+      (device) => device.zone && zoneIds.includes(device.zone) && device.id !== deviceId,
+    );
+
+    const zoneDescription = includeChildZones ? `zone ${zoneId} and child zones` : `zone ${zoneId}`;
+    this.log(`Found ${matchingDevices.length} contact sensors in ${zoneDescription}. Named: ${matchingDevices.map((d) => d.name).join(', ')}`);
+    return matchingDevices.map((device) => device.id);
   }
 
-  private async getMotionSensorsInZone(): Promise<string[]> {
+  private async getMotionSensorsInZone(includeChildZones: boolean = false): Promise<string[]> {
     const api = await this.getApi();
     const deviceId = await this.getDeviceId();
     const zoneId = await this.getZoneId();
+    if (!zoneId) return [];
+
+    const allZones = await getAllZones(api);
+    const zoneIds = getZoneIdsForSearch(allZones, zoneId, includeChildZones);
+
     const allMotionDevices = await getDevicesWithCapability(api, 'alarm_motion');
-    const allMotionDevicesInZone = allMotionDevices.filter((device) => device.zone === zoneId && device.id !== deviceId);
-    this.log(`Found ${allMotionDevicesInZone.length} motion sensors in zone ${zoneId}. Named: ${allMotionDevicesInZone.map((d) => d.name).join(', ')}`);
-    return allMotionDevicesInZone.map((device) => device.id);
+    const matchingDevices = allMotionDevices.filter(
+      (device) => device.zone && zoneIds.includes(device.zone) && device.id !== deviceId,
+    );
+
+    const zoneDescription = includeChildZones ? `zone ${zoneId} and child zones` : `zone ${zoneId}`;
+    this.log(`Found ${matchingDevices.length} motion sensors in ${zoneDescription}. Named: ${matchingDevices.map((d) => d.name).join(', ')}`);
+    return matchingDevices.map((device) => device.id);
   }
 
   private async getMotionsSensorsFromSettings(settings: DeviceSettings = this.getSettings()): Promise<string[]> {
-    let motionSensorIds = parseSensorIdsSetting(settings.motion_sensors);
-    if (motionSensorIds.length === 0) {
-      this.log('No motion sensor ids configured, using automatic zone detection');
-      motionSensorIds = await this.getMotionSensorsInZone();
-      this.log(`Auto-detected motion sensors in zone: ${motionSensorIds.join(', ')}`);
+    const motionSensorIds = parseSensorIdsSetting(settings.motion_sensors);
+
+    if (settings.auto_detect_motion_sensors) {
+      this.log('Auto-detection enabled, searching for motion sensors in zone');
+      const autoDetectedIds = await this.getMotionSensorsInZone(settings.include_child_zones_motion);
+      this.log(`Auto-detected motion sensors: ${autoDetectedIds.join(', ')}`);
+      return [...new Set([...motionSensorIds, ...autoDetectedIds])];
     }
+
     return motionSensorIds;
   }
 
   private async getContactSensorsFromSettings(settings: DeviceSettings = this.getSettings()): Promise<string[]> {
-    let doorSensorIds = parseSensorIdsSetting(settings.door_sensors);
-    if (doorSensorIds.length === 0) {
-      this.log('No door sensor ids configured, using automatic zone detection');
-      doorSensorIds = await this.getContactSensorsInZone();
-      this.log(`Auto-detected door sensors in zone: ${doorSensorIds.join(', ')}`);
+    const doorSensorIds = parseSensorIdsSetting(settings.door_sensors);
+
+    if (settings.auto_detect_door_sensors) {
+      this.log('Auto-detection enabled, searching for door sensors in zone');
+      const autoDetectedIds = await this.getContactSensorsInZone(settings.include_child_zones_contact);
+      this.log(`Auto-detected door sensors: ${autoDetectedIds.join(', ')}`);
+      return [...new Set([...doorSensorIds, ...autoDetectedIds])];
     }
+
     return doorSensorIds;
   }
 }

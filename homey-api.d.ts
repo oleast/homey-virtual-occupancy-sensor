@@ -8,6 +8,7 @@ declare module 'homey-api' {
 
   export interface HomeyAPIV3Local {
     devices: HomeyAPIV3Local.ManagerDevices;
+    zones: HomeyAPIV3Local.ManagerZones;
   }
 
   export interface CapabilityInstance {
@@ -22,6 +23,22 @@ declare module 'homey-api' {
     export interface ManagerDevices {
       getDevice(params: { id: string }): Promise<ManagerDevices.Device>;
       getDevices(): Promise<Record<string, ManagerDevices.Device>>;
+    }
+
+    export interface ManagerZones {
+      getZone(params: { id: string }): Promise<ManagerZones.Zone>;
+      getZones(): Promise<Record<string, ManagerZones.Zone>>;
+    }
+
+    export namespace ManagerZones {
+      export interface Zone {
+        id: string;
+        name: string;
+        parent: string | null;
+        icon: string;
+        active: boolean;
+        activeLastUpdated: string | null;
+      }
     }
 
     export namespace ManagerDevices {

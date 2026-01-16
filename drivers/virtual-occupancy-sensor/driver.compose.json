@@ -135,6 +135,114 @@
           "value": true
         },
         {
+          "id": "auto_detect_motion_sensors",
+          "type": "checkbox",
+          "label": {
+            "en": "Auto-detect motion sensors",
+            "nl": "Bewegingssensoren automatisch detecteren",
+            "de": "Bewegungssensoren automatisch erkennen",
+            "fr": "Détecter les capteurs de mouvement automatiquement",
+            "no": "Oppdag bevegelsessensorer automatisk",
+            "sv": "Upptäck rörelsesensorer automatiskt",
+            "da": "Registrer automatisk bevægelsessensorer",
+            "es": "Detectar automáticamente sensores de movimiento",
+            "it": "Rileva automaticamente sensori di movimento"
+          },
+          "hint": {
+            "en": "Automatically find motion sensors in the device's zone.",
+            "nl": "Automatisch bewegingssensoren vinden in de zone van het apparaat.",
+            "de": "Automatisch Bewegungssensoren in der Zone des Geräts finden.",
+            "fr": "Trouver automatiquement les capteurs de mouvement dans la zone de l'appareil.",
+            "no": "Finn automatisk bevegelsessensorer i enhetens sone.",
+            "sv": "Hitta automatiskt rörelsesensorer i enhetens zon.",
+            "da": "Find automatisk bevægelsessensorer i enhedens zone.",
+            "es": "Buscar automáticamente sensores de movimiento en la zona del dispositivo.",
+            "it": "Trova automaticamente sensori di movimento nella zona del dispositivo."
+          },
+          "value": true
+        },
+        {
+          "id": "auto_detect_door_sensors",
+          "type": "checkbox",
+          "label": {
+            "en": "Auto-detect door sensors",
+            "nl": "Deursensoren automatisch detecteren",
+            "de": "Türsensoren automatisch erkennen",
+            "fr": "Détecter les capteurs de porte automatiquement",
+            "no": "Oppdag dørsensorer automatisk",
+            "sv": "Upptäck dörrsensorer automatiskt",
+            "da": "Registrer automatisk dørsensorer",
+            "es": "Detectar automáticamente sensores de puerta",
+            "it": "Rileva automaticamente sensori porta"
+          },
+          "hint": {
+            "en": "Automatically find door/contact sensors in the device's zone.",
+            "nl": "Automatisch deur-/contactsensoren vinden in de zone van het apparaat.",
+            "de": "Automatisch Tür-/Kontaktsensoren in der Zone des Geräts finden.",
+            "fr": "Trouver automatiquement les capteurs de porte/contact dans la zone de l'appareil.",
+            "no": "Finn automatisk dør-/kontaktsensorer i enhetens sone.",
+            "sv": "Hitta automatiskt dörr-/kontaktsensorer i enhetens zon.",
+            "da": "Find automatisk dør-/kontaktsensorer i enhedens zone.",
+            "es": "Buscar automáticamente sensores de puerta/contacto en la zona del dispositivo.",
+            "it": "Trova automaticamente sensori porta/contatto nella zona del dispositivo."
+          },
+          "value": true
+        },
+        {
+          "id": "include_child_zones_motion",
+          "type": "checkbox",
+          "label": {
+            "en": "Include child zones (Motion)",
+            "nl": "Inclusief kindzones (Beweging)",
+            "de": "Unterzonen einbeziehen (Bewegung)",
+            "fr": "Inclure les zones enfants (Mouvement)",
+            "no": "Inkluder undersoner (Bevegelse)",
+            "sv": "Inkludera underzoner (Rörelse)",
+            "da": "Inkluder underzoner (Bevægelse)",
+            "es": "Incluir zonas secundarias (Movimiento)",
+            "it": "Includi zone secondarie (Movimento)"
+          },
+          "hint": {
+            "en": "When auto-detecting, also include motion sensors from child zones recursively.",
+            "nl": "Bij automatische detectie, ook bewegingssensoren van kindzones recursief opnemen.",
+            "de": "Bei automatischer Erkennung auch Bewegungssensoren aus Unterzonen rekursiv einbeziehen.",
+            "fr": "Lors de la détection automatique, inclure également les capteurs de mouvement des zones enfants de manière récursive.",
+            "no": "Ved automatisk deteksjon, inkluder også bevegelsessensorer fra undersoner rekursivt.",
+            "sv": "Vid automatisk detektering, inkludera även rörelsesensorer från underzoner rekursivt.",
+            "da": "Ved automatisk detektion, inkluder også bevægelsessensorer fra underzoner rekursivt.",
+            "es": "Al detectar automáticamente, incluir también sensores de movimiento de zonas secundarias recursivamente.",
+            "it": "Durante il rilevamento automatico, includi anche i sensori di movimento dalle zone secondarie in modo ricorsivo."
+          },
+          "value": false
+        },
+        {
+          "id": "include_child_zones_contact",
+          "type": "checkbox",
+          "label": {
+            "en": "Include child zones (Contact)",
+            "nl": "Inclusief kindzones (Contact)",
+            "de": "Unterzonen einbeziehen (Kontakt)",
+            "fr": "Inclure les zones enfants (Contact)",
+            "no": "Inkluder undersoner (Kontakt)",
+            "sv": "Inkludera underzoner (Kontakt)",
+            "da": "Inkluder underzoner (Kontakt)",
+            "es": "Incluir zonas secundarias (Contacto)",
+            "it": "Includi zone secondarie (Contatto)"
+          },
+          "hint": {
+            "en": "When auto-detecting, also include contact sensors from child zones recursively.",
+            "nl": "Bij automatische detectie, ook contactsensoren van kindzones recursief opnemen.",
+            "de": "Bei automatischer Erkennung auch Kontaktsensoren aus Unterzonen rekursiv einbeziehen.",
+            "fr": "Lors de la détection automatique, inclure également les capteurs de contact des zones enfants de manière récursive.",
+            "no": "Ved automatisk deteksjon, inkluder også kontaktsensorer fra undersoner rekursivt.",
+            "sv": "Vid automatisk detektering, inkludera även kontaktsensorer från underzoner rekursivt.",
+            "da": "Ved automatisk detektion, inkluder også kontaktsensorer fra underzoner rekursivt.",
+            "es": "Al detectar automáticamente, incluir también sensores de contacto de zonas secundarias recursivamente.",
+            "it": "Durante il rilevamento automatico, includi anche i sensori di contatto dalle zone secondarie in modo ricorsivo."
+          },
+          "value": false
+        },
+        {
           "id": "active_on_occupied",
           "type": "checkbox",
           "label": {
@@ -273,7 +381,7 @@
             "it": "ID dispositivi sensore porta (separati da virgola)"
           },
           "hint": {
-            "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify door sensors from other rooms.",
+            "en": "OPTIONAL: Manually specify door sensors. If 'Auto-detect door sensors' is enabled, these are added to the detected sensors. Use this to specify sensors from other rooms.",
             "nl": "OPTIONEEL: Laat leeg om sensoren in dezelfde kamer automatisch te detecteren. Gebruik dit alleen als u handmatig deursensoren uit andere kamers wilt opgeven.",
             "de": "OPTIONAL: Leer lassen, um Sensoren im selben Raum automatisch zu erkennen. Verwenden Sie dies nur, wenn Sie Türsensoren aus anderen Räumen manuell angeben möchten.",
             "fr": "OPTIONNEL: Laisser vide pour détecter automatiquement les capteurs dans la même pièce. Utilisez ceci uniquement si vous souhaitez spécifier manuellement des capteurs de porte d'autres pièces.",
@@ -300,7 +408,7 @@
             "it": "ID dispositivi sensore movimento (separati da virgola)"
           },
           "hint": {
-            "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify motion sensors from other rooms.",
+            "en": "OPTIONAL: Manually specify motion sensors. If 'Auto-detect motion sensors' is enabled, these are added to the detected sensors. Use this to specify sensors from other rooms.",
             "nl": "OPTIONEEL: Laat leeg om sensoren in dezelfde kamer automatisch te detecteren. Gebruik dit alleen als u handmatig bewegingssensoren uit andere kamers wilt opgeven.",
             "de": "OPTIONAL: Leer lassen, um Sensoren im selben Raum automatisch zu erkennen. Verwenden Sie dies nur, wenn Sie Bewegungssensoren aus anderen Räumen manuell angeben möchten.",
             "fr": "OPTIONNEL: Laisser vide pour détecter automatiquement les capteurs dans la même pièce. Utilisez ceci uniquement si vous souhaitez spécifier manuellement des capteurs de mouvement d'autres pièces.",
