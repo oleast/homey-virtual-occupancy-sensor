@@ -23,18 +23,27 @@ export interface OnSettingsEvent {
   changedKeys: Array<keyof DeviceSettings>;
 }
 
-module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
-
-  private controller!: VirtualOccupancySensorController;
+export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
+  protected controller: VirtualOccupancySensorController;
   private motionSensorRegistry: MotionSensorRegistry | null = null;
   private contactSensorRegistry: ContactSensorRegistry | null = null;
   private checkingSensorRegistry: CheckingSensorRegistry | null = null;
+
+  constructor() {
+    super();
+    this.controller = new VirtualOccupancySensorController(
+      (state: OccupancyState) => {
+        this.onStateChange(state).catch(this.error);
+      },
+      this.log.bind(this),
+      this.error.bind(this),
+    );
+  }
 
   async onInit() {
     this.log('VirtualOccupancySensorDevice has been initialized');
     await this.initCapabilities();
     await this.setInitialCapabilityStates();
-    this.initController();
     await this.initSensorRegistries();
   }
 
@@ -47,9 +56,6 @@ module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   // @ts-expect-error - Homey onSettings typing is incorrect
   async onSettings({ newSettings, changedKeys }: OnSettingsEvent): Promise<void> {
     this.log('Updating VirtualOccupancySensorDevice settings');
-    if (changedKeys.includes('motion_timeout')) {
-      this.controller.setMotionTimeout(newSettings.motion_timeout);
-    }
 
     if (changedKeys.includes('door_sensors')) {
       this.log('Door sensor settings changed, updating registry');
@@ -74,18 +80,7 @@ module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     }
   }
 
-  private initController() {
-    this.controller = new VirtualOccupancySensorController(
-      (state: OccupancyState) => {
-        this.onStateChange(state).catch(this.error);
-      },
-      this.log.bind(this),
-      this.error.bind(this),
-    );
-    this.controller.setMotionTimeout(this.getSettings().motion_timeout);
-  }
-
-  private async onStateChange(state: OccupancyState) {
+  protected async onStateChange(state: OccupancyState) {
     this.log(`Device state changed to: ${state}`);
     await this.setCapabilityValue('occupancy_state', state).catch(this.error);
 
@@ -132,11 +127,7 @@ module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
   private onCheckingTimeout() {
     this.log('Checking sensor timeout reached, determining next state');
-
-    // Check if any motion sensor is currently active (hasn't sent its timeout yet).
-    // If motion is active, someone is still moving in the room - go to occupied.
-    // If all motion sensors have timed out, the room is empty.
-    const isAnyMotionActive = this.motionSensorRegistry?.isAnyBooleanStateTrue() ?? false;
+    const isAnyMotionActive = this.motionSensorRegistry?.isAnyStateTrue() ?? false;
 
     if (isAnyMotionActive) {
       this.log('Motion sensor still active after checking timeout, transitioning to occupied');
@@ -200,7 +191,7 @@ module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       this.log(`Door opened event triggered on sensor ${deviceId}`);
       this.controller.registerEvent('any_door_open', deviceId);
     } else {
-      const allDoorsClosed = this.contactSensorRegistry?.isAllBooleanStateFalse() ?? false;
+      const allDoorsClosed = this.contactSensorRegistry?.isAllStateFalse() ?? false;
       if (!allDoorsClosed) {
         this.log(`Not all doors are closed after door close on sensor ${deviceId}, ignoring event`);
       } else {
@@ -259,4 +250,6 @@ module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     }
     return doorSensorIds;
   }
-};
+}
+
+module.exports = VirtualOccupancySensorDevice;

@@ -71,24 +71,8 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
     return this.deviceIds.has(deviceId);
   }
 
-  get capabilityStates(): Array<TCapabilityType> {
+  public getCapabilityStates(): Array<TCapabilityType> {
     return Array.from(this.capabilityState.values());
-  }
-
-  public isAnyBooleanStateTrue(): boolean {
-    return this.capabilityStates.some((value) => value === true);
-  }
-
-  public isAllBooleanStateTrue(): boolean {
-    return this.capabilityStates.every((value) => value === true);
-  }
-
-  public isAnyBooleanStateFalse(): boolean {
-    return this.capabilityStates.some((value) => value === false);
-  }
-
-  public isAllBooleanStateFalse(): boolean {
-    return this.capabilityStates.every((value) => value === false);
   }
 
   private async handleDeviceEvent(deviceId: string, value: boolean | string | number): Promise<void> {

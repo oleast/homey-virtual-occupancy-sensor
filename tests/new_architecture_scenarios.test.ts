@@ -10,7 +10,8 @@ import * as HomeyAPIModuleMock from '../__mocks__/homey-api';
 import { Device as MockDevice } from '../__mocks__/homey'; // Auto-mock from root __mocks__
 
 // Import Class Under Test
-import VirtualOccupancySensorDevice, { DeviceSettings } from '../drivers/virtual-occupancy-sensor/device';
+import { DeviceSettings } from '../drivers/virtual-occupancy-sensor/device';
+import { VirtualOccupancySensorDeviceForTest } from './virtual-occupancy-sensor-device-for-test';
 import { OccupancyState } from '../lib/types';
 
 // Setup Mocks
@@ -63,7 +64,7 @@ class MockExternalDevice {
 }
 
 describe('VirtualOccupancySensorDevice - Scenarios', () => {
-  let device: VirtualOccupancySensorDevice;
+  let device: VirtualOccupancySensorDeviceForTest;
   let motionSensor: MockExternalDevice;
   let doorSensor: MockExternalDevice;
   const devicesMap = new Map<string, unknown>();
@@ -107,7 +108,7 @@ describe('VirtualOccupancySensorDevice - Scenarios', () => {
   });
 
   async function createDevice(settingsOverride: Partial<DeviceSettings>) {
-    device = new VirtualOccupancySensorDevice();
+    device = new VirtualOccupancySensorDeviceForTest();
     // Use spy/mock on the instance itself for settings if needed, or overwrite method
     // Since getSettings was defined in our mock base class, we can overwrite it on the instance
     device.getSettings = () => ({
@@ -125,14 +126,13 @@ describe('VirtualOccupancySensorDevice - Scenarios', () => {
     // The sensor registries call addListener asynchronously in their constructors
     await vi.advanceTimersByTimeAsync(0);
 
-    // Force initial state if controller exists
-    if (device.controller) await device.controller.setOccupancyState('empty');
+    device.forceOccupancyState('empty');
 
     return device;
   }
 
   async function forceState(state: OccupancyState) {
-    if (device.controller) await device.controller.setOccupancyState(state);
+    device.forceOccupancyState(state);
     lastOccupancyState = state;
   }
 

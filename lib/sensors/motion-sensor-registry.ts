@@ -1,6 +1,7 @@
 /* eslint-disable import/prefer-default-export */
 import { HomeyInstance } from 'homey-api';
-import { DeviceEvent, SensorRegistry } from './sensor-registry';
+import { DeviceEvent } from './sensor-registry';
+import { BooleanSensorRegistry } from './boolean-sensor-registry';
 import { DeviceConfig } from './checking-sensor-registry';
 
 interface TimeoutLearningData {
@@ -8,7 +9,7 @@ interface TimeoutLearningData {
   learnedTimeoutMs: number | null;
 }
 
-export class MotionSensorRegistry extends SensorRegistry<boolean> {
+export class MotionSensorRegistry extends BooleanSensorRegistry {
   private timeoutLearning: Map<string, TimeoutLearningData> = new Map();
   private defaultMotionTimeoutMs: number;
 
@@ -27,7 +28,7 @@ export class MotionSensorRegistry extends SensorRegistry<boolean> {
       await onDeviceEvent(deviceId, value);
     };
 
-    super(homey, deviceIds, 'alarm_motion', 'boolean', wrappedOnDeviceEvent, log, error);
+    super(homey, deviceIds, 'alarm_motion', wrappedOnDeviceEvent, log, error);
     this.defaultMotionTimeoutMs = defaultMotionTimeoutMs;
   }
 

@@ -1,17 +1,17 @@
 import {
   describe, it, expect, beforeEach,
 } from 'vitest';
-import { VirtualOccupancySensorController } from '../drivers/virtual-occupancy-sensor/controller';
 import { OccupancyState } from '../lib/types';
+import { VirtualOccupancySensorControllerForTest } from './virtual-occupancy-sensor-controller-for-test';
 
 describe('VirtualOccupancySensorController', () => {
-  let controller: VirtualOccupancySensorController;
+  let controller: VirtualOccupancySensorControllerForTest;
   let stateChanges: OccupancyState[];
 
   beforeEach(() => {
     stateChanges = [];
 
-    controller = new VirtualOccupancySensorController(
+    controller = new VirtualOccupancySensorControllerForTest(
       (state: OccupancyState) => {
         stateChanges.push(state);
       },
@@ -35,14 +35,6 @@ describe('VirtualOccupancySensorController', () => {
     it('should transition to occupied on first motion event', () => {
       controller.registerEvent('motion_detected', 'sensor-1');
       expect(stateChanges).toEqual(['occupied']);
-    });
-  });
-
-  describe('setMotionTimeout', () => {
-    it('should set motion timeout without causing state changes', () => {
-      controller.setMotionTimeout(60);
-      // Setting timeout should not trigger any state changes
-      expect(stateChanges).toHaveLength(0);
     });
   });
 
