@@ -10,6 +10,8 @@ import { CheckingSensorRegistry } from '../../lib/sensors/checking-sensor-regist
 /* eslint-disable camelcase */
 export interface DeviceSettings {
   motion_timeout: number;
+  active_on_occupied: boolean;
+  active_on_empty: boolean;
   active_on_door_open: boolean;
   active_on_checking: boolean;
   door_sensors: string;
@@ -78,6 +80,14 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       this.log('Setting active_on_door_open changed while in door_open state, updating alarm_motion');
       await this.setCapabilityValue('alarm_motion', newSettings.active_on_door_open);
     }
+    if (changedKeys.includes('active_on_occupied') && currentOccupancyState === 'occupied') {
+      this.log('Setting active_on_occupied changed while in occupied state, updating alarm_motion');
+      await this.setCapabilityValue('alarm_motion', newSettings.active_on_occupied);
+    }
+    if (changedKeys.includes('active_on_empty') && currentOccupancyState === 'empty') {
+      this.log('Setting active_on_empty changed while in empty state, updating alarm_motion');
+      await this.setCapabilityValue('alarm_motion', newSettings.active_on_empty);
+    }
   }
 
   protected async onStateChange(state: OccupancyState) {
@@ -96,10 +106,10 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
     switch (state) {
       case 'occupied':
-        alarmState = true;
+        alarmState = settings.active_on_occupied;
         break;
       case 'empty':
-        alarmState = false;
+        alarmState = settings.active_on_empty;
         break;
       case 'door_open':
         alarmState = settings.active_on_door_open;

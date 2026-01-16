@@ -108,6 +108,60 @@
           }
         },
         {
+          "id": "active_on_occupied",
+          "type": "checkbox",
+          "label": {
+            "en": "Zone active when occupied",
+            "nl": "Zone actief wanneer bezet",
+            "de": "Zone aktiv, wenn belegt",
+            "fr": "Zone active lorsque occupé",
+            "no": "Sone aktiv når opptatt",
+            "sv": "Zon aktiv när upptagen",
+            "da": "Zone aktiv når optaget",
+            "es": "Zona activa cuando ocupada",
+            "it": "Zona attiva quando occupata"
+          },
+          "hint": {
+            "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while the room is occupied.",
+            "nl": "Indien ingeschakeld, meldt de virtuele sensor beweging (alarm_motion: true) terwijl de kamer bezet is.",
+            "de": "Wenn aktiviert, meldet der virtuelle Sensor Bewegung (alarm_motion: true), während der Raum belegt ist.",
+            "fr": "Si activé, le capteur virtuel signalera un mouvement (alarm_motion: true) tant que la pièce est occupée.",
+            "no": "Hvis aktivert, vil den virtuelle sensoren rapportere bevegelse (alarm_motion: true) mens rommet er opptatt.",
+            "sv": "Om aktiverad kommer den virtuella sensorn att rapportera rörelse (alarm_motion: true) medan rummet är upptaget.",
+            "da": "Hvis aktiveret, vil den virtuelle sensor rapportere bevægelse (alarm_motion: true), mens rummet er optaget.",
+            "es": "Si está habilitado, el sensor virtual reportará movimiento (alarm_motion: true) mientras la habitación esté ocupada.",
+            "it": "Se abilitato, il sensore virtuale segnalerà movimento (alarm_motion: true) mentre la stanza è occupata."
+          },
+          "value": true
+        },
+        {
+          "id": "active_on_empty",
+          "type": "checkbox",
+          "label": {
+            "en": "Zone active when empty",
+            "nl": "Zone actief wanneer leeg",
+            "de": "Zone aktiv, wenn leer",
+            "fr": "Zone active lorsque vide",
+            "no": "Sone aktiv når tomt",
+            "sv": "Zon aktiv när tomt",
+            "da": "Zone aktiv når tomt",
+            "es": "Zona activa cuando vacía",
+            "it": "Zona attiva quando vuota"
+          },
+          "hint": {
+            "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while the room is empty.",
+            "nl": "Indien ingeschakeld, meldt de virtuele sensor beweging (alarm_motion: true) terwijl de kamer leeg is.",
+            "de": "Wenn aktiviert, meldet der virtuelle Sensor Bewegung (alarm_motion: true), während der Raum leer ist.",
+            "fr": "Si activé, le capteur virtuel signalera un mouvement (alarm_motion: true) tant que la pièce est vide.",
+            "no": "Hvis aktivert, vil den virtuelle sensoren rapportere bevegelse (alarm_motion: true) mens rommet er tomt.",
+            "sv": "Om aktiverad kommer den virtuella sensorn att rapportera rörelse (alarm_motion: true) medan rummet är tomt.",
+            "da": "Hvis aktiveret, vil den virtuelle sensor rapportere bevægelse (alarm_motion: true), mens rummet er tomt.",
+            "es": "Si está habilitado, el sensor virtual reportará movimiento (alarm_motion: true) mientras la habitación esté vacía.",
+            "it": "Se abilitato, il sensore virtuale segnalerà movimento (alarm_motion: true) mentre la stanza è vuota."
+          },
+          "value": false
+        },
+        {
           "id": "active_on_door_open",
           "type": "checkbox",
           "label": {
