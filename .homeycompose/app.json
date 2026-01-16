@@ -27,5 +27,6 @@
   "author": {
     "name": "Ole Anders Stokker",
     "email": "olestokk@gmail.com"
-  }
+  },
+  "support": "https://github.com/oleast/homey-virtual-occupancy-sensor/issues"
 }
