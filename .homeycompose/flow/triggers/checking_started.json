@@ -1,10 +1,26 @@
 {
   "id": "checking_started",
   "title": {
-    "en": "Started checking"
+    "en": "Started checking",
+    "nl": "Begon met controleren",
+    "de": "Begann zu prüfen",
+    "fr": "A commencé à vérifier",
+    "no": "Startet sjekking",
+    "sv": "Startade kontroll",
+    "da": "Startede kontrol",
+    "es": "Comenzó a comprobar",
+    "it": "Ha iniziato il controllo"
   },
   "titleFormatted": {
-    "en": "Started checking for motion"
+    "en": "Started checking for motion",
+    "nl": "Begon te controleren op beweging",
+    "de": "Begann auf Bewegung zu prüfen",
+    "fr": "A commencé à vérifier le mouvement",
+    "no": "Startet å sjekke for bevegelse",
+    "sv": "Startade kontroll av rörelse",
+    "da": "Startede kontrol af bevægelse",
+    "es": "Comenzó a comprobar movimiento",
+    "it": "Ha iniziato a controllare il movimento"
   },
   "args": [
     {

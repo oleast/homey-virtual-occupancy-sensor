@@ -1,10 +1,26 @@
 {
   "id": "became_empty",
   "title": {
-    "en": "Became empty"
+    "en": "Became empty",
+    "nl": "Werd leeg",
+    "de": "Wurde leer",
+    "fr": "Est devenu vide",
+    "no": "Ble tomt",
+    "sv": "Blev tomt",
+    "da": "Blev tomt",
+    "es": "Quedó vacío",
+    "it": "È diventato vuoto"
   },
   "titleFormatted": {
-    "en": "Became empty"
+    "en": "Became empty",
+    "nl": "Werd leeg",
+    "de": "Wurde leer",
+    "fr": "Est devenu vide",
+    "no": "Ble tomt",
+    "sv": "Blev tomt",
+    "da": "Blev tomt",
+    "es": "Quedó vacío",
+    "it": "È diventato vuoto"
   },
   "args": [
     {

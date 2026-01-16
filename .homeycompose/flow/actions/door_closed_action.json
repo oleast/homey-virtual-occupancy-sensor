@@ -1,10 +1,26 @@
 {
   "id": "door_closed_action",
   "title": {
-    "en": "Door Closed"
+    "en": "Door Closed",
+    "nl": "Deur gesloten",
+    "de": "Tür geschlossen",
+    "fr": "Porte fermée",
+    "no": "Dør lukket",
+    "sv": "Dörr stängd",
+    "da": "Dør lukket",
+    "es": "Puerta cerrada",
+    "it": "Porta chiusa"
   },
   "titleFormatted": {
-    "en": "Door closed"
+    "en": "Door closed",
+    "nl": "Deur gesloten",
+    "de": "Tür geschlossen",
+    "fr": "Porte fermée",
+    "no": "Dør lukket",
+    "sv": "Dörr stängd",
+    "da": "Dør lukket",
+    "es": "Puerta cerrada",
+    "it": "Porta chiusa"
   },
   "args": [
     {

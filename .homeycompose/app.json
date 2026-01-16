@@ -7,10 +7,26 @@
     "local"
   ],
   "name": {
-    "en": "Virtual Occupancy Sensor"
+    "en": "Virtual Occupancy Sensor",
+    "nl": "Virtuele Bezettingssensor",
+    "de": "Virtueller Anwesenheitssensor",
+    "fr": "Capteur d'Occupation Virtuel",
+    "no": "Virtuell Tilstedeværelsessensor",
+    "sv": "Virtuell Närvarosensor",
+    "da": "Virtuel Tilstedeværelsessensor",
+    "es": "Sensor de Ocupación Virtual",
+    "it": "Sensore di Occupazione Virtuale"
   },
   "description": {
-    "en": "Create virtual occupancy sensors that intelligently detect room occupancy based on door and motion sensors."
+    "en": "Create virtual occupancy sensors that intelligently detect room occupancy based on door and motion sensors.",
+    "nl": "Maak virtuele bezettingssensoren die op intelligente wijze kamerbezetting detecteren op basis van deur- en bewegingssensoren.",
+    "de": "Erstellen Sie virtuelle Anwesenheitssensoren, die die Raumbelegung basierend auf Tür- und Bewegungssensoren intelligent erkennen.",
+    "fr": "Créez des capteurs d'occupation virtuels qui détectent intelligemment l'occupation de la pièce en fonction des capteurs de porte et de mouvement.",
+    "no": "Lag virtuelle tilstedeværelsessensorer som intelligent oppdager tilstedeværelse i rom basert på dør- og bevegelsessensorer.",
+    "sv": "Skapa virtuella närvarosensorer som intelligent detekterar rumsnärvaro baserat på dörr- och rörelsesensorer.",
+    "da": "Opret virtuelle tilstedeværelsessensorer, der intelligent registrerer rumbelægning baseret på dør- og bevægelsessensorer.",
+    "es": "Crea sensores de ocupación virtuales que detectan inteligentemente la ocupación de la habitación basándose en sensores de puerta y movimiento.",
+    "it": "Crea sensori di occupazione virtuali che rilevano intelligentemente l'occupazione della stanza basandosi su sensori porta e movimento."
   },
   "category": [
     "tools"

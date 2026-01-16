@@ -1,6 +1,14 @@
 {
   "name": {
-    "en": "Virtual Occupancy Sensor"
+    "en": "Virtual Occupancy Sensor",
+    "nl": "Virtuele Bezettingssensor",
+    "de": "Virtueller Anwesenheitssensor",
+    "fr": "Capteur d'Occupation Virtuel",
+    "no": "Virtuell Tilstedeværelsessensor",
+    "sv": "Virtuell Närvarosensor",
+    "da": "Virtuel Tilstedeværelsessensor",
+    "es": "Sensor de Ocupación Virtual",
+    "it": "Sensore di Occupazione Virtuale"
   },
   "class": "sensor",
   "capabilities": [
@@ -10,7 +18,15 @@
   "capabilitiesOptions": {
     "alarm_motion": {
       "title": {
-        "en": "Motion"
+        "en": "Motion",
+        "nl": "Beweging",
+        "de": "Bewegung",
+        "fr": "Mouvement",
+        "no": "Bevegelse",
+        "sv": "Rörelse",
+        "da": "Bevægelse",
+        "es": "Movimiento",
+        "it": "Movimento"
       }
     }
   },
@@ -40,33 +56,81 @@
     {
       "type": "group",
       "label": {
-        "en": "Detection Settings"
+        "en": "Detection Settings",
+        "nl": "Detectie-instellingen",
+        "de": "Erkennungseinstellungen",
+        "fr": "Paramètres de détection",
+        "no": "Deteksjonsinnstillinger",
+        "sv": "Detektionsinställningar",
+        "da": "Detektionsindstillinger",
+        "es": "Ajustes de detección",
+        "it": "Impostazioni di rilevamento"
       },
       "children": [
         {
           "id": "motion_timeout",
           "type": "number",
           "label": {
-            "en": "Motion detection timeout (seconds)"
+            "en": "Motion detection timeout (seconds)",
+            "nl": "Time-out bewegingsdetectie (seconden)",
+            "de": "Timeout für Bewegungserkennung (Sekunden)",
+            "fr": "Délai de détection de mouvement (secondes)",
+            "no": "Tidsavbrudd for bevegelsesdeteksjon (sekunder)",
+            "sv": "Tidsgräns för rörelsedetektering (sekunder)",
+            "da": "Tidsudløb for bevægelsesdetektering (sekunder)",
+            "es": "Tiempo de espera de detección de movimiento (segundos)",
+            "it": "Timeout rilevamento movimento (secondi)"
           },
           "hint": {
-            "en": "Time to wait for motion after door closes before marking room as empty"
+            "en": "Time to wait for motion after door closes before marking room as empty",
+            "nl": "Tijd om te wachten op beweging nadat de deur sluit voordat de kamer als leeg wordt gemarkeerd",
+            "de": "Zeit zum Warten auf Bewegung nach dem Schließen der Tür, bevor der Raum als leer markiert wird",
+            "fr": "Temps d'attente pour le mouvement après la fermeture de la porte avant de marquer la pièce comme vide",
+            "no": "Tid å vente på bevegelse etter at døren lukkes før rommet markeres som tomt",
+            "sv": "Tid att vänta på rörelse efter att dörren stängs innan rummet markeras som tomt",
+            "da": "Tid til at vente på bevægelse, efter at døren lukkes, før rummet markeres som tomt",
+            "es": "Tiempo de espera de movimiento después de cerrar la puerta antes de marcar la habitación como vacía",
+            "it": "Tempo di attesa del movimento dopo la chiusura della porta prima di segnare la stanza come vuota"
           },
           "value": 30,
           "min": 5,
           "max": 300,
           "units": {
-            "en": "seconds"
+            "en": "seconds",
+            "nl": "seconden",
+            "de": "Sekunden",
+            "fr": "secondes",
+            "no": "sekunder",
+            "sv": "sekunder",
+            "da": "sekunder",
+            "es": "segundos",
+            "it": "secondi"
           }
         },
         {
           "id": "active_on_door_open",
           "type": "checkbox",
           "label": {
-            "en": "Zone active when door is open"
+            "en": "Zone active when door is open",
+            "nl": "Zone actief wanneer deur open is",
+            "de": "Zone aktiv, wenn Tür offen ist",
+            "fr": "Zone active lorsque la porte est ouverte",
+            "no": "Sone aktiv når døren er åpen",
+            "sv": "Zon aktiv när dörren är öppen",
+            "da": "Zone aktiv når døren er åben",
+            "es": "Zona activa cuando la puerta está abierta",
+            "it": "Zona attiva quando la porta è aperta"
           },
           "hint": {
-            "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while the door is open."
+            "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while the door is open.",
+            "nl": "Indien ingeschakeld, meldt de virtuele sensor beweging (alarm_motion: true) terwijl de deur open is.",
+            "de": "Wenn aktiviert, meldet der virtuelle Sensor Bewegung (alarm_motion: true), während die Tür offen ist.",
+            "fr": "Si activé, le capteur virtuel signalera un mouvement (alarm_motion: true) tant que la porte est ouverte.",
+            "no": "Hvis aktivert, vil den virtuelle sensoren rapportere bevegelse (alarm_motion: true) mens døren er åpen.",
+            "sv": "Om aktiverad kommer den virtuella sensorn att rapportera rörelse (alarm_motion: true) medan dörren är öppen.",
+            "da": "Hvis aktiveret, vil den virtuelle sensor rapportere bevægelse (alarm_motion: true), mens døren er åben.",
+            "es": "Si está habilitado, el sensor virtual reportará movimiento (alarm_motion: true) mientras la puerta esté abierta.",
+            "it": "Se abilitato, il sensore virtuale segnalerà movimento (alarm_motion: true) mentre la porta è aperta."
           },
           "value": true
         },
@@ -74,10 +138,26 @@
           "id": "active_on_checking",
           "type": "checkbox",
           "label": {
-            "en": "Zone active when checking"
+            "en": "Zone active when checking",
+            "nl": "Zone actief tijdens controleren",
+            "de": "Zone aktiv beim Prüfen",
+            "fr": "Zone active lors de la vérification",
+            "no": "Sone aktiv ved sjekking",
+            "sv": "Zon aktiv vid kontroll",
+            "da": "Zone aktiv ved kontrol",
+            "es": "Zona activa durante la comprobación",
+            "it": "Zona attiva durante il controllo"
           },
           "hint": {
-            "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while checking for motion after door closes."
+            "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while checking for motion after door closes.",
+            "nl": "Indien ingeschakeld, meldt de virtuele sensor beweging (alarm_motion: true) tijdens het controleren op beweging nadat de deur is gesloten.",
+            "de": "Wenn aktiviert, meldet der virtuelle Sensor Bewegung (alarm_motion: true), während nach dem Schließen der Tür auf Bewegung geprüft wird.",
+            "fr": "Si activé, le capteur virtuel signalera un mouvement (alarm_motion: true) pendant la vérification de mouvement après la fermeture de la porte.",
+            "no": "Hvis aktivert, vil den virtuelle sensoren rapportere bevegelse (alarm_motion: true) mens den sjekker for bevegelse etter at døren lukkes.",
+            "sv": "Om aktiverad kommer den virtuella sensorn att rapportera rörelse (alarm_motion: true) medan den kontrollerar rörelse efter att dörren stängts.",
+            "da": "Hvis aktiveret, vil den virtuelle sensor rapportere bevægelse (alarm_motion: true), mens den tjekker for bevægelse, efter at døren lukkes.",
+            "es": "Si está habilitado, el sensor virtual reportará movimiento (alarm_motion: true) mientras comprueba si hay movimiento después de cerrarse la puerta.",
+            "it": "Se abilitato, il sensore virtuale segnalerà movimento (alarm_motion: true) mentre controlla il movimento dopo la chiusura della porta."
           },
           "value": false
         }
@@ -86,17 +166,41 @@
     {
       "type": "group",
       "label": {
-        "en": "Manual Sensor Configuration (Optional)"
+        "en": "Manual Sensor Configuration (Optional)",
+        "nl": "Handmatige sensorconfiguratie (Optioneel)",
+        "de": "Manuelle Sensorkonfiguration (Optional)",
+        "fr": "Configuration manuelle des capteurs (Optionnel)",
+        "no": "Manuell sensorkonfigurasjon (Valgfritt)",
+        "sv": "Manuell sensorkonfiguration (Valfritt)",
+        "da": "Manuel sensorkonfiguration (Valgfrit)",
+        "es": "Configuración manual de sensores (Opcional)",
+        "it": "Configurazione manuale sensori (Opzionale)"
       },
       "children": [
         {
           "id": "door_sensors",
           "type": "text",
           "label": {
-            "en": "Door sensor device IDs (comma-separated)"
+            "en": "Door sensor device IDs (comma-separated)",
+            "nl": "Deursensor apparaat-ID's (komma-gescheiden)",
+            "de": "Türsensor-Geräte-IDs (kommagetrennt)",
+            "fr": "IDs des capteurs de porte (séparés par des virgules)",
+            "no": "Dørsensor enhets-IDer (komma-separert)",
+            "sv": "Dörrsensor enhets-ID:n (komma-separerad)",
+            "da": "Dørsensor enheds-ID'er (komma-separeret)",
+            "es": "IDs de dispositivos de sensor de puerta (separados por comas)",
+            "it": "ID dispositivi sensore porta (separati da virgola)"
           },
           "hint": {
-            "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify door sensors from other rooms."
+            "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify door sensors from other rooms.",
+            "nl": "OPTIONEEL: Laat leeg om sensoren in dezelfde kamer automatisch te detecteren. Gebruik dit alleen als u handmatig deursensoren uit andere kamers wilt opgeven.",
+            "de": "OPTIONAL: Leer lassen, um Sensoren im selben Raum automatisch zu erkennen. Verwenden Sie dies nur, wenn Sie Türsensoren aus anderen Räumen manuell angeben möchten.",
+            "fr": "OPTIONNEL: Laisser vide pour détecter automatiquement les capteurs dans la même pièce. Utilisez ceci uniquement si vous souhaitez spécifier manuellement des capteurs de porte d'autres pièces.",
+            "no": "VALGFRITT: La stå tomt for å oppdage sensorer i samme rom automatisk. Bruk dette bare hvis du vil angi dørsensorer fra andre rom manuelt.",
+            "sv": "VALFRITT: Lämna tomt för att automatiskt upptäcka sensorer i samma rum. Använd endast detta om du vill ange dörrsensorer från andra rum manuellt.",
+            "da": "VALGFRIT: Lad stå tomt for automatisk at registrere sensorer i samme rum. Brug kun dette, hvis du manuelt vil angive dørsensorer fra andre rum.",
+            "es": "OPCIONAL: Dejar vacío para detectar automáticamente sensores en la misma habitación. Use esto solo si desea especificar manualmente sensores de puerta de otras habitaciones.",
+            "it": "OPZIONALE: Lasciare vuoto per rilevare automaticamente i sensori nella stessa stanza. Usare solo se si desidera specificare manualmente sensori porta di altre stanze."
           },
           "value": ""
         },
@@ -104,10 +208,26 @@
           "id": "motion_sensors",
           "type": "text",
           "label": {
-            "en": "Motion sensor device IDs (comma-separated)"
+            "en": "Motion sensor device IDs (comma-separated)",
+            "nl": "Bewegingssensor apparaat-ID's (komma-gescheiden)",
+            "de": "Bewegungssensor-Geräte-IDs (kommagetrennt)",
+            "fr": "IDs des capteurs de mouvement (séparés par des virgules)",
+            "no": "Bevegelsessensor enhets-IDer (komma-separert)",
+            "sv": "Rörelsesensor enhets-ID:n (komma-separerad)",
+            "da": "Bevægelsessensor enheds-ID'er (komma-separeret)",
+            "es": "IDs de dispositivos de sensor de movimiento (separados por comas)",
+            "it": "ID dispositivi sensore movimento (separati da virgola)"
           },
           "hint": {
-            "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify motion sensors from other rooms."
+            "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify motion sensors from other rooms.",
+            "nl": "OPTIONEEL: Laat leeg om sensoren in dezelfde kamer automatisch te detecteren. Gebruik dit alleen als u handmatig bewegingssensoren uit andere kamers wilt opgeven.",
+            "de": "OPTIONAL: Leer lassen, um Sensoren im selben Raum automatisch zu erkennen. Verwenden Sie dies nur, wenn Sie Bewegungssensoren aus anderen Räumen manuell angeben möchten.",
+            "fr": "OPTIONNEL: Laisser vide pour détecter automatiquement les capteurs dans la même pièce. Utilisez ceci uniquement si vous souhaitez spécifier manuellement des capteurs de mouvement d'autres pièces.",
+            "no": "VALGFRITT: La stå tomt for å oppdage sensorer i samme rom automatisk. Bruk dette bare hvis du vil angi bevegelsessensorer fra andre rom manuelt.",
+            "sv": "VALFRITT: Lämna tomt för att automatiskt upptäcka sensorer i samma rum. Använd endast detta om du vill ange rörelsesensorer från andra rum manuellt.",
+            "da": "VALGFRIT: Lad stå tomt for automatisk at registrere sensorer i samme rum. Brug kun dette, hvis du manuelt vil angive bevægelsessensorer fra andre rum.",
+            "es": "OPCIONAL: Dejar vacío para detectar automáticamente sensores en la misma habitación. Use esto solo si desea especificar manualmente sensores de movimiento de otras habitaciones.",
+            "it": "OPZIONALE: Lasciare vuoto per rilevare automaticamente i sensori nella stessa stanza. Usare solo se si desidera specificare manualmente sensori movimento di altre stanze."
           },
           "value": ""
         }

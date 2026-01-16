@@ -1,10 +1,26 @@
 {
   "id": "door_opened",
   "title": {
-    "en": "Door opened"
+    "en": "Door opened",
+    "nl": "Deur geopend",
+    "de": "Tür geöffnet",
+    "fr": "Porte ouverte",
+    "no": "Dør åpnet",
+    "sv": "Dörr öppnad",
+    "da": "Dør åbnet",
+    "es": "Puerta abierta",
+    "it": "Porta aperta"
   },
   "titleFormatted": {
-    "en": "Door opened"
+    "en": "Door opened",
+    "nl": "Deur geopend",
+    "de": "Tür geöffnet",
+    "fr": "Porte ouverte",
+    "no": "Dør åpnet",
+    "sv": "Dörr öppnad",
+    "da": "Dør åbnet",
+    "es": "Puerta abierta",
+    "it": "Porta aperta"
   },
   "args": [
     {

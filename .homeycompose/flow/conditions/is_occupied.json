@@ -1,13 +1,37 @@
 {
   "id": "is_occupied",
   "title": {
-    "en": "Is occupied"
+    "en": "Is occupied",
+    "nl": "Is bezet",
+    "de": "Ist belegt",
+    "fr": "Est occupé",
+    "no": "Er opptatt",
+    "sv": " Är upptagen",
+    "da": "Er optaget",
+    "es": "Está ocupada",
+    "it": "È occupata"
   },
   "titleFormatted": {
-    "en": "!{{Is|Is not}} occupied"
+    "en": "!{{Is|Is not}} occupied",
+    "nl": "!{{Is|Is niet}} bezet",
+    "de": "!{{Ist|Ist nicht}} belegt",
+    "fr": "!{{Est|N'est pas}} occupé",
+    "no": "!{{Er|Er ikke}} opptatt",
+    "sv": "!{{Är|Är inte}} upptagen",
+    "da": "!{{Er|Er ikke}} optaget",
+    "es": "!{{Está|No está}} ocupada",
+    "it": "!{{È|Non è}} occupata"
   },
   "hint": {
-    "en": "Checks if the room is currently occupied."
+    "en": "Checks if the room is currently occupied.",
+    "nl": "Controleert of de kamer momenteel bezet is.",
+    "de": "Prüft, ob der Raum aktuell belegt ist.",
+    "fr": "Vérifie si la pièce est actuellement occupée.",
+    "no": "Sjekker om rommet for tiden er opptatt.",
+    "sv": "Kontrollerar om rummet för närvarande är upptaget.",
+    "da": "Tjekker, om rummet i øjeblikket er optaget.",
+    "es": "Comprueba si la habitación está actualmente ocupada.",
+    "it": "Controlla se la stanza è attualmente occupata."
   },
   "args": [
     {
