@@ -1,4 +1,4 @@
-import { HomeyAPIV3, HomeyInstance, HomeyAPIV3Local } from 'homey-api';
+import { DeviceCapabilityInstance, HomeyInstance, HomeyAPIV3Local } from 'homey-api';
 import { deviceHasCapability, findDeviceById } from '../homey/device-api';
 import { getHomeyAPI } from '../homey/api';
 
@@ -10,7 +10,7 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
   protected deviceIds: Set<string> = new Set();
   protected capabilityId: string;
   protected capabilityType!: 'boolean' | 'string' | 'number';
-  protected listeners: Map<string, HomeyAPIV3.ManagerDevices.Device.DeviceCapability> = new Map();
+  protected listeners: Map<string, DeviceCapabilityInstance> = new Map();
   protected capabilityState: Map<string, TCapabilityType> = new Map();
   protected onDeviceEvent: DeviceEvent;
   protected log: (message: string) => void;
@@ -99,7 +99,7 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
         return;
       }
 
-      if (!(await deviceHasCapability(device, this.capabilityId))) {
+      if (!deviceHasCapability(device, this.capabilityId)) {
         this.log(`Device ${device.name} (${deviceId}) does not have capability ${this.capabilityId}`);
         return;
       }

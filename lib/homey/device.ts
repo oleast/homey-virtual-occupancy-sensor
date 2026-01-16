@@ -4,10 +4,8 @@ import { HomeyAPIV3Local } from 'homey-api';
 import { findDeviceById, getAllDevices } from './device-api';
 import { getHomeyAPI } from './api';
 
-export interface DeviceUpdateInfo {
-  zone?: boolean;
-  available?: boolean;
-}
+// Re-export DeviceUpdateInfo from our extended types for convenience
+export type DeviceUpdateInfo = HomeyAPIV3Local.ManagerDevices.DeviceUpdateInfo;
 
 export class BaseHomeyDevice extends Device {
   private apiDevice: HomeyAPIV3Local.ManagerDevices.Device | null = null;
@@ -36,8 +34,7 @@ export class BaseHomeyDevice extends Device {
   protected async getZoneId(): Promise<string | null> {
     const deviceId = await this.getDeviceId();
     const api = await getHomeyAPI(this.homey);
-    const allDevices = await getAllDevices(api);
-    const device = allDevices[deviceId];
+    const device = await findDeviceById(api, deviceId);
     if (!device) {
       this.error(`Current device with ID ${deviceId} not found in Homey devices`);
       return null;

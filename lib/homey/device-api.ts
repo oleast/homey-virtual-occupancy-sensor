@@ -17,14 +17,19 @@ export async function getAllDevices(homeyApi: HomeyAPIV3Local): Promise<Record<s
 export async function getDevicesWithCapability(
   homeyApi: HomeyAPIV3Local,
   capabilityId: string,
+  includeUnavailable: boolean = false,
 ): Promise<HomeyAPIV3Local.ManagerDevices.Device[]> {
   const allDevices = await homeyApi.devices.getDevices();
-  return Object.values(allDevices).filter((device) => device.capabilities.includes(capabilityId));
+  return Object.values(allDevices).filter((device) => {
+    const hasCapability = device.capabilities.includes(capabilityId);
+    const isAvailable = includeUnavailable || device.available;
+    return hasCapability && isAvailable;
+  });
 }
 
-export async function deviceHasCapability(
+export function deviceHasCapability(
   device: HomeyAPIV3Local.ManagerDevices.Device,
   capabilityId: string,
-): Promise<boolean> {
+): boolean {
   return device.capabilities.includes(capabilityId);
 }
