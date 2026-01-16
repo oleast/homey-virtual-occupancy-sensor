@@ -82,6 +82,13 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
   protected async onStateChange(state: OccupancyState) {
     this.log(`Device state changed to: ${state}`);
+
+    if (state !== 'checking' && this.checkingSensorRegistry) {
+      this.log('Stopping checking sensor');
+      this.checkingSensorRegistry.stopChecking();
+      this.checkingSensorRegistry = null;
+    }
+
     await this.setCapabilityValue('occupancy_state', state).catch(this.error);
 
     const settings = this.getSettings() as DeviceSettings;
