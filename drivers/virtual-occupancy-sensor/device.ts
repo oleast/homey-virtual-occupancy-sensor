@@ -124,10 +124,27 @@ module.exports = class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     this.checkingSensorRegistry = new CheckingSensorRegistry(
       this.homey,
       deviceConfigs,
-      () => this.controller.registerEvent('timeout', 'system'),
+      () => this.onCheckingTimeout(),
       this.log.bind(this),
       this.error.bind(this),
     );
+  }
+
+  private onCheckingTimeout() {
+    this.log('Checking sensor timeout reached, determining next state');
+
+    // Check if any motion sensor is currently active (hasn't sent its timeout yet).
+    // If motion is active, someone is still moving in the room - go to occupied.
+    // If all motion sensors have timed out, the room is empty.
+    const isAnyMotionActive = this.motionSensorRegistry?.isAnyBooleanStateTrue() ?? false;
+
+    if (isAnyMotionActive) {
+      this.log('Motion sensor still active after checking timeout, transitioning to occupied');
+      this.controller.registerEvent('motion_detected', 'system');
+    } else {
+      this.log('No motion detected during checking period, transitioning to empty');
+      this.controller.registerEvent('timeout', 'system');
+    }
   }
 
   private async initCapabilities() {

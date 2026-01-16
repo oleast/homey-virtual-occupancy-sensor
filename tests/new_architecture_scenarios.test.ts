@@ -190,20 +190,11 @@ describe('VirtualOccupancySensorDevice - Scenarios', () => {
     expect(lastOccupancyState).toBe('checking');
 
     // Wait for the checking timeout (30s)
-    // Note: The CheckingSensorRegistry uses a fixed timeout. Even if motion is
-    // continuously active, the timeout will fire. This is by design - the
-    // checking phase verifies presence through the motion sensor's activity,
-    // not its current state.
+    // With the fix, since motion is still TRUE (sensor active), system stays occupied
     await vi.advanceTimersByTimeAsync(31000);
     await vi.advanceTimersByTimeAsync(0);
 
-    // After timeout, system goes to empty
-    expect(lastOccupancyState).toBe('empty');
-
-    // But if motion is still active (or re-triggered), system goes back to occupied
-    // In real world, if someone is still moving, the motion sensor would trigger again
-    await motionSensor.setCapabilityValue('alarm_motion', true);
-    await vi.advanceTimersByTimeAsync(0);
+    // After timeout, system stays occupied because motion sensor is still active
     expect(lastOccupancyState).toBe('occupied');
   });
 
@@ -337,6 +328,88 @@ describe('VirtualOccupancySensorDevice - Scenarios', () => {
     await vi.advanceTimersByTimeAsync(3000); // A bit more than 2s to be safe
     await vi.advanceTimersByTimeAsync(0);
     expect(lastOccupancyState).toBe('empty');
+  });
+
+  /**
+   * FIXED BEHAVIOR: Checking timer fires while motion sensor is still active
+   *
+   * Real-world logs (2026-01-16) showed the bug:
+   * - 08:58:25.611Z: Checking starts with timeout 21779 ms
+   * - 08:58:47.398Z: Checking sensor timeout fires (21.8s later) → went to empty (BUG!)
+   * - 08:58:58.232Z: Motion sensor sends false (10.8s AFTER empty!)
+   *
+   * The motion sensor was active the ENTIRE time during checking. This means someone
+   * was moving in the room during the entire checking period!
+   *
+   * Fixed behavior:
+   * - Checking timer fires
+   * - System checks if any motion sensor is still active (hasn't sent false)
+   * - If active → go to occupied (someone is there!)
+   * - If all inactive → go to empty
+   */
+  it('BUG SCENARIO C: Real-world logs - Motion still active when checking fires (fixed behavior)', async () => {
+    // Configure with 22s motion timeout (close to the 21.779s in real logs)
+    // Checking timeout will be ~22s
+    await createDevice({ motion_timeout: 22 });
+
+    // Door opens, motion detected, door closes
+    await doorSensor.setCapabilityValue('alarm_contact', true);
+    expect(lastOccupancyState).toBe('door_open');
+
+    await motionSensor.setCapabilityValue('alarm_motion', true);
+    expect(lastOccupancyState).toBe('door_open');
+
+    await doorSensor.setCapabilityValue('alarm_contact', false);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(lastOccupancyState).toBe('checking');
+
+    // Checking timer fires after 22s
+    // Motion sensor is STILL TRUE at this point (hasn't sent false yet)
+    await vi.advanceTimersByTimeAsync(23000);
+    await vi.advanceTimersByTimeAsync(0);
+
+    // Fixed behavior: Goes to occupied because motion sensor is still active
+    expect(lastOccupancyState).toBe('occupied');
+
+    // Motion sensor sends false 10.8s later (as in real logs)
+    // This is now ignored because we're already occupied
+    await vi.advanceTimersByTimeAsync(10800);
+    await motionSensor.setCapabilityValue('alarm_motion', false);
+    await vi.advanceTimersByTimeAsync(0);
+
+    // System stays occupied (motion_timeout in occupied state is ignored)
+    expect(lastOccupancyState).toBe('occupied');
+  });
+
+  /**
+   * BUG FIX: Checking should NOT complete if motion sensor is still active
+   *
+   * Expected behavior:
+   * - When checking timer fires, check if any motion sensor is currently active
+   * - If motion is active (sensor hasn't sent false), someone is there → occupied
+   * - Only go to empty if motion sensors have ALL timed out
+   *
+   * This test represents what SHOULD happen. It should FAIL with current code.
+   */
+  it('BUG SCENARIO D: Expected behavior - Should be occupied if motion active when checking timer fires', async () => {
+    // Configure with 22s motion timeout
+    await createDevice({ motion_timeout: 22 });
+
+    // Door opens, motion detected, door closes
+    await doorSensor.setCapabilityValue('alarm_contact', true);
+    await motionSensor.setCapabilityValue('alarm_motion', true);
+    await doorSensor.setCapabilityValue('alarm_contact', false);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(lastOccupancyState).toBe('checking');
+
+    // Checking timer fires after 22s
+    // But motion sensor is STILL TRUE (hasn't sent false yet)
+    await vi.advanceTimersByTimeAsync(23000);
+    await vi.advanceTimersByTimeAsync(0);
+
+    // EXPECTED: Should be 'occupied' because motion sensor is still active
+    // Someone is clearly still moving in the room!
+    expect(lastOccupancyState).toBe('occupied');
   });
 
 });
