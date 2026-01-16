@@ -82,15 +82,15 @@
             "it": "Timeout rilevamento movimento predefinito (secondi)"
           },
           "hint": {
-            "en": "Initial time to wait for motion after door closes. The sensor will automatically learn and adapt to the blind time of your motion sensors over time.",
-            "nl": "Initiële tijd om te wachten op beweging na het sluiten van de deur. De sensor leert automatisch en past zich aan de blinde tijd van uw bewegingssensoren aan.",
-            "de": "Anfängliche Zeit zum Warten auf Bewegung nach dem Schließen der Tür. Der Sensor lernt automatisch und passt sich an die Blindzeit Ihrer Bewegungssensoren an.",
-            "fr": "Temps initial d'attente de mouvement après la fermeture de la porte. Le capteur apprendra automatiquement et s'adaptera au temps aveugle de vos capteurs de mouvement.",
-            "no": "Første tid å vente på bevegelse etter at døren lukkes. Sensoren vil automatisk lære og tilpasse seg blindtiden til bevegelsessensorene dine over tid.",
-            "sv": "Initial tid att vänta på rörelse efter att dörren stängs. Sensorn kommer automatiskt att lära sig och anpassa sig till blindtiden för dina rörelsesensorer.",
-            "da": "Indledende tid til at vente på bevægelse efter døren lukkes. Sensoren vil automatisk lære og tilpasse sig blindtiden for dine bevægelsessensorer over tid.",
-            "es": "Tiempo inicial de espera de movimiento después de cerrar la puerta. El sensor aprenderá automáticamente y se adaptará al tiempo ciego de sus sensores de movimiento.",
-            "it": "Tempo iniziale di attesa del movimento dopo la chiusura della porta. Il sensore imparerà automaticamente e si adatterà al tempo cieco dei tuoi sensori di movimento."
+            "en": "Set this to match your motion sensor's timeout (blind time). A lower value results in faster and more accurate occupancy detection. If auto-learning is enabled, this is used as the initial value until the sensor learns the actual blind time.",
+            "nl": "Stel dit in op de time-out (blinde tijd) van uw bewegingssensor. Een lagere waarde resulteert in snellere en nauwkeurigere bezettingsdetectie. Als automatisch leren is ingeschakeld, wordt dit gebruikt als initiële waarde totdat de sensor de werkelijke blinde tijd leert.",
+            "de": "Stellen Sie dies auf den Timeout (Blindzeit) Ihres Bewegungssensors ein. Ein niedrigerer Wert führt zu schnellerer und genauerer Anwesenheitserkennung. Wenn automatisches Lernen aktiviert ist, wird dies als Anfangswert verwendet, bis der Sensor die tatsächliche Blindzeit lernt.",
+            "fr": "Réglez cette valeur sur le délai (temps aveugle) de votre capteur de mouvement. Une valeur plus basse permet une détection d'occupation plus rapide et plus précise. Si l'apprentissage automatique est activé, cette valeur est utilisée comme valeur initiale jusqu'à ce que le capteur apprenne le temps aveugle réel.",
+            "no": "Sett denne til å matche bevegelsessensorens tidsavbrudd (blindtid). En lavere verdi gir raskere og mer nøyaktig tilstedeværelsesdeteksjon. Hvis automatisk læring er aktivert, brukes dette som startverdi til sensoren lærer den faktiske blindtiden.",
+            "sv": "Ställ in detta så att det matchar din rörelsesensors tidsgräns (blindtid). Ett lägre värde ger snabbare och mer exakt närvarodetektering. Om automatisk inlärning är aktiverad används detta som startvärde tills sensorn lär sig den faktiska blindtiden.",
+            "da": "Indstil dette til at matche din bevægelsessensors tidsudløb (blindtid). En lavere værdi resulterer i hurtigere og mere præcis tilstedeværelsesdetektering. Hvis automatisk indlæring er aktiveret, bruges dette som startværdi, indtil sensoren lærer den faktiske blindtid.",
+            "es": "Configure esto para que coincida con el tiempo de espera (tiempo ciego) de su sensor de movimiento. Un valor más bajo resulta en una detección de ocupación más rápida y precisa. Si el aprendizaje automático está habilitado, esto se usa como valor inicial hasta que el sensor aprenda el tiempo ciego real.",
+            "it": "Imposta questo valore in base al timeout (tempo cieco) del tuo sensore di movimento. Un valore più basso consente un rilevamento dell'occupazione più rapido e preciso. Se l'apprendimento automatico è abilitato, questo viene utilizzato come valore iniziale finché il sensore non apprende il tempo cieco effettivo."
           },
           "value": 30,
           "min": 5,
@@ -106,6 +106,33 @@
             "es": "segundos",
             "it": "secondi"
           }
+        },
+        {
+          "id": "auto_learn_timeout",
+          "type": "checkbox",
+          "label": {
+            "en": "Auto-learn motion sensor timeout",
+            "nl": "Automatisch time-out bewegingssensor leren",
+            "de": "Bewegungssensor-Timeout automatisch lernen",
+            "fr": "Apprendre automatiquement le délai du capteur de mouvement",
+            "no": "Automatisk lær tidsavbrudd for bevegelsessensor",
+            "sv": "Automatiskt lär in rörelsesensorns tidsgräns",
+            "da": "Automatisk lær bevægelsessensorens tidsudløb",
+            "es": "Aprender automáticamente el tiempo de espera del sensor de movimiento",
+            "it": "Apprendimento automatico timeout sensore movimento"
+          },
+          "hint": {
+            "en": "When enabled, the sensor learns the blind time of your motion sensors by observing how long they stay active. This works best with a single motion sensor. With multiple motion sensors having different timeouts, the learned value may be inaccurate and cause premature 'empty' detection.",
+            "nl": "Indien ingeschakeld, leert de sensor de blinde tijd van uw bewegingssensoren door te observeren hoe lang ze actief blijven. Dit werkt het beste met één bewegingssensor. Bij meerdere bewegingssensoren met verschillende time-outs kan de geleerde waarde onnauwkeurig zijn en leiden tot voortijdige 'leeg' detectie.",
+            "de": "Wenn aktiviert, lernt der Sensor die Blindzeit Ihrer Bewegungssensoren, indem er beobachtet, wie lange sie aktiv bleiben. Dies funktioniert am besten mit einem einzelnen Bewegungssensor. Bei mehreren Bewegungssensoren mit unterschiedlichen Timeouts kann der gelernte Wert ungenau sein und zu vorzeitiger 'Leer'-Erkennung führen.",
+            "fr": "Lorsque activé, le capteur apprend le temps aveugle de vos capteurs de mouvement en observant combien de temps ils restent actifs. Cela fonctionne mieux avec un seul capteur de mouvement. Avec plusieurs capteurs de mouvement ayant des délais différents, la valeur apprise peut être inexacte et provoquer une détection prématurée de 'vide'.",
+            "no": "Når aktivert, lærer sensoren blindtiden til bevegelsessensorene dine ved å observere hvor lenge de forblir aktive. Dette fungerer best med én bevegelsessensor. Med flere bevegelsessensorer med forskjellige tidsavbrudd kan den lærte verdien være unøyaktig og føre til for tidlig 'tomt' deteksjon.",
+            "sv": "När aktiverad lär sig sensorn blindtiden för dina rörelsesensorer genom att observera hur länge de förblir aktiva. Detta fungerar bäst med en enda rörelsesensor. Med flera rörelsesensorer med olika tidsgränser kan det inlärda värdet vara felaktigt och orsaka för tidig 'tom' detektering.",
+            "da": "Når aktiveret, lærer sensoren blindtiden for dine bevægelsessensorer ved at observere, hvor længe de forbliver aktive. Dette fungerer bedst med en enkelt bevægelsessensor. Med flere bevægelsessensorer med forskellige tidsudløb kan den indlærte værdi være unøjagtig og forårsage for tidlig 'tom' detektion.",
+            "es": "Cuando está habilitado, el sensor aprende el tiempo ciego de sus sensores de movimiento observando cuánto tiempo permanecen activos. Esto funciona mejor con un solo sensor de movimiento. Con múltiples sensores de movimiento con diferentes tiempos de espera, el valor aprendido puede ser inexacto y causar detección prematura de 'vacío'.",
+            "it": "Quando abilitato, il sensore apprende il tempo cieco dei tuoi sensori di movimento osservando quanto tempo rimangono attivi. Funziona meglio con un singolo sensore di movimento. Con più sensori di movimento con timeout diversi, il valore appreso potrebbe essere impreciso e causare un rilevamento prematuro di 'vuoto'."
+          },
+          "value": true
         },
         {
           "id": "active_on_occupied",

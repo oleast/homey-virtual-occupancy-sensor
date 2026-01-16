@@ -10,6 +10,7 @@ import { CheckingSensorRegistry } from '../../lib/sensors/checking-sensor-regist
 /* eslint-disable camelcase */
 export interface DeviceSettings {
   motion_timeout: number;
+  auto_learn_timeout: boolean;
   active_on_occupied: boolean;
   active_on_empty: boolean;
   active_on_door_open: boolean;
@@ -187,9 +188,11 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     );
 
     const motionSensorIds = await this.getMotionsSensorsFromSettings();
+    const settings = this.getSettings();
     this.motionSensorRegistry = new MotionSensorRegistry(
       this.homey,
-      this.getSettings().motion_timeout * 1000,
+      settings.motion_timeout * 1000,
+      settings.auto_learn_timeout,
       motionSensorIds,
       this.handleMotionSensorEvent.bind(this),
       this.log.bind(this),

@@ -12,17 +12,19 @@ interface TimeoutLearningData {
 export class MotionSensorRegistry extends BooleanSensorRegistry {
   private timeoutLearning: Map<string, TimeoutLearningData> = new Map();
   private defaultMotionTimeoutMs: number;
+  private enableLearning: boolean;
 
   constructor(
     homey: HomeyInstance,
     defaultMotionTimeoutMs: number,
+    enableLearning: boolean,
     deviceIds: string[],
     onDeviceEvent: DeviceEvent,
     log: (message: string) => void,
     error: (message: string, error?: unknown) => void,
   ) {
     const wrappedOnDeviceEvent: DeviceEvent = async (deviceId, value) => {
-      if (typeof value === 'boolean') {
+      if (typeof value === 'boolean' && this.enableLearning) {
         this.trackTimeoutLearning(deviceId, value);
       }
       await onDeviceEvent(deviceId, value);
@@ -30,6 +32,7 @@ export class MotionSensorRegistry extends BooleanSensorRegistry {
 
     super(homey, deviceIds, 'alarm_motion', wrappedOnDeviceEvent, log, error);
     this.defaultMotionTimeoutMs = defaultMotionTimeoutMs;
+    this.enableLearning = enableLearning;
   }
 
   /**
