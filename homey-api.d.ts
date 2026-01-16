@@ -23,6 +23,13 @@ declare module 'homey-api' {
     export interface ManagerDevices {
       getDevice(params: { id: string }): Promise<ManagerDevices.Device>;
       getDevices(): Promise<Record<string, ManagerDevices.Device>>;
+      connect(): Promise<void>;
+      disconnect(): Promise<void>;
+      on(event: 'device.create', callback: (device: ManagerDevices.Device) => void): void;
+      on(event: 'device.delete', callback: (device: ManagerDevices.Device) => void): void;
+      on(event: 'device.update', callback: (device: ManagerDevices.Device, info: { zone?: boolean; available?: boolean }) => void): void;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      removeListener(event: string, callback: (...args: any[]) => void): void;
     }
 
     export interface ManagerZones {
@@ -62,6 +69,7 @@ declare module 'homey-api' {
         id: string;
         name: string;
         zone: string;
+        available: boolean;
         capabilities: string[];
         data: {
           id: string;

@@ -1,10 +1,11 @@
+import type { HomeyAPIV3Local } from 'homey-api';
 import { OccupancyState } from '../../lib/types';
 import { VirtualOccupancySensorController } from './controller';
 import { MotionSensorRegistry } from '../../lib/sensors/motion-sensor-registry';
 import { ContactSensorRegistry } from '../../lib/sensors/contact-sensor-registry';
 import { parseSensorIdsSetting } from '../../lib/utils';
 import { getDevicesWithCapability } from '../../lib/homey/device-api';
-import { BaseHomeyDevice } from '../../lib/homey/device';
+import { BaseHomeyDevice, DeviceUpdateInfo } from '../../lib/homey/device';
 import { getAllZones, getZoneIdsForSearch } from '../../lib/homey/zone-api';
 import { CheckingSensorRegistry } from '../../lib/sensors/checking-sensor-registry';
 
@@ -50,17 +51,73 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     await this.setInitialCapabilityStates();
     await this.initSensorRegistries();
     await this.subscribeToDeviceUpdates();
+    await this.subscribeToDeviceManagerEvents();
   }
 
   async onDeleted() {
     this.log('VirtualOccupancySensorDevice has been deleted');
     this.unsubscribeFromDeviceUpdates();
+    await this.unsubscribeFromDeviceManagerEvents();
     this.motionSensorRegistry?.destroy();
     this.contactSensorRegistry?.destroy();
   }
 
   protected onZoneChanged(): void {
     this.log('Zone changed, refreshing auto-detected sensors');
+    this.refreshAutoDetectedSensors().catch(this.error);
+  }
+
+  protected onOtherDeviceCreated(device: HomeyAPIV3Local.ManagerDevices.Device): void {
+    // Check if the new device is relevant (has motion or contact capability and is in our zone)
+    this.handleOtherDeviceChange(device, 'created');
+  }
+
+  protected onOtherDeviceDeleted(device: HomeyAPIV3Local.ManagerDevices.Device): void {
+    // Check if we were listening to this device
+    this.handleOtherDeviceChange(device, 'deleted');
+  }
+
+  protected onOtherDeviceUpdated(
+    device: HomeyAPIV3Local.ManagerDevices.Device,
+    info: DeviceUpdateInfo,
+  ): void {
+    // Only react to zone or availability changes
+    if (info.zone || info.available !== undefined) {
+      this.handleOtherDeviceChange(device, 'updated', info);
+    }
+  }
+
+  private handleOtherDeviceChange(
+    device: HomeyAPIV3Local.ManagerDevices.Device,
+    changeType: 'created' | 'deleted' | 'updated',
+    info?: DeviceUpdateInfo,
+  ): void {
+    const settings = this.getSettings() as DeviceSettings;
+    const capabilities = device.capabilities || [];
+
+    // Check if this device has relevant capabilities
+    const hasMotionCapability = capabilities.includes('alarm_motion');
+    const hasContactCapability = capabilities.includes('alarm_contact');
+
+    if (!hasMotionCapability && !hasContactCapability) {
+      return; // Device is not a sensor we care about
+    }
+
+    // Check if auto-detect is enabled for the relevant capability
+    const autoDetectMotion = settings.auto_detect_motion_sensors && hasMotionCapability;
+    const autoDetectContact = settings.auto_detect_door_sensors && hasContactCapability;
+
+    if (!autoDetectMotion && !autoDetectContact) {
+      return; // Auto-detect is disabled for this sensor type
+    }
+
+    // Log the change
+    const details = info
+      ? ` (zone: ${info.zone}, available: ${info.available})`
+      : '';
+    this.log(`Relevant device ${changeType}: ${device.name}${details}`);
+
+    // Refresh auto-detected sensors
     this.refreshAutoDetectedSensors().catch(this.error);
   }
 

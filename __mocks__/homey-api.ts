@@ -18,6 +18,25 @@ class MockManagerDevices {
     });
     return obj;
   }
+
+  // Mock methods for device manager event subscriptions
+  async connect() {
+    // No-op for tests
+  }
+
+  async disconnect() {
+    // No-op for tests
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  on(_event: string, _callback: (...args: unknown[]) => void) {
+    // No-op for tests
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  removeListener(_event: string, _callback: (...args: unknown[]) => void) {
+    // No-op for tests
+  }
 }
 
 export class HomeyAPIV3Local {

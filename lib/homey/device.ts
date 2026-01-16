@@ -6,11 +6,16 @@ import { getHomeyAPI } from './api';
 
 export interface DeviceUpdateInfo {
   zone?: boolean;
+  available?: boolean;
 }
 
 export class BaseHomeyDevice extends Device {
   private apiDevice: HomeyAPIV3Local.ManagerDevices.Device | null = null;
   private boundOnDeviceUpdate: ((device: HomeyAPIV3Local.ManagerDevices.Device, info: DeviceUpdateInfo) => void) | null = null;
+  private boundOnOtherDeviceCreate: ((device: HomeyAPIV3Local.ManagerDevices.Device) => void) | null = null;
+  private boundOnOtherDeviceDelete: ((device: HomeyAPIV3Local.ManagerDevices.Device) => void) | null = null;
+  private boundOnOtherDeviceUpdate: ((device: HomeyAPIV3Local.ManagerDevices.Device, info: DeviceUpdateInfo) => void) | null = null;
+  private devicesManagerConnected: boolean = false;
 
   protected async getDeviceId(): Promise<string> {
     const data = this.getData();
@@ -103,5 +108,122 @@ export class BaseHomeyDevice extends Device {
   protected onZoneChanged(): void {
     // Default implementation does nothing.
     // Subclasses can override to handle zone changes.
+  }
+
+  /**
+   * Subscribes to device manager events (device create, delete, update).
+   * This allows reacting to changes in other devices in the system.
+   */
+  protected async subscribeToDeviceManagerEvents(): Promise<void> {
+    try {
+      const api = await getHomeyAPI(this.homey);
+
+      // Connect to the devices manager to receive events
+      await api.devices.connect();
+      this.devicesManagerConnected = true;
+
+      // Create bound handlers
+      this.boundOnOtherDeviceCreate = this.handleOtherDeviceCreate.bind(this);
+      this.boundOnOtherDeviceDelete = this.handleOtherDeviceDelete.bind(this);
+      this.boundOnOtherDeviceUpdate = this.handleOtherDeviceUpdate.bind(this);
+
+      // Subscribe to events
+      api.devices.on('device.create', this.boundOnOtherDeviceCreate);
+      api.devices.on('device.delete', this.boundOnOtherDeviceDelete);
+      api.devices.on('device.update', this.boundOnOtherDeviceUpdate);
+
+      this.log('Subscribed to device manager events');
+    } catch (err) {
+      this.error('Failed to subscribe to device manager events:', err);
+    }
+  }
+
+  /**
+   * Unsubscribes from device manager events.
+   */
+  protected async unsubscribeFromDeviceManagerEvents(): Promise<void> {
+    if (!this.devicesManagerConnected) {
+      return;
+    }
+
+    try {
+      const api = await getHomeyAPI(this.homey);
+
+      if (this.boundOnOtherDeviceCreate) {
+        api.devices.removeListener('device.create', this.boundOnOtherDeviceCreate);
+        this.boundOnOtherDeviceCreate = null;
+      }
+      if (this.boundOnOtherDeviceDelete) {
+        api.devices.removeListener('device.delete', this.boundOnOtherDeviceDelete);
+        this.boundOnOtherDeviceDelete = null;
+      }
+      if (this.boundOnOtherDeviceUpdate) {
+        api.devices.removeListener('device.update', this.boundOnOtherDeviceUpdate);
+        this.boundOnOtherDeviceUpdate = null;
+      }
+
+      await api.devices.disconnect();
+      this.devicesManagerConnected = false;
+
+      this.log('Unsubscribed from device manager events');
+    } catch (err) {
+      this.error('Failed to unsubscribe from device manager events:', err);
+    }
+  }
+
+  private handleOtherDeviceCreate(device: HomeyAPIV3Local.ManagerDevices.Device): void {
+    // Ignore events for this device
+    if (device.id === this.getData().id) {
+      return;
+    }
+    this.onOtherDeviceCreated(device);
+  }
+
+  private handleOtherDeviceDelete(device: HomeyAPIV3Local.ManagerDevices.Device): void {
+    // Ignore events for this device
+    if (device.id === this.getData().id) {
+      return;
+    }
+    this.onOtherDeviceDeleted(device);
+  }
+
+  private handleOtherDeviceUpdate(
+    device: HomeyAPIV3Local.ManagerDevices.Device,
+    info: DeviceUpdateInfo,
+  ): void {
+    // Ignore events for this device (handled by subscribeToDeviceUpdates)
+    if (device.id === this.getData().id) {
+      return;
+    }
+    this.onOtherDeviceUpdated(device, info);
+  }
+
+  /**
+   * Called when another device is created in the system.
+   * Override this method in subclasses to react to device creation.
+   */
+  protected onOtherDeviceCreated(_device: HomeyAPIV3Local.ManagerDevices.Device): void {
+    // Default implementation does nothing.
+  }
+
+  /**
+   * Called when another device is deleted from the system.
+   * Override this method in subclasses to react to device deletion.
+   */
+  protected onOtherDeviceDeleted(_device: HomeyAPIV3Local.ManagerDevices.Device): void {
+    // Default implementation does nothing.
+  }
+
+  /**
+   * Called when another device is updated in the system.
+   * Override this method in subclasses to react to device updates.
+   * @param device The device that was updated
+   * @param info Information about what changed (zone, available, etc.)
+   */
+  protected onOtherDeviceUpdated(
+    _device: HomeyAPIV3Local.ManagerDevices.Device,
+    _info: DeviceUpdateInfo,
+  ): void {
+    // Default implementation does nothing.
   }
 }
