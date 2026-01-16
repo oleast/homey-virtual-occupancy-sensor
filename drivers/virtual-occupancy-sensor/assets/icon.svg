@@ -1,15 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 500 500" style="enable-background:new 0 0 500 500;" xml:space="preserve">
-<g>
-	<!-- Person icon -->
-	<circle cx="250" cy="150" r="60" fill="#4A90E2"/>
-	<path d="M250,230c-70,0-120,40-120,100v50h240v-50C370,270,320,230,250,230z" fill="#4A90E2"/>
-	
-	<!-- Motion waves -->
-	<path d="M100,250c0-80,70-150,150-150" fill="none" stroke="#4A90E2" stroke-width="10" opacity="0.3"/>
-	<path d="M400,250c0-80-70-150-150-150" fill="none" stroke="#4A90E2" stroke-width="10" opacity="0.3"/>
-	<path d="M50,250c0-110,90-200,200-200" fill="none" stroke="#4A90E2" stroke-width="8" opacity="0.2"/>
-	<path d="M450,250c0-110-90-200-200-200" fill="none" stroke="#4A90E2" stroke-width="8" opacity="0.2"/>
-</g>
+<svg width="960" height="960" viewBox="0 0 960 960" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="677" y="828" width="100" height="4" fill="black"/>
+<rect x="183" y="828" width="100" height="4" fill="black"/>
+<rect x="279" y="124" width="402" height="4" fill="black"/>
+<rect x="279" y="128" width="4" height="700" fill="black"/>
+<rect x="677" y="128" width="4" height="700" fill="black"/>
+<circle cx="630" cy="175" r="13" fill="black"/>
+<circle cx="642" cy="493" r="12" stroke="black" stroke-width="2"/>
+<path d="M629.627 458C631.314 463.223 636.216 467 642 467C649.18 467 655 461.18 655 454C655 446.82 649.18 441 642 441C636.216 441 631.314 444.777 629.627 450" stroke="black" stroke-width="2"/>
+<circle cx="630" cy="175" r="23" stroke="black" stroke-width="4"/>
+<rect x="576" y="449" width="72" height="2" fill="black"/>
+<rect x="576" y="457" width="72" height="2" fill="black"/>
+<rect x="576" y="451" width="2" height="6" fill="black"/>
+<rect x="646" y="451" width="2" height="6" fill="black"/>
+<path d="M311 140C311 148.837 303.837 156 295 156" stroke="black" stroke-width="4"/>
+<path d="M327 140C327 157.673 312.673 172 295 172" stroke="black" stroke-width="4"/>
+<path d="M345 140C345 167.614 322.614 190 295 190" stroke="black" stroke-width="4"/>
+<path d="M363 140C363 177.555 332.555 208 295 208" stroke="black" stroke-width="4"/>
 </svg>
+
