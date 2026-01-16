@@ -27,13 +27,12 @@ export interface OnSettingsEvent {
 }
 
 export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
-  protected controller: VirtualOccupancySensorController;
+  protected controller!: VirtualOccupancySensorController;
   private motionSensorRegistry: MotionSensorRegistry | null = null;
   private contactSensorRegistry: ContactSensorRegistry | null = null;
   private checkingSensorRegistry: CheckingSensorRegistry | null = null;
 
-  constructor() {
-    super();
+  async onInit() {
     this.controller = new VirtualOccupancySensorController(
       (state: OccupancyState) => {
         this.onStateChange(state).catch(this.error);
@@ -41,9 +40,6 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       this.log.bind(this),
       this.error.bind(this),
     );
-  }
-
-  async onInit() {
     this.log('VirtualOccupancySensorDevice has been initialized');
     await this.initCapabilities();
     await this.setInitialCapabilityStates();

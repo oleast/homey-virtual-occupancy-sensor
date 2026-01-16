@@ -4,16 +4,21 @@ import { OccupancyState } from '../lib/types';
 import { VirtualOccupancySensorControllerForTest } from './virtual-occupancy-sensor-controller-for-test';
 
 export class VirtualOccupancySensorDeviceForTest extends VirtualOccupancySensorDevice {
-  protected controller: VirtualOccupancySensorControllerForTest;
-  constructor() {
-    super();
-    this.controller = new VirtualOccupancySensorControllerForTest(
+  protected declare controller: VirtualOccupancySensorControllerForTest;
+
+  async onInit() {
+    // Create our test controller BEFORE calling super.onInit()
+    // This will be immediately overwritten by super.onInit(), so we save it
+    const testController = new VirtualOccupancySensorControllerForTest(
       (state: OccupancyState) => {
         this.onStateChange(state).catch(this.error);
       },
       this.log.bind(this),
       this.error.bind(this),
     );
+    await super.onInit();
+    // Override the controller with our test controller after super.onInit()
+    this.controller = testController;
   }
 
   public forceOccupancyState(state: OccupancyState) {
