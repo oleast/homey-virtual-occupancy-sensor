@@ -92,7 +92,7 @@ export class BaseHomeyDevice extends Device {
     _device: HomeyAPIV3Local.ManagerDevices.Device,
     info: DeviceUpdateInfo,
   ): void {
-    if (info.zone) {
+    if (info?.changedKeys?.includes('zone')) {
       this.log('Device zone changed');
       this.onZoneChanged();
     }
@@ -192,6 +192,7 @@ export class BaseHomeyDevice extends Device {
     if (device.id === this.getData().id) {
       return;
     }
+    this.log(`Other device updated: ${device.name} (${device.id}), with info: ${JSON.stringify(info)}`);
     this.onOtherDeviceUpdated(device, info);
   }
 

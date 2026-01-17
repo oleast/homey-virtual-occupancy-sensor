@@ -81,8 +81,12 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     device: HomeyAPIV3Local.ManagerDevices.Device,
     info: DeviceUpdateInfo,
   ): void {
+    // Guard against undefined info (can happen in edge cases with Homey API)
+    if (!info || !info.changedKeys) {
+      return;
+    }
     // Only react to zone or availability changes
-    if (info.zone || info.available !== undefined) {
+    if (info.changedKeys.includes('zone') || info.changedKeys.includes('available')) {
       this.handleOtherDeviceChange(device, 'updated', info);
     }
   }
@@ -112,8 +116,8 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     }
 
     // Log the change
-    const details = info
-      ? ` (zone: ${info.zone}, available: ${info.available})`
+    const details = info?.changedKeys
+      ? ` (changed: ${info.changedKeys.join(', ')})`
       : '';
     this.log(`Relevant device ${changeType}: ${device.name}${details}`);
 

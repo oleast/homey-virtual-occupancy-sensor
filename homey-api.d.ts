@@ -169,16 +169,12 @@ declare module 'homey-api' {
     export namespace ManagerDevices {
       /** Info object passed to device.update events */
       export interface DeviceUpdateInfo {
-        zone?: boolean;
-        available?: boolean;
-        name?: boolean;
-        settings?: boolean;
-        capabilities?: boolean;
-        capabilitiesOptions?: boolean;
-        class?: boolean;
-        virtualClass?: boolean;
-        energy?: boolean;
-        [key: string]: boolean | undefined;
+        /** Previous values of changed properties */
+        oldValues?: Record<string, unknown>;
+        /** New values of changed properties */
+        newValues?: Record<string, unknown>;
+        /** List of property keys that changed */
+        changedKeys?: string[];
       }
 
       /**
