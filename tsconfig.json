@@ -2,6 +2,13 @@
   "extends": "@tsconfig/node16/tsconfig.json",
   "compilerOptions": {
     "allowJs": true,
-    "outDir": ".homeybuild/"
-  }
+    "outDir": ".homeybuild/",
+    "lib": ["ES2023"]
+  },
+  "exclude": [
+    "generated",
+    "node_modules",
+    "**/*.test.ts",
+    "vitest.config.ts"
+  ]
 }

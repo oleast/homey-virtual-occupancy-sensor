@@ -1,0 +1,32 @@
+{
+  "id": "door_closed_action",
+  "title": {
+    "en": "Door Closed",
+    "nl": "Deur gesloten",
+    "de": "Tür geschlossen",
+    "fr": "Porte fermée",
+    "no": "Dør lukket",
+    "sv": "Dörr stängd",
+    "da": "Dør lukket",
+    "es": "Puerta cerrada",
+    "it": "Porta chiusa"
+  },
+  "titleFormatted": {
+    "en": "Door closed",
+    "nl": "Deur gesloten",
+    "de": "Tür geschlossen",
+    "fr": "Porte fermée",
+    "no": "Dør lukket",
+    "sv": "Dörr stängd",
+    "da": "Dør lukket",
+    "es": "Puerta cerrada",
+    "it": "Porta chiusa"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    }
+  ]
+}

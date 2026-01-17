@@ -1,34 +1,82 @@
 {
   "type": "enum",
   "title": {
-    "en": "Occupancy State"
+    "en": "Occupancy State",
+    "nl": "Bezettingsstatus",
+    "de": "Belegungsstatus",
+    "fr": "État d'occupation",
+    "no": "Tilstedeværelsesstatus",
+    "sv": "Närvarostatus",
+    "da": "Tilstedeværelsesstatus",
+    "es": "Estado de ocupación",
+    "it": "Stato di occupazione"
   },
   "desc": {
-    "en": "Current occupancy state of the room"
+    "en": "Current occupancy state of the room",
+    "nl": "Huidige bezettingsstatus van de kamer",
+    "de": "Aktueller Belegungsstatus des Raums",
+    "fr": "État d'occupation actuel de la pièce",
+    "no": "Gjeldende tilstedeværelsesstatus i rommet",
+    "sv": "Aktuell närvarostatus i rummet",
+    "da": "Aktuel tilstedeværelsesstatus i rummet",
+    "es": "Estado actual de ocupación de la habitación",
+    "it": "Stato attuale di occupazione della stanza"
   },
   "values": [
     {
       "id": "empty",
       "title": {
-        "en": "Empty"
+        "en": "Empty",
+        "nl": "Leeg",
+        "de": "Leer",
+        "fr": "Vide",
+        "no": "Tomt",
+        "sv": "Tomt",
+        "da": "Tomt",
+        "es": "Vacía",
+        "it": "Vuota"
       }
     },
     {
       "id": "occupied",
       "title": {
-        "en": "Occupied"
+        "en": "Occupied",
+        "nl": "Bezet",
+        "de": "Belegt",
+        "fr": "Occupé",
+        "no": "Opptatt",
+        "sv": "Upptagen",
+        "da": "Optaget",
+        "es": "Ocupada",
+        "it": "Occupata"
       }
     },
     {
       "id": "door_open",
       "title": {
-        "en": "Door Open"
+        "en": "Door Open",
+        "nl": "Deur open",
+        "de": "Tür offen",
+        "fr": "Porte ouverte",
+        "no": "Dør åpen",
+        "sv": "Dörr öppen",
+        "da": "Dør åben",
+        "es": "Puerta abierta",
+        "it": "Porta aperta"
       }
     },
     {
       "id": "checking",
       "title": {
-        "en": "Checking"
+        "en": "Checking",
+        "nl": "Controleren",
+        "de": "Prüfen",
+        "fr": "Vérification",
+        "no": "Sjekker",
+        "sv": "Kontrollerar",
+        "da": "Kontrollerer",
+        "es": "Comprobando",
+        "it": "Controllo"
       }
     }
   ],

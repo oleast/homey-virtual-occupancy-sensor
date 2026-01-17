@@ -1,0 +1,32 @@
+{
+  "id": "door_opened_action",
+  "title": {
+    "en": "Door Opened",
+    "nl": "Deur geopend",
+    "de": "Tür geöffnet",
+    "fr": "Porte ouverte",
+    "no": "Dør åpnet",
+    "sv": "Dörr öppnad",
+    "da": "Dør åbnet",
+    "es": "Puerta abierta",
+    "it": "Porta aperta"
+  },
+  "titleFormatted": {
+    "en": "Door opened",
+    "nl": "Deur geopend",
+    "de": "Tür geöffnet",
+    "fr": "Porte ouverte",
+    "no": "Dør åpnet",
+    "sv": "Dörr öppnad",
+    "da": "Dør åbnet",
+    "es": "Puerta abierta",
+    "it": "Porta aperta"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    }
+  ]
+}

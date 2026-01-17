@@ -1,0 +1,84 @@
+{
+  "id": "occupancy_state_is",
+  "title": {
+    "en": "Occupancy state is",
+    "nl": "Bezettingsstatus is",
+    "de": "Belegungsstatus ist",
+    "fr": "L'état d'occupation est",
+    "no": "Tilstedeværelsesstatus er",
+    "sv": "Närvarostatus är",
+    "da": "Tilstedeværelsesstatus er",
+    "es": "El estado de ocupación es",
+    "it": "Lo stato di occupazione è"
+  },
+  "titleFormatted": {
+    "en": "Occupancy state !{{is|is not}} [[state]]",
+    "nl": "Bezettingsstatus !{{is|is niet}} [[state]]",
+    "de": "Belegungsstatus !{{ist|ist nicht}} [[state]]",
+    "fr": "L'état d'occupation !{{est|n'est pas}} [[state]]",
+    "no": "Tilstedeværelsesstatus !{{er|er ikke}} [[state]]",
+    "sv": "Närvarostatus !{{är|är inte}} [[state]]",
+    "da": "Tilstedeværelsesstatus !{{er|er ikke}} [[state]]",
+    "es": "El estado de ocupación !{{es|no es}} [[state]]",
+    "it": "Lo stato di occupazione !{{è|non è}} [[state]]"
+  },
+  "hint": {
+    "en": "Checks if the room occupancy state matches the selected state.",
+    "nl": "Controleert of de bezettingsstatus van de kamer overeenkomt met de geselecteerde status.",
+    "de": "Prüft, ob der Belegungsstatus des Raums mit dem ausgewählten Status übereinstimmt.",
+    "fr": "Vérifie si l'état d'occupation de la pièce correspond à l'état sélectionné.",
+    "no": "Sjekker om rommets tilstedeværelsesstatus samsvarer med den valgte statusen.",
+    "sv": "Kontrollerar om rummets närvarostatus matchar den valda statusen.",
+    "da": "Tjekker, om rummets tilstedeværelsesstatus matcher den valgte status.",
+    "es": "Comprueba si el estado de ocupación de la habitación coincide con el estado seleccionado.",
+    "it": "Controlla se lo stato di occupazione della stanza corrisponde allo stato selezionato."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    },
+    {
+      "name": "state",
+      "type": "dropdown",
+      "title": {
+        "en": "State",
+        "nl": "Status",
+        "de": "Zustand",
+        "fr": "État",
+        "no": "Status",
+        "sv": "Status",
+        "da": "Status",
+        "es": "Estado",
+        "it": "Stato"
+      },
+      "values": [
+        {
+          "id": "empty",
+          "label": {
+            "en": "Empty"
+          }
+        },
+        {
+          "id": "occupied",
+          "label": {
+            "en": "Occupied"
+          }
+        },
+        {
+          "id": "door_open",
+          "label": {
+            "en": "Door Open"
+          }
+        },
+        {
+          "id": "checking",
+          "label": {
+            "en": "Checking"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "became_occupied",
+  "title": {
+    "en": "Became occupied",
+    "nl": "Werd bezet",
+    "de": "Wurde belegt",
+    "fr": "Est devenu occupé",
+    "no": "Ble opptatt",
+    "sv": "Blev upptagen",
+    "da": "Blev optaget",
+    "es": "Quedó ocupado",
+    "it": "È diventato occupato"
+  },
+  "titleFormatted": {
+    "en": "Became occupied",
+    "nl": "Werd bezet",
+    "de": "Wurde belegt",
+    "fr": "Est devenu occupé",
+    "no": "Ble opptatt",
+    "sv": "Blev upptagen",
+    "da": "Blev optaget",
+    "es": "Quedó ocupado",
+    "it": "È diventato occupato"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    }
+  ]
+}

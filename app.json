@@ -1,17 +1,33 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
-  "id": "no.oleast.virtual-occupancy-sensor",
+  "id": "no.oleast.virtual-room-occupancy",
   "version": "1.0.0",
-  "compatibility": ">=12.4.0",
+  "compatibility": ">=12.9.0",
   "sdk": 3,
   "platforms": [
     "local"
   ],
   "name": {
-    "en": "Virtual Occupancy Sensor"
+    "en": "Virtual Room Occupancy",
+    "nl": "Virtuele Kamerbezetting",
+    "de": "Virtuelle Raumbelegung",
+    "fr": "Occupation de Pièce Virtuelle",
+    "no": "Virtuell Romtilstedeværelse",
+    "sv": "Virtuell Rumsnärvaro",
+    "da": "Virtuel Rumtilstedeværelse",
+    "es": "Ocupación de Habitación Virtual",
+    "it": "Occupazione Stanza Virtuale"
   },
   "description": {
-    "en": "Create virtual occupancy sensors that intelligently detect room occupancy based on door and motion sensors."
+    "en": "Create virtual occupancy sensors that intelligently detect room occupancy based on door and motion sensors.",
+    "nl": "Maak virtuele bezettingssensoren die op intelligente wijze kamerbezetting detecteren op basis van deur- en bewegingssensoren.",
+    "de": "Erstellen Sie virtuelle Anwesenheitssensoren, die die Raumbelegung basierend auf Tür- und Bewegungssensoren intelligent erkennen.",
+    "fr": "Créez des capteurs d'occupation virtuels qui détectent intelligemment l'occupation de la pièce en fonction des capteurs de porte et de mouvement.",
+    "no": "Lag virtuelle tilstedeværelsessensorer som intelligent oppdager tilstedeværelse i rom basert på dør- og bevegelsessensorer.",
+    "sv": "Skapa virtuella närvarosensorer som intelligent detekterar rumsnärvaro baserat på dörr- och rörelsesensorer.",
+    "da": "Opret virtuelle tilstedeværelsessensorer, der intelligent registrerer rumbelægning baseret på dør- og bevægelsessensorer.",
+    "es": "Crea sensores de ocupación virtuales que detectan inteligentemente la ocupación de la habitación basándose en sensores de puerta y movimiento.",
+    "it": "Crea sensori di occupazione virtuali che rilevano intelligentemente l'occupazione della stanza basandosi su sensori porta e movimento."
   },
   "category": [
     "tools"
@@ -29,10 +45,526 @@
     "name": "Ole Anders Stokker",
     "email": "olestokk@gmail.com"
   },
+  "support": "https://github.com/oleast/homey-virtual-occupancy-sensor/issues",
+  "flow": {
+    "triggers": [
+      {
+        "id": "became_empty",
+        "title": {
+          "en": "Became empty",
+          "nl": "Werd leeg",
+          "de": "Wurde leer",
+          "fr": "Est devenu vide",
+          "no": "Ble tomt",
+          "sv": "Blev tomt",
+          "da": "Blev tomt",
+          "es": "Quedó vacío",
+          "it": "È diventato vuoto"
+        },
+        "titleFormatted": {
+          "en": "Became empty",
+          "nl": "Werd leeg",
+          "de": "Wurde leer",
+          "fr": "Est devenu vide",
+          "no": "Ble tomt",
+          "sv": "Blev tomt",
+          "da": "Blev tomt",
+          "es": "Quedó vacío",
+          "it": "È diventato vuoto"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "became_occupied",
+        "title": {
+          "en": "Became occupied",
+          "nl": "Werd bezet",
+          "de": "Wurde belegt",
+          "fr": "Est devenu occupé",
+          "no": "Ble opptatt",
+          "sv": "Blev upptagen",
+          "da": "Blev optaget",
+          "es": "Quedó ocupado",
+          "it": "È diventato occupato"
+        },
+        "titleFormatted": {
+          "en": "Became occupied",
+          "nl": "Werd bezet",
+          "de": "Wurde belegt",
+          "fr": "Est devenu occupé",
+          "no": "Ble opptatt",
+          "sv": "Blev upptagen",
+          "da": "Blev optaget",
+          "es": "Quedó ocupado",
+          "it": "È diventato occupato"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "checking_started",
+        "title": {
+          "en": "Started checking",
+          "nl": "Begon met controleren",
+          "de": "Begann zu prüfen",
+          "fr": "A commencé à vérifier",
+          "no": "Startet sjekking",
+          "sv": "Startade kontroll",
+          "da": "Startede kontrol",
+          "es": "Comenzó a comprobar",
+          "it": "Ha iniziato il controllo"
+        },
+        "titleFormatted": {
+          "en": "Started checking for motion",
+          "nl": "Begon te controleren op beweging",
+          "de": "Begann auf Bewegung zu prüfen",
+          "fr": "A commencé à vérifier le mouvement",
+          "no": "Startet å sjekke for bevegelse",
+          "sv": "Startade kontroll av rörelse",
+          "da": "Startede kontrol af bevægelse",
+          "es": "Comenzó a comprobar movimiento",
+          "it": "Ha iniziato a controllare il movimento"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "door_opened",
+        "title": {
+          "en": "Door opened",
+          "nl": "Deur geopend",
+          "de": "Tür geöffnet",
+          "fr": "Porte ouverte",
+          "no": "Dør åpnet",
+          "sv": "Dörr öppnad",
+          "da": "Dør åbnet",
+          "es": "Puerta abierta",
+          "it": "Porta aperta"
+        },
+        "titleFormatted": {
+          "en": "Door opened",
+          "nl": "Deur geopend",
+          "de": "Tür geöffnet",
+          "fr": "Porte ouverte",
+          "no": "Dør åpnet",
+          "sv": "Dörr öppnad",
+          "da": "Dør åbnet",
+          "es": "Puerta abierta",
+          "it": "Porta aperta"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "occupancy_state_changed",
+        "title": {
+          "en": "Occupancy state changed",
+          "nl": "Bezettingsstatus gewijzigd",
+          "de": "Belegungsstatus geändert",
+          "fr": "État d'occupation changé",
+          "no": "Tilstedeværelsesstatus endret",
+          "sv": "Närvarostatus ändrad",
+          "da": "Tilstedeværelsesstatus ændret",
+          "es": "Estado de ocupación cambiado",
+          "it": "Stato di occupazione cambiato"
+        },
+        "titleFormatted": {
+          "en": "Occupancy state changed to [[state]]",
+          "nl": "Bezettingsstatus gewijzigd naar [[state]]",
+          "de": "Belegungsstatus geändert zu [[state]]",
+          "fr": "État d'occupation changé en [[state]]",
+          "no": "Tilstedeværelsesstatus endret til [[state]]",
+          "sv": "Närvarostatus ändrad till [[state]]",
+          "da": "Tilstedeværelsesstatus ændret til [[state]]",
+          "es": "Estado de ocupación cambiado a [[state]]",
+          "it": "Stato di occupazione cambiato in [[state]]"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "title": {
+              "en": "State",
+              "nl": "Status",
+              "de": "Zustand",
+              "fr": "État",
+              "no": "Status",
+              "sv": "Status",
+              "da": "Status",
+              "es": "Estado",
+              "it": "Stato"
+            },
+            "values": [
+              {
+                "id": "empty",
+                "label": {
+                  "en": "Empty",
+                  "nl": "Leeg",
+                  "de": "Leer",
+                  "fr": "Vide",
+                  "no": "Tomt",
+                  "sv": "Tomt",
+                  "da": "Tomt",
+                  "es": "Vacía",
+                  "it": "Vuota"
+                }
+              },
+              {
+                "id": "occupied",
+                "label": {
+                  "en": "Occupied",
+                  "nl": "Bezet",
+                  "de": "Belegt",
+                  "fr": "Occupé",
+                  "no": "Opptatt",
+                  "sv": "Upptagen",
+                  "da": "Optaget",
+                  "es": "Ocupada",
+                  "it": "Occupata"
+                }
+              },
+              {
+                "id": "door_open",
+                "label": {
+                  "en": "Door Open",
+                  "nl": "Deur open",
+                  "de": "Tür offen",
+                  "fr": "Porte ouverte",
+                  "no": "Dør åpen",
+                  "sv": "Dörr öppen",
+                  "da": "Dør åben",
+                  "es": "Puerta abierta",
+                  "it": "Porta aperta"
+                }
+              },
+              {
+                "id": "checking",
+                "label": {
+                  "en": "Checking",
+                  "nl": "Controleren",
+                  "de": "Prüfen",
+                  "fr": "Vérification",
+                  "no": "Sjekker",
+                  "sv": "Kontrollerar",
+                  "da": "Kontrollerer",
+                  "es": "Comprobando",
+                  "it": "Controllo"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "conditions": [
+      {
+        "id": "is_occupied",
+        "title": {
+          "en": "Is occupied",
+          "nl": "Is bezet",
+          "de": "Ist belegt",
+          "fr": "Est occupé",
+          "no": "Er opptatt",
+          "sv": " Är upptagen",
+          "da": "Er optaget",
+          "es": "Está ocupada",
+          "it": "È occupata"
+        },
+        "titleFormatted": {
+          "en": "!{{Is|Is not}} occupied",
+          "nl": "!{{Is|Is niet}} bezet",
+          "de": "!{{Ist|Ist nicht}} belegt",
+          "fr": "!{{Est|N'est pas}} occupé",
+          "no": "!{{Er|Er ikke}} opptatt",
+          "sv": "!{{Är|Är inte}} upptagen",
+          "da": "!{{Er|Er ikke}} optaget",
+          "es": "!{{Está|No está}} ocupada",
+          "it": "!{{È|Non è}} occupata"
+        },
+        "hint": {
+          "en": "Checks if the room is currently occupied.",
+          "nl": "Controleert of de kamer momenteel bezet is.",
+          "de": "Prüft, ob der Raum aktuell belegt ist.",
+          "fr": "Vérifie si la pièce est actuellement occupée.",
+          "no": "Sjekker om rommet for tiden er opptatt.",
+          "sv": "Kontrollerar om rummet för närvarande är upptaget.",
+          "da": "Tjekker, om rummet i øjeblikket er optaget.",
+          "es": "Comprueba si la habitación está actualmente ocupada.",
+          "it": "Controlla se la stanza è attualmente occupata."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "occupancy_state_is",
+        "title": {
+          "en": "Occupancy state is",
+          "nl": "Bezettingsstatus is",
+          "de": "Belegungsstatus ist",
+          "fr": "L'état d'occupation est",
+          "no": "Tilstedeværelsesstatus er",
+          "sv": "Närvarostatus är",
+          "da": "Tilstedeværelsesstatus er",
+          "es": "El estado de ocupación es",
+          "it": "Lo stato di occupazione è"
+        },
+        "titleFormatted": {
+          "en": "Occupancy state !{{is|is not}} [[state]]",
+          "nl": "Bezettingsstatus !{{is|is niet}} [[state]]",
+          "de": "Belegungsstatus !{{ist|ist nicht}} [[state]]",
+          "fr": "L'état d'occupation !{{est|n'est pas}} [[state]]",
+          "no": "Tilstedeværelsesstatus !{{er|er ikke}} [[state]]",
+          "sv": "Närvarostatus !{{är|är inte}} [[state]]",
+          "da": "Tilstedeværelsesstatus !{{er|er ikke}} [[state]]",
+          "es": "El estado de ocupación !{{es|no es}} [[state]]",
+          "it": "Lo stato di occupazione !{{è|non è}} [[state]]"
+        },
+        "hint": {
+          "en": "Checks if the room occupancy state matches the selected state.",
+          "nl": "Controleert of de bezettingsstatus van de kamer overeenkomt met de geselecteerde status.",
+          "de": "Prüft, ob der Belegungsstatus des Raums mit dem ausgewählten Status übereinstimmt.",
+          "fr": "Vérifie si l'état d'occupation de la pièce correspond à l'état sélectionné.",
+          "no": "Sjekker om rommets tilstedeværelsesstatus samsvarer med den valgte statusen.",
+          "sv": "Kontrollerar om rummets närvarostatus matchar den valda statusen.",
+          "da": "Tjekker, om rummets tilstedeværelsesstatus matcher den valgte status.",
+          "es": "Comprueba si el estado de ocupación de la habitación coincide con el estado seleccionado.",
+          "it": "Controlla se lo stato di occupazione della stanza corrisponde allo stato selezionato."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "title": {
+              "en": "State",
+              "nl": "Status",
+              "de": "Zustand",
+              "fr": "État",
+              "no": "Status",
+              "sv": "Status",
+              "da": "Status",
+              "es": "Estado",
+              "it": "Stato"
+            },
+            "values": [
+              {
+                "id": "empty",
+                "label": {
+                  "en": "Empty"
+                }
+              },
+              {
+                "id": "occupied",
+                "label": {
+                  "en": "Occupied"
+                }
+              },
+              {
+                "id": "door_open",
+                "label": {
+                  "en": "Door Open"
+                }
+              },
+              {
+                "id": "checking",
+                "label": {
+                  "en": "Checking"
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "actions": [
+      {
+        "id": "door_closed_action",
+        "title": {
+          "en": "Door Closed",
+          "nl": "Deur gesloten",
+          "de": "Tür geschlossen",
+          "fr": "Porte fermée",
+          "no": "Dør lukket",
+          "sv": "Dörr stängd",
+          "da": "Dør lukket",
+          "es": "Puerta cerrada",
+          "it": "Porta chiusa"
+        },
+        "titleFormatted": {
+          "en": "Door closed",
+          "nl": "Deur gesloten",
+          "de": "Tür geschlossen",
+          "fr": "Porte fermée",
+          "no": "Dør lukket",
+          "sv": "Dörr stängd",
+          "da": "Dør lukket",
+          "es": "Puerta cerrada",
+          "it": "Porta chiusa"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "door_opened_action",
+        "title": {
+          "en": "Door Opened",
+          "nl": "Deur geopend",
+          "de": "Tür geöffnet",
+          "fr": "Porte ouverte",
+          "no": "Dør åpnet",
+          "sv": "Dörr öppnad",
+          "da": "Dør åbnet",
+          "es": "Puerta abierta",
+          "it": "Porta aperta"
+        },
+        "titleFormatted": {
+          "en": "Door opened",
+          "nl": "Deur geopend",
+          "de": "Tür geöffnet",
+          "fr": "Porte ouverte",
+          "no": "Dør åpnet",
+          "sv": "Dörr öppnad",
+          "da": "Dør åbnet",
+          "es": "Puerta abierta",
+          "it": "Porta aperta"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "motion_detected_action",
+        "title": {
+          "en": "Motion Detected",
+          "nl": "Beweging gedetecteerd",
+          "de": "Bewegung erkannt",
+          "fr": "Mouvement détecté",
+          "no": "Bevegelse oppdaget",
+          "sv": "Rörelse upptäckt",
+          "da": "Bevægelse registreret",
+          "es": "Movimiento detectado",
+          "it": "Movimento rilevato"
+        },
+        "titleFormatted": {
+          "en": "Motion detected",
+          "nl": "Beweging gedetecteerd",
+          "de": "Bewegung erkannt",
+          "fr": "Mouvement détecté",
+          "no": "Bevegelse oppdaget",
+          "sv": "Rörelse upptäckt",
+          "da": "Bevægelse registreret",
+          "es": "Movimiento detectado",
+          "it": "Movimento rilevato"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "reset_state_action",
+        "title": {
+          "en": "Reset State",
+          "nl": "Status resetten",
+          "de": "Zustand zurücksetzen",
+          "fr": "Réinitialiser l'état",
+          "no": "Tilbakestill status",
+          "sv": "Återställ status",
+          "da": "Nulstil status",
+          "es": "Restablecer estado",
+          "it": "Reimposta stato"
+        },
+        "titleFormatted": {
+          "en": "Reset state",
+          "nl": "Status resetten",
+          "de": "Zustand zurücksetzen",
+          "fr": "Réinitialiser l'état",
+          "no": "Tilbakestill status",
+          "sv": "Återställ status",
+          "da": "Nulstil status",
+          "es": "Restablecer estado",
+          "it": "Reimposta stato"
+        },
+        "hint": {
+          "en": "Resets the occupancy state to Empty.",
+          "nl": "Zet de bezettingsstatus terug naar Leeg.",
+          "de": "Setzt den Belegungsstatus auf Leer zurück.",
+          "fr": "Réinitialise l'état d'occupation à Vide.",
+          "no": "Tilbakestiller tilstedeværelsesstatusen til Tomt.",
+          "sv": "Återställer närvarostatus till Tomt.",
+          "da": "Nulstiller tilstedeværelsesstatus til Tomt.",
+          "es": "Restablece el estado de ocupación a Vacío.",
+          "it": "Reimposta lo stato di occupazione su Vuoto."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      }
+    ]
+  },
   "drivers": [
     {
       "name": {
-        "en": "Virtual Occupancy Sensor"
+        "en": "Virtual Room Occupancy",
+        "nl": "Virtuele Kamerbezetting",
+        "de": "Virtuelle Raumbelegung",
+        "fr": "Occupation de Pièce Virtuelle",
+        "no": "Virtuell Romtilstedeværelse",
+        "sv": "Virtuell Rumsnärvaro",
+        "da": "Virtuel Rumtilstedeværelse",
+        "es": "Ocupación de Habitación Virtual",
+        "it": "Occupazione Stanza Virtuale"
       },
       "class": "sensor",
       "capabilities": [
@@ -42,7 +574,15 @@
       "capabilitiesOptions": {
         "alarm_motion": {
           "title": {
-            "en": "Motion"
+            "en": "Motion",
+            "nl": "Beweging",
+            "de": "Bewegung",
+            "fr": "Mouvement",
+            "no": "Bevegelse",
+            "sv": "Rörelse",
+            "da": "Bevægelse",
+            "es": "Movimiento",
+            "it": "Movimento"
           }
         }
       },
@@ -72,41 +612,340 @@
         {
           "type": "group",
           "label": {
-            "en": "Detection Settings"
+            "en": "Detection Settings",
+            "nl": "Detectie-instellingen",
+            "de": "Erkennungseinstellungen",
+            "fr": "Paramètres de détection",
+            "no": "Deteksjonsinnstillinger",
+            "sv": "Detektionsinställningar",
+            "da": "Detektionsindstillinger",
+            "es": "Ajustes de detección",
+            "it": "Impostazioni di rilevamento"
           },
           "children": [
             {
               "id": "motion_timeout",
               "type": "number",
               "label": {
-                "en": "Motion detection timeout (seconds)"
+                "en": "Default motion detection timeout (seconds)",
+                "nl": "Standaard time-out bewegingsdetectie (seconden)",
+                "de": "Standard-Timeout für Bewegungserkennung (Sekunden)",
+                "fr": "Délai de détection de mouvement par défaut (secondes)",
+                "no": "Standard tidsavbrudd for bevegelsesdeteksjon (sekunder)",
+                "sv": "Standard tidsgräns för rörelsedetektering (sekunder)",
+                "da": "Standard tidsudløb for bevægelsesdetektering (sekunder)",
+                "es": "Tiempo de espera de detección de movimiento predeterminado (segundos)",
+                "it": "Timeout rilevamento movimento predefinito (secondi)"
               },
               "hint": {
-                "en": "Time to wait for motion after door closes before marking room as empty"
+                "en": "Set this to match your motion sensor's timeout (blind time). A lower value results in faster and more accurate occupancy detection. If auto-learning is enabled, this is used as the initial value until the sensor learns the actual blind time.",
+                "nl": "Stel dit in op de time-out (blinde tijd) van uw bewegingssensor. Een lagere waarde resulteert in snellere en nauwkeurigere bezettingsdetectie. Als automatisch leren is ingeschakeld, wordt dit gebruikt als initiële waarde totdat de sensor de werkelijke blinde tijd leert.",
+                "de": "Stellen Sie dies auf den Timeout (Blindzeit) Ihres Bewegungssensors ein. Ein niedrigerer Wert führt zu schnellerer und genauerer Anwesenheitserkennung. Wenn automatisches Lernen aktiviert ist, wird dies als Anfangswert verwendet, bis der Sensor die tatsächliche Blindzeit lernt.",
+                "fr": "Réglez cette valeur sur le délai (temps aveugle) de votre capteur de mouvement. Une valeur plus basse permet une détection d'occupation plus rapide et plus précise. Si l'apprentissage automatique est activé, cette valeur est utilisée comme valeur initiale jusqu'à ce que le capteur apprenne le temps aveugle réel.",
+                "no": "Sett denne til å matche bevegelsessensorens tidsavbrudd (blindtid). En lavere verdi gir raskere og mer nøyaktig tilstedeværelsesdeteksjon. Hvis automatisk læring er aktivert, brukes dette som startverdi til sensoren lærer den faktiske blindtiden.",
+                "sv": "Ställ in detta så att det matchar din rörelsesensors tidsgräns (blindtid). Ett lägre värde ger snabbare och mer exakt närvarodetektering. Om automatisk inlärning är aktiverad används detta som startvärde tills sensorn lär sig den faktiska blindtiden.",
+                "da": "Indstil dette til at matche din bevægelsessensors tidsudløb (blindtid). En lavere værdi resulterer i hurtigere og mere præcis tilstedeværelsesdetektering. Hvis automatisk indlæring er aktiveret, bruges dette som startværdi, indtil sensoren lærer den faktiske blindtid.",
+                "es": "Configure esto para que coincida con el tiempo de espera (tiempo ciego) de su sensor de movimiento. Un valor más bajo resulta en una detección de ocupación más rápida y precisa. Si el aprendizaje automático está habilitado, esto se usa como valor inicial hasta que el sensor aprenda el tiempo ciego real.",
+                "it": "Imposta questo valore in base al timeout (tempo cieco) del tuo sensore di movimento. Un valore più basso consente un rilevamento dell'occupazione più rapido e preciso. Se l'apprendimento automatico è abilitato, questo viene utilizzato come valore iniziale finché il sensore non apprende il tempo cieco effettivo."
               },
               "value": 30,
               "min": 5,
               "max": 300,
               "units": {
-                "en": "seconds"
+                "en": "seconds",
+                "nl": "seconden",
+                "de": "Sekunden",
+                "fr": "secondes",
+                "no": "sekunder",
+                "sv": "sekunder",
+                "da": "sekunder",
+                "es": "segundos",
+                "it": "secondi"
               }
+            },
+            {
+              "id": "auto_learn_timeout",
+              "type": "checkbox",
+              "label": {
+                "en": "Auto-learn motion sensor timeout",
+                "nl": "Automatisch time-out bewegingssensor leren",
+                "de": "Bewegungssensor-Timeout automatisch lernen",
+                "fr": "Apprendre automatiquement le délai du capteur de mouvement",
+                "no": "Automatisk lær tidsavbrudd for bevegelsessensor",
+                "sv": "Automatiskt lär in rörelsesensorns tidsgräns",
+                "da": "Automatisk lær bevægelsessensorens tidsudløb",
+                "es": "Aprender automáticamente el tiempo de espera del sensor de movimiento",
+                "it": "Apprendimento automatico timeout sensore movimento"
+              },
+              "hint": {
+                "en": "When enabled, the sensor learns the blind time of your motion sensors by observing how long they stay active. This works best with a single motion sensor. With multiple motion sensors having different timeouts, the learned value may be inaccurate and cause premature 'empty' detection.",
+                "nl": "Indien ingeschakeld, leert de sensor de blinde tijd van uw bewegingssensoren door te observeren hoe lang ze actief blijven. Dit werkt het beste met één bewegingssensor. Bij meerdere bewegingssensoren met verschillende time-outs kan de geleerde waarde onnauwkeurig zijn en leiden tot voortijdige 'leeg' detectie.",
+                "de": "Wenn aktiviert, lernt der Sensor die Blindzeit Ihrer Bewegungssensoren, indem er beobachtet, wie lange sie aktiv bleiben. Dies funktioniert am besten mit einem einzelnen Bewegungssensor. Bei mehreren Bewegungssensoren mit unterschiedlichen Timeouts kann der gelernte Wert ungenau sein und zu vorzeitiger 'Leer'-Erkennung führen.",
+                "fr": "Lorsque activé, le capteur apprend le temps aveugle de vos capteurs de mouvement en observant combien de temps ils restent actifs. Cela fonctionne mieux avec un seul capteur de mouvement. Avec plusieurs capteurs de mouvement ayant des délais différents, la valeur apprise peut être inexacte et provoquer une détection prématurée de 'vide'.",
+                "no": "Når aktivert, lærer sensoren blindtiden til bevegelsessensorene dine ved å observere hvor lenge de forblir aktive. Dette fungerer best med én bevegelsessensor. Med flere bevegelsessensorer med forskjellige tidsavbrudd kan den lærte verdien være unøyaktig og føre til for tidlig 'tomt' deteksjon.",
+                "sv": "När aktiverad lär sig sensorn blindtiden för dina rörelsesensorer genom att observera hur länge de förblir aktiva. Detta fungerar bäst med en enda rörelsesensor. Med flera rörelsesensorer med olika tidsgränser kan det inlärda värdet vara felaktigt och orsaka för tidig 'tom' detektering.",
+                "da": "Når aktiveret, lærer sensoren blindtiden for dine bevægelsessensorer ved at observere, hvor længe de forbliver aktive. Dette fungerer bedst med en enkelt bevægelsessensor. Med flere bevægelsessensorer med forskellige tidsudløb kan den indlærte værdi være unøjagtig og forårsage for tidlig 'tom' detektion.",
+                "es": "Cuando está habilitado, el sensor aprende el tiempo ciego de sus sensores de movimiento observando cuánto tiempo permanecen activos. Esto funciona mejor con un solo sensor de movimiento. Con múltiples sensores de movimiento con diferentes tiempos de espera, el valor aprendido puede ser inexacto y causar detección prematura de 'vacío'.",
+                "it": "Quando abilitato, il sensore apprende il tempo cieco dei tuoi sensori di movimento osservando quanto tempo rimangono attivi. Funziona meglio con un singolo sensore di movimento. Con più sensori di movimento con timeout diversi, il valore appreso potrebbe essere impreciso e causare un rilevamento prematuro di 'vuoto'."
+              },
+              "value": true
+            },
+            {
+              "id": "auto_detect_motion_sensors",
+              "type": "checkbox",
+              "label": {
+                "en": "Auto-detect motion sensors",
+                "nl": "Bewegingssensoren automatisch detecteren",
+                "de": "Bewegungssensoren automatisch erkennen",
+                "fr": "Détecter les capteurs de mouvement automatiquement",
+                "no": "Oppdag bevegelsessensorer automatisk",
+                "sv": "Upptäck rörelsesensorer automatiskt",
+                "da": "Registrer automatisk bevægelsessensorer",
+                "es": "Detectar automáticamente sensores de movimiento",
+                "it": "Rileva automaticamente sensori di movimento"
+              },
+              "hint": {
+                "en": "Automatically find motion sensors in the device's zone.",
+                "nl": "Automatisch bewegingssensoren vinden in de zone van het apparaat.",
+                "de": "Automatisch Bewegungssensoren in der Zone des Geräts finden.",
+                "fr": "Trouver automatiquement les capteurs de mouvement dans la zone de l'appareil.",
+                "no": "Finn automatisk bevegelsessensorer i enhetens sone.",
+                "sv": "Hitta automatiskt rörelsesensorer i enhetens zon.",
+                "da": "Find automatisk bevægelsessensorer i enhedens zone.",
+                "es": "Buscar automáticamente sensores de movimiento en la zona del dispositivo.",
+                "it": "Trova automaticamente sensori di movimento nella zona del dispositivo."
+              },
+              "value": true
+            },
+            {
+              "id": "auto_detect_door_sensors",
+              "type": "checkbox",
+              "label": {
+                "en": "Auto-detect door sensors",
+                "nl": "Deursensoren automatisch detecteren",
+                "de": "Türsensoren automatisch erkennen",
+                "fr": "Détecter les capteurs de porte automatiquement",
+                "no": "Oppdag dørsensorer automatisk",
+                "sv": "Upptäck dörrsensorer automatiskt",
+                "da": "Registrer automatisk dørsensorer",
+                "es": "Detectar automáticamente sensores de puerta",
+                "it": "Rileva automaticamente sensori porta"
+              },
+              "hint": {
+                "en": "Automatically find door/contact sensors in the device's zone.",
+                "nl": "Automatisch deur-/contactsensoren vinden in de zone van het apparaat.",
+                "de": "Automatisch Tür-/Kontaktsensoren in der Zone des Geräts finden.",
+                "fr": "Trouver automatiquement les capteurs de porte/contact dans la zone de l'appareil.",
+                "no": "Finn automatisk dør-/kontaktsensorer i enhetens sone.",
+                "sv": "Hitta automatiskt dörr-/kontaktsensorer i enhetens zon.",
+                "da": "Find automatisk dør-/kontaktsensorer i enhedens zone.",
+                "es": "Buscar automáticamente sensores de puerta/contacto en la zona del dispositivo.",
+                "it": "Trova automaticamente sensori porta/contatto nella zona del dispositivo."
+              },
+              "value": true
+            },
+            {
+              "id": "include_child_zones_motion",
+              "type": "checkbox",
+              "label": {
+                "en": "Include child zones (Motion)",
+                "nl": "Inclusief kindzones (Beweging)",
+                "de": "Unterzonen einbeziehen (Bewegung)",
+                "fr": "Inclure les zones enfants (Mouvement)",
+                "no": "Inkluder undersoner (Bevegelse)",
+                "sv": "Inkludera underzoner (Rörelse)",
+                "da": "Inkluder underzoner (Bevægelse)",
+                "es": "Incluir zonas secundarias (Movimiento)",
+                "it": "Includi zone secondarie (Movimento)"
+              },
+              "hint": {
+                "en": "When auto-detecting, also include motion sensors from child zones recursively.",
+                "nl": "Bij automatische detectie, ook bewegingssensoren van kindzones recursief opnemen.",
+                "de": "Bei automatischer Erkennung auch Bewegungssensoren aus Unterzonen rekursiv einbeziehen.",
+                "fr": "Lors de la détection automatique, inclure également les capteurs de mouvement des zones enfants de manière récursive.",
+                "no": "Ved automatisk deteksjon, inkluder også bevegelsessensorer fra undersoner rekursivt.",
+                "sv": "Vid automatisk detektering, inkludera även rörelsesensorer från underzoner rekursivt.",
+                "da": "Ved automatisk detektion, inkluder også bevægelsessensorer fra underzoner rekursivt.",
+                "es": "Al detectar automáticamente, incluir también sensores de movimiento de zonas secundarias recursivamente.",
+                "it": "Durante il rilevamento automatico, includi anche i sensori di movimento dalle zone secondarie in modo ricorsivo."
+              },
+              "value": false
+            },
+            {
+              "id": "include_child_zones_contact",
+              "type": "checkbox",
+              "label": {
+                "en": "Include child zones (Contact)",
+                "nl": "Inclusief kindzones (Contact)",
+                "de": "Unterzonen einbeziehen (Kontakt)",
+                "fr": "Inclure les zones enfants (Contact)",
+                "no": "Inkluder undersoner (Kontakt)",
+                "sv": "Inkludera underzoner (Kontakt)",
+                "da": "Inkluder underzoner (Kontakt)",
+                "es": "Incluir zonas secundarias (Contacto)",
+                "it": "Includi zone secondarie (Contatto)"
+              },
+              "hint": {
+                "en": "When auto-detecting, also include contact sensors from child zones recursively.",
+                "nl": "Bij automatische detectie, ook contactsensoren van kindzones recursief opnemen.",
+                "de": "Bei automatischer Erkennung auch Kontaktsensoren aus Unterzonen rekursiv einbeziehen.",
+                "fr": "Lors de la détection automatique, inclure également les capteurs de contact des zones enfants de manière récursive.",
+                "no": "Ved automatisk deteksjon, inkluder også kontaktsensorer fra undersoner rekursivt.",
+                "sv": "Vid automatisk detektering, inkludera även kontaktsensorer från underzoner rekursivt.",
+                "da": "Ved automatisk detektion, inkluder også kontaktsensorer fra underzoner rekursivt.",
+                "es": "Al detectar automáticamente, incluir también sensores de contacto de zonas secundarias recursivamente.",
+                "it": "Durante il rilevamento automatico, includi anche i sensori di contatto dalle zone secondarie in modo ricorsivo."
+              },
+              "value": false
+            },
+            {
+              "id": "active_on_occupied",
+              "type": "checkbox",
+              "label": {
+                "en": "Zone active when occupied",
+                "nl": "Zone actief wanneer bezet",
+                "de": "Zone aktiv, wenn belegt",
+                "fr": "Zone active lorsque occupé",
+                "no": "Sone aktiv når opptatt",
+                "sv": "Zon aktiv när upptagen",
+                "da": "Zone aktiv når optaget",
+                "es": "Zona activa cuando ocupada",
+                "it": "Zona attiva quando occupata"
+              },
+              "hint": {
+                "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while the room is occupied.",
+                "nl": "Indien ingeschakeld, meldt de virtuele sensor beweging (alarm_motion: true) terwijl de kamer bezet is.",
+                "de": "Wenn aktiviert, meldet der virtuelle Sensor Bewegung (alarm_motion: true), während der Raum belegt ist.",
+                "fr": "Si activé, le capteur virtuel signalera un mouvement (alarm_motion: true) tant que la pièce est occupée.",
+                "no": "Hvis aktivert, vil den virtuelle sensoren rapportere bevegelse (alarm_motion: true) mens rommet er opptatt.",
+                "sv": "Om aktiverad kommer den virtuella sensorn att rapportera rörelse (alarm_motion: true) medan rummet är upptaget.",
+                "da": "Hvis aktiveret, vil den virtuelle sensor rapportere bevægelse (alarm_motion: true), mens rummet er optaget.",
+                "es": "Si está habilitado, el sensor virtual reportará movimiento (alarm_motion: true) mientras la habitación esté ocupada.",
+                "it": "Se abilitato, il sensore virtuale segnalerà movimento (alarm_motion: true) mentre la stanza è occupata."
+              },
+              "value": true
+            },
+            {
+              "id": "active_on_empty",
+              "type": "checkbox",
+              "label": {
+                "en": "Zone active when empty",
+                "nl": "Zone actief wanneer leeg",
+                "de": "Zone aktiv, wenn leer",
+                "fr": "Zone active lorsque vide",
+                "no": "Sone aktiv når tomt",
+                "sv": "Zon aktiv när tomt",
+                "da": "Zone aktiv når tomt",
+                "es": "Zona activa cuando vacía",
+                "it": "Zona attiva quando vuota"
+              },
+              "hint": {
+                "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while the room is empty.",
+                "nl": "Indien ingeschakeld, meldt de virtuele sensor beweging (alarm_motion: true) terwijl de kamer leeg is.",
+                "de": "Wenn aktiviert, meldet der virtuelle Sensor Bewegung (alarm_motion: true), während der Raum leer ist.",
+                "fr": "Si activé, le capteur virtuel signalera un mouvement (alarm_motion: true) tant que la pièce est vide.",
+                "no": "Hvis aktivert, vil den virtuelle sensoren rapportere bevegelse (alarm_motion: true) mens rommet er tomt.",
+                "sv": "Om aktiverad kommer den virtuella sensorn att rapportera rörelse (alarm_motion: true) medan rummet är tomt.",
+                "da": "Hvis aktiveret, vil den virtuelle sensor rapportere bevægelse (alarm_motion: true), mens rummet er tomt.",
+                "es": "Si está habilitado, el sensor virtual reportará movimiento (alarm_motion: true) mientras la habitación esté vacía.",
+                "it": "Se abilitato, il sensore virtuale segnalerà movimento (alarm_motion: true) mentre la stanza è vuota."
+              },
+              "value": false
+            },
+            {
+              "id": "active_on_door_open",
+              "type": "checkbox",
+              "label": {
+                "en": "Zone active when door is open",
+                "nl": "Zone actief wanneer deur open is",
+                "de": "Zone aktiv, wenn Tür offen ist",
+                "fr": "Zone active lorsque la porte est ouverte",
+                "no": "Sone aktiv når døren er åpen",
+                "sv": "Zon aktiv när dörren är öppen",
+                "da": "Zone aktiv når døren er åben",
+                "es": "Zona activa cuando la puerta está abierta",
+                "it": "Zona attiva quando la porta è aperta"
+              },
+              "hint": {
+                "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while the door is open.",
+                "nl": "Indien ingeschakeld, meldt de virtuele sensor beweging (alarm_motion: true) terwijl de deur open is.",
+                "de": "Wenn aktiviert, meldet der virtuelle Sensor Bewegung (alarm_motion: true), während die Tür offen ist.",
+                "fr": "Si activé, le capteur virtuel signalera un mouvement (alarm_motion: true) tant que la porte est ouverte.",
+                "no": "Hvis aktivert, vil den virtuelle sensoren rapportere bevegelse (alarm_motion: true) mens døren er åpen.",
+                "sv": "Om aktiverad kommer den virtuella sensorn att rapportera rörelse (alarm_motion: true) medan dörren är öppen.",
+                "da": "Hvis aktiveret, vil den virtuelle sensor rapportere bevægelse (alarm_motion: true), mens døren er åben.",
+                "es": "Si está habilitado, el sensor virtual reportará movimiento (alarm_motion: true) mientras la puerta esté abierta.",
+                "it": "Se abilitato, il sensore virtuale segnalerà movimento (alarm_motion: true) mentre la porta è aperta."
+              },
+              "value": true
+            },
+            {
+              "id": "active_on_checking",
+              "type": "checkbox",
+              "label": {
+                "en": "Zone active when checking",
+                "nl": "Zone actief tijdens controleren",
+                "de": "Zone aktiv beim Prüfen",
+                "fr": "Zone active lors de la vérification",
+                "no": "Sone aktiv ved sjekking",
+                "sv": "Zon aktiv vid kontroll",
+                "da": "Zone aktiv ved kontrol",
+                "es": "Zona activa durante la comprobación",
+                "it": "Zona attiva durante il controllo"
+              },
+              "hint": {
+                "en": "If enabled, the virtual sensor will report motion (alarm_motion: true) while checking for motion after door closes.",
+                "nl": "Indien ingeschakeld, meldt de virtuele sensor beweging (alarm_motion: true) tijdens het controleren op beweging nadat de deur is gesloten.",
+                "de": "Wenn aktiviert, meldet der virtuelle Sensor Bewegung (alarm_motion: true), während nach dem Schließen der Tür auf Bewegung geprüft wird.",
+                "fr": "Si activé, le capteur virtuel signalera un mouvement (alarm_motion: true) pendant la vérification de mouvement après la fermeture de la porte.",
+                "no": "Hvis aktivert, vil den virtuelle sensoren rapportere bevegelse (alarm_motion: true) mens den sjekker for bevegelse etter at døren lukkes.",
+                "sv": "Om aktiverad kommer den virtuella sensorn att rapportera rörelse (alarm_motion: true) medan den kontrollerar rörelse efter att dörren stängts.",
+                "da": "Hvis aktiveret, vil den virtuelle sensor rapportere bevægelse (alarm_motion: true), mens den tjekker for bevægelse, efter at døren lukkes.",
+                "es": "Si está habilitado, el sensor virtual reportará movimiento (alarm_motion: true) mientras comprueba si hay movimiento después de cerrarse la puerta.",
+                "it": "Se abilitato, il sensore virtuale segnalerà movimento (alarm_motion: true) mentre controlla il movimento dopo la chiusura della porta."
+              },
+              "value": false
             }
           ]
         },
         {
           "type": "group",
           "label": {
-            "en": "Manual Sensor Configuration (Optional)"
+            "en": "Manual Sensor Configuration (Optional)",
+            "nl": "Handmatige sensorconfiguratie (Optioneel)",
+            "de": "Manuelle Sensorkonfiguration (Optional)",
+            "fr": "Configuration manuelle des capteurs (Optionnel)",
+            "no": "Manuell sensorkonfigurasjon (Valgfritt)",
+            "sv": "Manuell sensorkonfiguration (Valfritt)",
+            "da": "Manuel sensorkonfiguration (Valgfrit)",
+            "es": "Configuración manual de sensores (Opcional)",
+            "it": "Configurazione manuale sensori (Opzionale)"
           },
           "children": [
             {
               "id": "door_sensors",
               "type": "text",
               "label": {
-                "en": "Door sensor device IDs (comma-separated)"
+                "en": "Door sensor device IDs (comma-separated)",
+                "nl": "Deursensor apparaat-ID's (komma-gescheiden)",
+                "de": "Türsensor-Geräte-IDs (kommagetrennt)",
+                "fr": "IDs des capteurs de porte (séparés par des virgules)",
+                "no": "Dørsensor enhets-IDer (komma-separert)",
+                "sv": "Dörrsensor enhets-ID:n (komma-separerad)",
+                "da": "Dørsensor enheds-ID'er (komma-separeret)",
+                "es": "IDs de dispositivos de sensor de puerta (separados por comas)",
+                "it": "ID dispositivi sensore porta (separati da virgola)"
               },
               "hint": {
-                "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify door sensors from other rooms."
+                "en": "OPTIONAL: Manually specify door sensors. If 'Auto-detect door sensors' is enabled, these are added to the detected sensors. Use this to specify sensors from other rooms.",
+                "nl": "OPTIONEEL: Laat leeg om sensoren in dezelfde kamer automatisch te detecteren. Gebruik dit alleen als u handmatig deursensoren uit andere kamers wilt opgeven.",
+                "de": "OPTIONAL: Leer lassen, um Sensoren im selben Raum automatisch zu erkennen. Verwenden Sie dies nur, wenn Sie Türsensoren aus anderen Räumen manuell angeben möchten.",
+                "fr": "OPTIONNEL: Laisser vide pour détecter automatiquement les capteurs dans la même pièce. Utilisez ceci uniquement si vous souhaitez spécifier manuellement des capteurs de porte d'autres pièces.",
+                "no": "VALGFRITT: La stå tomt for å oppdage sensorer i samme rom automatisk. Bruk dette bare hvis du vil angi dørsensorer fra andre rom manuelt.",
+                "sv": "VALFRITT: Lämna tomt för att automatiskt upptäcka sensorer i samma rum. Använd endast detta om du vill ange dörrsensorer från andra rum manuellt.",
+                "da": "VALGFRIT: Lad stå tomt for automatisk at registrere sensorer i samme rum. Brug kun dette, hvis du manuelt vil angive dørsensorer fra andre rum.",
+                "es": "OPCIONAL: Dejar vacío para detectar automáticamente sensores en la misma habitación. Use esto solo si desea especificar manualmente sensores de puerta de otras habitaciones.",
+                "it": "OPZIONALE: Lasciare vuoto per rilevare automaticamente i sensori nella stessa stanza. Usare solo se si desidera specificare manualmente sensori porta di altre stanze."
               },
               "value": ""
             },
@@ -114,10 +953,26 @@
               "id": "motion_sensors",
               "type": "text",
               "label": {
-                "en": "Motion sensor device IDs (comma-separated)"
+                "en": "Motion sensor device IDs (comma-separated)",
+                "nl": "Bewegingssensor apparaat-ID's (komma-gescheiden)",
+                "de": "Bewegungssensor-Geräte-IDs (kommagetrennt)",
+                "fr": "IDs des capteurs de mouvement (séparés par des virgules)",
+                "no": "Bevegelsessensor enhets-IDer (komma-separert)",
+                "sv": "Rörelsesensor enhets-ID:n (komma-separerad)",
+                "da": "Bevægelsessensor enheds-ID'er (komma-separeret)",
+                "es": "IDs de dispositivos de sensor de movimiento (separados por comas)",
+                "it": "ID dispositivi sensore movimento (separati da virgola)"
               },
               "hint": {
-                "en": "OPTIONAL: Leave empty to auto-detect sensors in the same room. Only use this if you want to manually specify motion sensors from other rooms."
+                "en": "OPTIONAL: Manually specify motion sensors. If 'Auto-detect motion sensors' is enabled, these are added to the detected sensors. Use this to specify sensors from other rooms.",
+                "nl": "OPTIONEEL: Laat leeg om sensoren in dezelfde kamer automatisch te detecteren. Gebruik dit alleen als u handmatig bewegingssensoren uit andere kamers wilt opgeven.",
+                "de": "OPTIONAL: Leer lassen, um Sensoren im selben Raum automatisch zu erkennen. Verwenden Sie dies nur, wenn Sie Bewegungssensoren aus anderen Räumen manuell angeben möchten.",
+                "fr": "OPTIONNEL: Laisser vide pour détecter automatiquement les capteurs dans la même pièce. Utilisez ceci uniquement si vous souhaitez spécifier manuellement des capteurs de mouvement d'autres pièces.",
+                "no": "VALGFRITT: La stå tomt for å oppdage sensorer i samme rom automatisk. Bruk dette bare hvis du vil angi bevegelsessensorer fra andre rom manuelt.",
+                "sv": "VALFRITT: Lämna tomt för att automatiskt upptäcka sensorer i samma rum. Använd endast detta om du vill ange rörelsesensorer från andra rum manuellt.",
+                "da": "VALGFRIT: Lad stå tomt for automatisk at registrere sensorer i samme rum. Brug kun dette, hvis du manuelt vil angive bevægelsessensorer fra andre rum.",
+                "es": "OPCIONAL: Dejar vacío para detectar automáticamente sensores en la misma habitación. Use esto solo si desea especificar manualmente sensores de movimiento de otras habitaciones.",
+                "it": "OPZIONALE: Lasciare vuoto per rilevare automaticamente i sensori nella stessa stanza. Usare solo se si desidera specificare manualmente sensori movimento di altre stanze."
               },
               "value": ""
             }
@@ -131,34 +986,82 @@
     "occupancy_state": {
       "type": "enum",
       "title": {
-        "en": "Occupancy State"
+        "en": "Occupancy State",
+        "nl": "Bezettingsstatus",
+        "de": "Belegungsstatus",
+        "fr": "État d'occupation",
+        "no": "Tilstedeværelsesstatus",
+        "sv": "Närvarostatus",
+        "da": "Tilstedeværelsesstatus",
+        "es": "Estado de ocupación",
+        "it": "Stato di occupazione"
       },
       "desc": {
-        "en": "Current occupancy state of the room"
+        "en": "Current occupancy state of the room",
+        "nl": "Huidige bezettingsstatus van de kamer",
+        "de": "Aktueller Belegungsstatus des Raums",
+        "fr": "État d'occupation actuel de la pièce",
+        "no": "Gjeldende tilstedeværelsesstatus i rommet",
+        "sv": "Aktuell närvarostatus i rummet",
+        "da": "Aktuel tilstedeværelsesstatus i rummet",
+        "es": "Estado actual de ocupación de la habitación",
+        "it": "Stato attuale di occupazione della stanza"
       },
       "values": [
         {
           "id": "empty",
           "title": {
-            "en": "Empty"
+            "en": "Empty",
+            "nl": "Leeg",
+            "de": "Leer",
+            "fr": "Vide",
+            "no": "Tomt",
+            "sv": "Tomt",
+            "da": "Tomt",
+            "es": "Vacía",
+            "it": "Vuota"
           }
         },
         {
           "id": "occupied",
           "title": {
-            "en": "Occupied"
+            "en": "Occupied",
+            "nl": "Bezet",
+            "de": "Belegt",
+            "fr": "Occupé",
+            "no": "Opptatt",
+            "sv": "Upptagen",
+            "da": "Optaget",
+            "es": "Ocupada",
+            "it": "Occupata"
           }
         },
         {
           "id": "door_open",
           "title": {
-            "en": "Door Open"
+            "en": "Door Open",
+            "nl": "Deur open",
+            "de": "Tür offen",
+            "fr": "Porte ouverte",
+            "no": "Dør åpen",
+            "sv": "Dörr öppen",
+            "da": "Dør åben",
+            "es": "Puerta abierta",
+            "it": "Porta aperta"
           }
         },
         {
           "id": "checking",
           "title": {
-            "en": "Checking"
+            "en": "Checking",
+            "nl": "Controleren",
+            "de": "Prüfen",
+            "fr": "Vérification",
+            "no": "Sjekker",
+            "sv": "Kontrollerar",
+            "da": "Kontrollerer",
+            "es": "Comprobando",
+            "it": "Controllo"
           }
         }
       ],

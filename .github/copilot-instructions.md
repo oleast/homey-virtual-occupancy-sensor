@@ -46,6 +46,15 @@ npm run lint
 
 This runs ESLint with the Athom Homey app configuration. The project follows Athom's coding standards.
 
+### Testing
+
+```bash
+npm run test:coverage
+```
+
+This runs the Vitest test suite.
+**Critical**: Mocks for Homey classes that are instantiated with `new` (like `SensorMonitor`) MUST be defined using `function()` expressions, NOT arrow functions `() => {}`. Arrow functions cannot be used as constructors.
+
 ### Installing Dependencies
 
 ```bash
@@ -143,7 +152,8 @@ Refer to `CONTRIBUTING.md` for detailed contribution guidelines.
 2. Implement feature in `app.ts` or new TypeScript files
 3. Run `npm run build` to compile
 4. Run `npm run lint` to ensure code quality
-5. Run `npx homey app validate` to ensure app store compatibility
+5. Run `npm run test:coverage` to ensure no regressions
+6. Run `npx homey app validate` to ensure app store compatibility
 
 ### Fixing Linting Errors
 
@@ -152,6 +162,8 @@ Most linting errors can be auto-fixed:
 ```bash
 npm run lint -- --fix
 ```
+
+**Warning**: Auto-fixing can sometimes change `function()` to arrow functions `() => {}`. This breaks mocks for classes. ALWAYS run `npm run test:coverage` after fixing lint errors to ensure mocks are still valid.
 
 ### Debugging
 

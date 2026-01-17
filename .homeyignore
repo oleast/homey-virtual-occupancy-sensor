@@ -1,5 +1,14 @@
-IMPLEMENTATION_SUMMARY.md
-TESTING.md
+.git
 .github/
+.vscode/
+.homeycompose/
+tests/
+coverage/
+.gitignore
+.homeyignore
+.eslintrc.json
+tsconfig.json
+vitest.config.ts
+*.md
 *.log
 .DS_Store

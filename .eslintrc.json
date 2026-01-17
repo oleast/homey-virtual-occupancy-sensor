@@ -1,3 +1,35 @@
 {
-  "extends": "athom/homey-app"
+  "extends": "athom/homey-app",
+  "parserOptions": {
+    "project": "./tsconfig.eslint.json"
+  },
+  "rules": {
+    "node/no-missing-import": ["error", {
+      "tryExtensions": [".js", ".json", ".node", ".ts"],
+      "allowModules": ["homey"]
+    }],
+    "import/extensions": ["error", "ignorePackages", {
+      "ts": "never",
+      "js": "never"
+    }],
+    "import/no-unresolved": "off"
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+  "overrides": [
+    {
+      "files": ["tests/**/*.ts", "vitest.config.ts", "__mocks__/**/*.ts"],
+      "rules": {
+        "node/no-unpublished-import": "off",
+        "node/no-missing-import": "off",
+        "homey-app/global-timers": "off",
+        "no-console": "off"
+      }
+    }
+  ]
 }

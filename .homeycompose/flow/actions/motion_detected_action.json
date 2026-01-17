@@ -1,0 +1,32 @@
+{
+  "id": "motion_detected_action",
+  "title": {
+    "en": "Motion Detected",
+    "nl": "Beweging gedetecteerd",
+    "de": "Bewegung erkannt",
+    "fr": "Mouvement détecté",
+    "no": "Bevegelse oppdaget",
+    "sv": "Rörelse upptäckt",
+    "da": "Bevægelse registreret",
+    "es": "Movimiento detectado",
+    "it": "Movimento rilevato"
+  },
+  "titleFormatted": {
+    "en": "Motion detected",
+    "nl": "Beweging gedetecteerd",
+    "de": "Bewegung erkannt",
+    "fr": "Mouvement détecté",
+    "no": "Bevegelse oppdaget",
+    "sv": "Rörelse upptäckt",
+    "da": "Bevægelse registreret",
+    "es": "Movimiento detectado",
+    "it": "Movimento rilevato"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    }
+  ]
+}

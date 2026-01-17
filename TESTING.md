@@ -1,12 +1,12 @@
-# Virtual Occupancy Sensor - Testing Guide
+# Virtual Room Occupancy - Testing Guide
 
 ## Manual Testing Steps
 
 ### 1. Device Pairing
 1. In Homey, go to Devices
 2. Add a new device
-3. Select "Virtual Occupancy Sensor" app
-4. Add a "Virtual Occupancy Sensor" device
+3. Select "Virtual Room Occupancy" app
+4. Add a "Virtual Room Occupancy" device
 5. Verify the device appears with initial state "Empty"
 
 ### 2. Configure Device Settings
