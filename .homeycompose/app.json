@@ -1,7 +1,7 @@
 {
   "id": "no.oleast.virtual-occupancy-sensor",
   "version": "1.0.0",
-  "compatibility": ">=12.4.0",
+  "compatibility": ">=12.9.0",
   "sdk": 3,
   "platforms": [
     "local"
