@@ -1,5 +1,5 @@
 {
-  "name": "no.oleast.virtual-occupancy-sensor",
+  "name": "no.oleast.virtual-room-occupancy",
   "version": "1.0.0",
   "scripts": {
     "build": "tsc",

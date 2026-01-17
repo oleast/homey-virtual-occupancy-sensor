@@ -1,6 +1,6 @@
-# Virtual Occupancy Sensor for Homey
+# Virtual Room Occupancy for Homey
 
-This Homey app provides a virtual occupancy sensor that intelligently detects room occupancy based on door and motion sensors.
+This Homey app provides a virtual room occupancy sensor that intelligently detects room occupancy based on door and motion sensors.
 
 ## Features
 

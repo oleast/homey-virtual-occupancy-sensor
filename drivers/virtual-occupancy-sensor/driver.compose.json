@@ -1,14 +1,14 @@
 {
   "name": {
-    "en": "Virtual Occupancy Sensor",
-    "nl": "Virtuele Bezettingssensor",
-    "de": "Virtueller Anwesenheitssensor",
-    "fr": "Capteur d'Occupation Virtuel",
-    "no": "Virtuell Tilstedeværelsessensor",
-    "sv": "Virtuell Närvarosensor",
-    "da": "Virtuel Tilstedeværelsessensor",
-    "es": "Sensor de Ocupación Virtual",
-    "it": "Sensore di Occupazione Virtuale"
+    "en": "Virtual Room Occupancy",
+    "nl": "Virtuele Kamerbezetting",
+    "de": "Virtuelle Raumbelegung",
+    "fr": "Occupation de Pièce Virtuelle",
+    "no": "Virtuell Romtilstedeværelse",
+    "sv": "Virtuell Rumsnärvaro",
+    "da": "Virtuel Rumtilstedeværelse",
+    "es": "Ocupación de Habitación Virtual",
+    "it": "Occupazione Stanza Virtuale"
   },
   "class": "sensor",
   "capabilities": [

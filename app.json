@@ -1,22 +1,22 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
-  "id": "no.oleast.virtual-occupancy-sensor",
+  "id": "no.oleast.virtual-room-occupancy",
   "version": "1.0.0",
-  "compatibility": ">=12.4.0",
+  "compatibility": ">=12.9.0",
   "sdk": 3,
   "platforms": [
     "local"
   ],
   "name": {
-    "en": "Virtual Occupancy Sensor",
-    "nl": "Virtuele Bezettingssensor",
-    "de": "Virtueller Anwesenheitssensor",
-    "fr": "Capteur d'Occupation Virtuel",
-    "no": "Virtuell Tilstedeværelsessensor",
-    "sv": "Virtuell Närvarosensor",
-    "da": "Virtuel Tilstedeværelsessensor",
-    "es": "Sensor de Ocupación Virtual",
-    "it": "Sensore di Occupazione Virtuale"
+    "en": "Virtual Room Occupancy",
+    "nl": "Virtuele Kamerbezetting",
+    "de": "Virtuelle Raumbelegung",
+    "fr": "Occupation de Pièce Virtuelle",
+    "no": "Virtuell Romtilstedeværelse",
+    "sv": "Virtuell Rumsnärvaro",
+    "da": "Virtuel Rumtilstedeværelse",
+    "es": "Ocupación de Habitación Virtual",
+    "it": "Occupazione Stanza Virtuale"
   },
   "description": {
     "en": "Create virtual occupancy sensors that intelligently detect room occupancy based on door and motion sensors.",
@@ -534,15 +534,15 @@
   "drivers": [
     {
       "name": {
-        "en": "Virtual Occupancy Sensor",
-        "nl": "Virtuele Bezettingssensor",
-        "de": "Virtueller Anwesenheitssensor",
-        "fr": "Capteur d'Occupation Virtuel",
-        "no": "Virtuell Tilstedeværelsessensor",
-        "sv": "Virtuell Närvarosensor",
-        "da": "Virtuel Tilstedeværelsessensor",
-        "es": "Sensor de Ocupación Virtual",
-        "it": "Sensore di Occupazione Virtuale"
+        "en": "Virtual Room Occupancy",
+        "nl": "Virtuele Kamerbezetting",
+        "de": "Virtuelle Raumbelegung",
+        "fr": "Occupation de Pièce Virtuelle",
+        "no": "Virtuell Romtilstedeværelse",
+        "sv": "Virtuell Rumsnärvaro",
+        "da": "Virtuel Rumtilstedeværelse",
+        "es": "Ocupación de Habitación Virtual",
+        "it": "Occupazione Stanza Virtuale"
       },
       "class": "sensor",
       "capabilities": [
