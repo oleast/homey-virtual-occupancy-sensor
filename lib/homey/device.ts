@@ -4,7 +4,6 @@ import { HomeyAPIV3Local } from 'homey-api';
 import { findDeviceById, getAllDevices } from './device-api';
 import { getHomeyAPI } from './api';
 
-// Re-export DeviceUpdateInfo from our extended types for convenience
 export type DeviceUpdateInfo = HomeyAPIV3Local.ManagerDevices.DeviceUpdateInfo;
 
 export class BaseHomeyDevice extends Device {
@@ -50,10 +49,6 @@ export class BaseHomeyDevice extends Device {
     return getHomeyAPI(this.homey);
   }
 
-  /**
-   * Subscribe to device updates from the Homey API.
-   * Call this in onInit() if you need to react to device property changes (e.g., zone changes).
-   */
   protected async subscribeToDeviceUpdates(): Promise<void> {
     try {
       const api = await this.getApi();
@@ -74,10 +69,6 @@ export class BaseHomeyDevice extends Device {
     }
   }
 
-  /**
-   * Unsubscribe from device updates.
-   * Call this in onDeleted() if you called subscribeToDeviceUpdates() in onInit().
-   */
   protected unsubscribeFromDeviceUpdates(): void {
     if (this.apiDevice && this.boundOnDeviceUpdate) {
       this.apiDevice.removeListener('update', this.boundOnDeviceUpdate);
@@ -98,33 +89,22 @@ export class BaseHomeyDevice extends Device {
     }
   }
 
-  /**
-   * Called when the device is moved to a different zone.
-   * Override this method in subclasses to react to zone changes.
-   */
   protected onZoneChanged(): void {
     // Default implementation does nothing.
     // Subclasses can override to handle zone changes.
   }
 
-  /**
-   * Subscribes to device manager events (device create, delete, update).
-   * This allows reacting to changes in other devices in the system.
-   */
   protected async subscribeToDeviceManagerEvents(): Promise<void> {
     try {
       const api = await getHomeyAPI(this.homey);
 
-      // Connect to the devices manager to receive events
       await api.devices.connect();
       this.devicesManagerConnected = true;
 
-      // Create bound handlers
       this.boundOnOtherDeviceCreate = this.handleOtherDeviceCreate.bind(this);
       this.boundOnOtherDeviceDelete = this.handleOtherDeviceDelete.bind(this);
       this.boundOnOtherDeviceUpdate = this.handleOtherDeviceUpdate.bind(this);
 
-      // Subscribe to events
       api.devices.on('device.create', this.boundOnOtherDeviceCreate);
       api.devices.on('device.delete', this.boundOnOtherDeviceDelete);
       api.devices.on('device.update', this.boundOnOtherDeviceUpdate);
@@ -135,9 +115,6 @@ export class BaseHomeyDevice extends Device {
     }
   }
 
-  /**
-   * Unsubscribes from device manager events.
-   */
   protected async unsubscribeFromDeviceManagerEvents(): Promise<void> {
     if (!this.devicesManagerConnected) {
       return;
@@ -198,7 +175,6 @@ export class BaseHomeyDevice extends Device {
 
   /**
    * Called when another device is created in the system.
-   * Override this method in subclasses to react to device creation.
    */
   protected onOtherDeviceCreated(_device: HomeyAPIV3Local.ManagerDevices.Device): void {
     // Default implementation does nothing.
@@ -206,7 +182,6 @@ export class BaseHomeyDevice extends Device {
 
   /**
    * Called when another device is deleted from the system.
-   * Override this method in subclasses to react to device deletion.
    */
   protected onOtherDeviceDeleted(_device: HomeyAPIV3Local.ManagerDevices.Device): void {
     // Default implementation does nothing.
@@ -214,9 +189,6 @@ export class BaseHomeyDevice extends Device {
 
   /**
    * Called when another device is updated in the system.
-   * Override this method in subclasses to react to device updates.
-   * @param device The device that was updated
-   * @param info Information about what changed (zone, available, etc.)
    */
   protected onOtherDeviceUpdated(
     _device: HomeyAPIV3Local.ManagerDevices.Device,

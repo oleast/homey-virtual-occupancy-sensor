@@ -103,7 +103,8 @@ export class CheckingSensorRegistry {
       this.log,
       this.error);
     this.listeners.set(deviceConfig.id, device);
-    device.start(); // Start the timeout timer
+
+    device.start();
     this.log(`Start listening to checking sensor for device ${deviceConfig.id}`);
   }
 

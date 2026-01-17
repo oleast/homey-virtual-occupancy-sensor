@@ -68,12 +68,10 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   }
 
   protected onOtherDeviceCreated(device: HomeyAPIV3Local.ManagerDevices.Device): void {
-    // Check if the new device is relevant (has motion or contact capability and is in our zone)
     this.handleOtherDeviceChange(device, 'created');
   }
 
   protected onOtherDeviceDeleted(device: HomeyAPIV3Local.ManagerDevices.Device): void {
-    // Check if we were listening to this device
     this.handleOtherDeviceChange(device, 'deleted');
   }
 
@@ -81,11 +79,9 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     device: HomeyAPIV3Local.ManagerDevices.Device,
     info: DeviceUpdateInfo,
   ): void {
-    // Guard against undefined info (can happen in edge cases with Homey API)
     if (!info || !info.changedKeys) {
       return;
     }
-    // Only react to zone or availability changes
     if (info.changedKeys.includes('zone') || info.changedKeys.includes('available')) {
       this.handleOtherDeviceChange(device, 'updated', info);
     }
@@ -99,29 +95,25 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     const settings = this.getSettings() as DeviceSettings;
     const capabilities = device.capabilities || [];
 
-    // Check if this device has relevant capabilities
     const hasMotionCapability = capabilities.includes('alarm_motion');
     const hasContactCapability = capabilities.includes('alarm_contact');
 
     if (!hasMotionCapability && !hasContactCapability) {
-      return; // Device is not a sensor we care about
+      return;
     }
 
-    // Check if auto-detect is enabled for the relevant capability
     const autoDetectMotion = settings.auto_detect_motion_sensors && hasMotionCapability;
     const autoDetectContact = settings.auto_detect_door_sensors && hasContactCapability;
 
     if (!autoDetectMotion && !autoDetectContact) {
-      return; // Auto-detect is disabled for this sensor type
+      return;
     }
 
-    // Log the change
     const details = info?.changedKeys
       ? ` (changed: ${info.changedKeys.join(', ')})`
       : '';
     this.log(`Relevant device ${changeType}: ${device.name}${details}`);
 
-    // Refresh auto-detected sensors
     this.refreshAutoDetectedSensors().catch(this.error);
   }
 
@@ -129,7 +121,6 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   async onSettings({ newSettings, changedKeys }: OnSettingsEvent): Promise<void> {
     this.log('Updating VirtualOccupancySensorDevice settings');
 
-    // Check if we need to reload sensors due to zone or sensor configuration changes
     const needsContactSensorReload = changedKeys.includes('door_sensors')
       || changedKeys.includes('auto_detect_door_sensors')
       || changedKeys.includes('include_child_zones_contact');
@@ -245,11 +236,9 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   }
 
   private async setInitialCapabilityStates() {
-    // Only set defaults if not set? Or always reset?
     // Homey persists state, so usually we don't want to reset unless necessary.
-    // However, the FSM starts in 'empty'.
-    // A clean startup for this kind of logic usually implies starting fresh or restoring state.
-    // For now, let's reset to match the FSM's initial state.
+    // However, the FSM starts in 'empty'. So if persisted state is 'occupied' or 'door_open',
+    // we need to reset it to 'empty' on init.
     await this.setCapabilityValue('alarm_motion', false).catch(this.error);
     await this.setCapabilityValue('occupancy_state', 'empty').catch(this.error);
   }

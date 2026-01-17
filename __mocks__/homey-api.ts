@@ -1,5 +1,4 @@
 /* eslint-disable max-classes-per-file */
-// tests/__mocks__/homey-api.ts
 export const devicesMap = new Map<string, unknown>();
 
 class MockManagerDevices {

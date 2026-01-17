@@ -76,11 +76,11 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
   }
 
   private async handleDeviceEvent(deviceId: string, value: boolean | string | number | null): Promise<void> {
-    // Skip null values - device may be unavailable or capability not yet set
     if (value === null) {
       this.log(`Received null value for device ${deviceId}, skipping`);
       return;
     }
+
     // eslint-disable-next-line valid-typeof
     if (typeof value !== this.capabilityType) {
       this.error(`Received value of incorrect type for device ${deviceId}: expected ${typeof this.capabilityType}, got ${typeof value}`);

@@ -35,9 +35,6 @@ export class MotionSensorRegistry extends BooleanSensorRegistry {
     this.enableLearning = enableLearning;
   }
 
-  /**
-   * Tracks the timing between true->false transitions to learn the timeout delay
-   */
   private trackTimeoutLearning(deviceId: string, value: boolean): void {
     let data = this.timeoutLearning.get(deviceId);
     if (!data) {
@@ -65,16 +62,10 @@ export class MotionSensorRegistry extends BooleanSensorRegistry {
     }
   }
 
-  /**
-   * Get the learned timeout for a specific device, or null if not yet learned
-   */
   public getLearnedTimeout(deviceId: string): number | null {
     return this.timeoutLearning.get(deviceId)?.learnedTimeoutMs ?? null;
   }
 
-  /**
-   * Get all learned timeouts as a map of deviceId -> timeoutMs
-   */
   public getAllLearnedTimeouts(): Map<string, number | null> {
     const result = new Map<string, number | null>();
     for (const [deviceId, data] of this.timeoutLearning) {
@@ -83,9 +74,6 @@ export class MotionSensorRegistry extends BooleanSensorRegistry {
     return result;
   }
 
-  /**
-   * Get the minimum learned timeout across all devices, or the default if none learned
-   */
   public getMinLearnedTimeout(defaultMs: number): number {
     let min = defaultMs;
     for (const data of this.timeoutLearning.values()) {
