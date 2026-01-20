@@ -1,5 +1,6 @@
 import type { HomeyAPIV3Local } from 'homey-api';
-import { OccupancyState } from '../../lib/types';
+import Homey from 'homey';
+import { EventType, OccupancyState } from '../../lib/types';
 import { VirtualOccupancySensorController } from './controller';
 import { MotionSensorRegistry } from '../../lib/sensors/motion-sensor-registry';
 import { ContactSensorRegistry } from '../../lib/sensors/contact-sensor-registry';
@@ -31,6 +32,17 @@ export interface OnSettingsEvent {
   newSettings: DeviceSettings;
   changedKeys: Array<keyof DeviceSettings>;
 }
+
+// Interface for driver's flow trigger methods (defined after DeviceSettings but before class)
+/* eslint-disable no-use-before-define */
+interface VirtualOccupancySensorDriverInterface extends Homey.Driver {
+  triggerOccupancyStateChanged(device: VirtualOccupancySensorDevice, state: OccupancyState): void;
+  triggerBecameOccupied(device: VirtualOccupancySensorDevice): void;
+  triggerBecameEmpty(device: VirtualOccupancySensorDevice): void;
+  triggerDoorOpened(device: VirtualOccupancySensorDevice): void;
+  triggerCheckingStarted(device: VirtualOccupancySensorDevice): void;
+}
+/* eslint-enable no-use-before-define */
 
 export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   protected controller!: VirtualOccupancySensorController;
@@ -169,6 +181,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     }
 
     await this.setCapabilityValue('occupancy_state', state).catch(this.error);
+    await this.triggerStateChangeFlows(state);
 
     const settings = this.getSettings() as DeviceSettings;
     let alarmState = false;
@@ -192,6 +205,38 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     }
 
     await this.setCapabilityValue('alarm_motion', alarmState).catch(this.error);
+  }
+
+  private async triggerStateChangeFlows(state: OccupancyState): Promise<void> {
+    const driver = this.driver as VirtualOccupancySensorDriverInterface;
+
+    if (typeof driver?.triggerOccupancyStateChanged !== 'function') {
+      return;
+    }
+
+    driver.triggerOccupancyStateChanged(this, state);
+
+    switch (state) {
+      case 'occupied':
+        driver.triggerBecameOccupied(this);
+        break;
+      case 'empty':
+        driver.triggerBecameEmpty(this);
+        break;
+      case 'door_open':
+        driver.triggerDoorOpened(this);
+        break;
+      case 'checking':
+        driver.triggerCheckingStarted(this);
+        break;
+      default:
+        break;
+    }
+  }
+
+  public triggerEventFromFlow(eventType: EventType): void {
+    this.log(`Flow action: triggering manual event: ${eventType}`);
+    this.controller.registerEvent(eventType, 'flow_action');
   }
 
   private handleCheckingState() {

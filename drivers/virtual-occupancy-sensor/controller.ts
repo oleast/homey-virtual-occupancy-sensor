@@ -1,10 +1,8 @@
-import { OccupancyState } from '../../lib/types';
+import { EventType, OccupancyState } from '../../lib/types';
 
 export type StateChangeCallback = (state: OccupancyState) => void;
 export type TimerCallback = (durationMs: number) => void;
 export type CancelTimerCallback = () => void;
-
-type EventType = 'any_door_open' | 'all_doors_closed' | 'motion_detected' | 'motion_timeout' | 'timeout';
 
 export class VirtualOccupancySensorController {
   private currentState: OccupancyState = 'empty';
