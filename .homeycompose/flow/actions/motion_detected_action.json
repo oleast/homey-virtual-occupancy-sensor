@@ -1,26 +1,26 @@
 {
   "id": "motion_detected_action",
   "title": {
-    "en": "Motion Detected",
-    "nl": "Beweging gedetecteerd",
-    "de": "Bewegung erkannt",
-    "fr": "Mouvement détecté",
-    "no": "Bevegelse oppdaget",
-    "sv": "Rörelse upptäckt",
-    "da": "Bevægelse registreret",
-    "es": "Movimiento detectado",
-    "it": "Movimento rilevato"
+    "en": "Trigger 'Motion Detected' event",
+    "nl": "Activeer 'Beweging gedetecteerd' gebeurtenis",
+    "de": "Aktiviere 'Bewegung erkannt' Ereignis",
+    "fr": "Déclencher l'événement 'Mouvement détecté'",
+    "no": "Utløs hendelsen 'Bevegelse oppdaget'",
+    "sv": "Utlös händelsen 'Rörelse upptäckt'",
+    "da": "Udløs hændelsen 'Bevægelse registreret'",
+    "es": "Activar el evento 'Movimiento detectado'",
+    "it": "Attiva evento 'Movimento rilevato'"
   },
   "titleFormatted": {
-    "en": "Motion detected",
-    "nl": "Beweging gedetecteerd",
-    "de": "Bewegung erkannt",
-    "fr": "Mouvement détecté",
-    "no": "Bevegelse oppdaget",
-    "sv": "Rörelse upptäckt",
-    "da": "Bevægelse registreret",
-    "es": "Movimiento detectado",
-    "it": "Movimento rilevato"
+    "en": "Trigger 'Motion Detected' event",
+    "nl": "Activeer 'Beweging gedetecteerd' gebeurtenis",
+    "de": "Aktiviere 'Bewegung erkannt' Ereignis",
+    "fr": "Déclencher l'événement 'Mouvement détecté'",
+    "no": "Utløs hendelsen 'Bevegelse oppdaget'",
+    "sv": "Utlös händelsen 'Rörelse upptäckt'",
+    "da": "Udløs hændelsen 'Bevægelse registreret'",
+    "es": "Activar el evento 'Movimiento detectado'",
+    "it": "Attiva evento 'Movimento rilevato'"
   },
   "args": [
     {

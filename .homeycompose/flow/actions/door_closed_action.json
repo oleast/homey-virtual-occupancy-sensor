@@ -1,26 +1,26 @@
 {
   "id": "door_closed_action",
   "title": {
-    "en": "Door Closed",
-    "nl": "Deur gesloten",
-    "de": "Tür geschlossen",
-    "fr": "Porte fermée",
-    "no": "Dør lukket",
-    "sv": "Dörr stängd",
-    "da": "Dør lukket",
-    "es": "Puerta cerrada",
-    "it": "Porta chiusa"
+    "en": "Trigger 'All Doors Closed' event",
+    "nl": "Activeer 'Alle deuren gesloten' gebeurtenis",
+    "de": "Aktiviere 'Alle Türen geschlossen' Ereignis",
+    "fr": "Déclencher l'événement 'Toutes les portes fermées'",
+    "no": "Utløs hendelsen 'Alle dører lukket'",
+    "sv": "Utlös händelsen 'Alla dörrar stängda'",
+    "da": "Udløs hændelsen 'Alle døre lukket'",
+    "es": "Activar el evento 'Todas las puertas cerradas'",
+    "it": "Attiva evento 'Tutte le porte chiuse'"
   },
   "titleFormatted": {
-    "en": "Door closed",
-    "nl": "Deur gesloten",
-    "de": "Tür geschlossen",
-    "fr": "Porte fermée",
-    "no": "Dør lukket",
-    "sv": "Dörr stängd",
-    "da": "Dør lukket",
-    "es": "Puerta cerrada",
-    "it": "Porta chiusa"
+    "en": "Trigger 'All Doors Closed' event",
+    "nl": "Activeer 'Alle deuren gesloten' gebeurtenis",
+    "de": "Aktiviere 'Alle Türen geschlossen' Ereignis",
+    "fr": "Déclencher l'événement 'Toutes les portes fermées'",
+    "no": "Utløs hendelsen 'Alle dører lukket'",
+    "sv": "Utlös händelsen 'Alla dörrar stängda'",
+    "da": "Udløs hændelsen 'Alle døre lukket'",
+    "es": "Activar el evento 'Todas las puertas cerradas'",
+    "it": "Attiva evento 'Tutte le porte chiuse'"
   },
   "args": [
     {

@@ -1,26 +1,26 @@
 {
   "id": "door_opened_action",
   "title": {
-    "en": "Door Opened",
-    "nl": "Deur geopend",
-    "de": "Tür geöffnet",
-    "fr": "Porte ouverte",
-    "no": "Dør åpnet",
-    "sv": "Dörr öppnad",
-    "da": "Dør åbnet",
-    "es": "Puerta abierta",
-    "it": "Porta aperta"
+    "en": "Trigger 'Door Open' event",
+    "nl": "Activeer 'Deur open' gebeurtenis",
+    "de": "Aktiviere 'Tür offen' Ereignis",
+    "fr": "Déclencher l'événement 'Porte ouverte'",
+    "no": "Utløs hendelsen 'Dør åpen'",
+    "sv": "Utlös händelsen 'Dörr öppen'",
+    "da": "Udløs hændelsen 'Dør åben'",
+    "es": "Activar el evento 'Puerta abierta'",
+    "it": "Attiva evento 'Porta aperta'"
   },
   "titleFormatted": {
-    "en": "Door opened",
-    "nl": "Deur geopend",
-    "de": "Tür geöffnet",
-    "fr": "Porte ouverte",
-    "no": "Dør åpnet",
-    "sv": "Dörr öppnad",
-    "da": "Dør åbnet",
-    "es": "Puerta abierta",
-    "it": "Porta aperta"
+    "en": "Trigger 'Door Open' event",
+    "nl": "Activeer 'Deur open' gebeurtenis",
+    "de": "Aktiviere 'Tür offen' Ereignis",
+    "fr": "Déclencher l'événement 'Porte ouverte'",
+    "no": "Utløs hendelsen 'Dør åpen'",
+    "sv": "Utlös händelsen 'Dörr öppen'",
+    "da": "Udløs hændelsen 'Dør åben'",
+    "es": "Activar el evento 'Puerta abierta'",
+    "it": "Attiva evento 'Porta aperta'"
   },
   "args": [
     {
