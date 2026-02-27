@@ -3,6 +3,7 @@ import { HomeyInstance } from 'homey-api';
 import { DeviceEvent } from './sensor-registry';
 import { BooleanSensorRegistry } from './boolean-sensor-registry';
 import { DeviceConfig } from './checking-sensor-registry';
+import { DeviceSettings, TriggerContext } from '../types';
 
 interface TimeoutLearningData {
   lastTrueTimestamp: number | null;
@@ -23,11 +24,11 @@ export class MotionSensorRegistry extends BooleanSensorRegistry {
     log: (message: string) => void,
     error: (message: string, error?: unknown) => void,
   ) {
-    const wrappedOnDeviceEvent: DeviceEvent = async (deviceId, value) => {
+    const wrappedOnDeviceEvent: DeviceEvent = (deviceId, value) => {
       if (typeof value === 'boolean' && this.enableLearning) {
         this.trackTimeoutLearning(deviceId, value);
       }
-      await onDeviceEvent(deviceId, value);
+      onDeviceEvent(deviceId, value);
     };
 
     super(homey, deviceIds, 'alarm_motion', wrappedOnDeviceEvent, log, error);
@@ -93,5 +94,17 @@ export class MotionSensorRegistry extends BooleanSensorRegistry {
         timeoutMs: learnedTimeout ?? defaultTimeout,
       };
     });
+  }
+
+  public override buildContext(deviceId: string, settings: DeviceSettings): TriggerContext {
+    const learnedTimeout = this.getLearnedTimeout(deviceId);
+    const timeoutMs = learnedTimeout ?? (settings.motion_timeout * 1000);
+    const timeoutSeconds = Math.round(timeoutMs / 1000);
+
+    return {
+      deviceId,
+      deviceName: this.getDeviceName(deviceId),
+      timeoutSeconds,
+    };
   }
 }

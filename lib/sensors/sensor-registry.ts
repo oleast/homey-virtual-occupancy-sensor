@@ -1,8 +1,9 @@
 import { DeviceCapabilityInstance, HomeyInstance, HomeyAPIV3Local } from 'homey-api';
 import { deviceHasCapability, findDeviceById } from '../homey/device-api';
 import { getHomeyAPI } from '../homey/api';
+import { DeviceSettings, TriggerContext } from '../types';
 
-export type DeviceEvent = (deviceId: string, value: boolean | string | number) => Promise<void>;
+export type DeviceEvent = (deviceId: string, value: boolean | string | number) => void;
 
 export class SensorRegistry<TCapabilityType extends number | string | boolean> {
   protected homey: HomeyInstance;
@@ -12,6 +13,7 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
   protected capabilityType!: 'boolean' | 'string' | 'number';
   protected listeners: Map<string, DeviceCapabilityInstance> = new Map();
   protected capabilityState: Map<string, TCapabilityType> = new Map();
+  protected deviceNames: Map<string, string> = new Map();
   protected onDeviceEvent: DeviceEvent;
   protected log: (message: string) => void;
   protected error: (message: string, error?: unknown) => void;
@@ -75,7 +77,24 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
     return Array.from(this.capabilityState.values());
   }
 
-  private async handleDeviceEvent(deviceId: string, value: boolean | string | number | null): Promise<void> {
+  /**
+   * Gets the cached device name for a given device ID.
+   * Returns 'Unknown' if the device name is not cached.
+   */
+  public getDeviceName(deviceId: string): string {
+    return this.deviceNames.get(deviceId) ?? 'Unknown';
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  public buildContext(deviceId: string, settings: DeviceSettings): TriggerContext {
+    return {
+      deviceId,
+      deviceName: this.getDeviceName(deviceId),
+      timeoutSeconds: null,
+    };
+  }
+
+  private handleDeviceEvent(deviceId: string, value: boolean | string | number | null): void {
     if (value === null) {
       this.log(`Received null value for device ${deviceId}, skipping`);
       return;
@@ -87,7 +106,7 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
       return;
     }
     this.capabilityState.set(deviceId, value as TCapabilityType);
-    await this.onDeviceEvent(deviceId, value);
+    this.onDeviceEvent(deviceId, value);
   }
 
   private async addListener(deviceId: string): Promise<void> {
@@ -104,16 +123,14 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
         return;
       }
 
+      this.deviceNames.set(deviceId, device.name || 'Unknown');
+
       const instance = device.makeCapabilityInstance(this.capabilityId, (value) => {
-        this.handleDeviceEvent(deviceId, value).catch((err) => {
-          this.error(`Error handling capability event for device ${deviceId}`, err);
-        });
+        this.handleDeviceEvent(deviceId, value);
       });
 
       const capabilitiesObj = device.capabilitiesObj as Record<string, HomeyAPIV3Local.ManagerDevices.CapabilityObj>;
-      this.handleDeviceEvent(deviceId, capabilitiesObj[this.capabilityId].value).catch((err) => {
-        this.error(`Error handling initial capability state for device ${deviceId}`, err);
-      });
+      this.handleDeviceEvent(deviceId, capabilitiesObj[this.capabilityId].value);
 
       this.listeners.set(deviceId, instance);
       this.log(`Start listening to ${device.name} (${this.capabilityId})`);
@@ -128,6 +145,7 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
     if (instance) {
       instance.destroy();
       this.listeners.delete(deviceId);
+      this.deviceNames.delete(deviceId);
       this.log(`Stopped listening to ${deviceId}`);
     }
   }

@@ -9,9 +9,8 @@ import { Device as MockDevice } from '../__mocks__/homey';
 import { MockExternalDevice } from '../__mocks__/mock-external-device';
 
 // Import Class Under Test
-import { DeviceSettings } from '../drivers/virtual-occupancy-sensor/device';
+import { DeviceSettings, OccupancyState } from '../lib/types';
 import { VirtualOccupancySensorDeviceForTest } from './virtual-occupancy-sensor-device-for-test';
-import { OccupancyState } from '../lib/types';
 
 // Setup Mocks
 vi.mock('homey-api'); // Auto-mock from root __mocks__

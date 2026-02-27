@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import { VirtualOccupancySensorDevice } from '../drivers/virtual-occupancy-sensor/device';
-import { OccupancyState } from '../lib/types';
+import { OccupancyState, TriggerContext } from '../lib/types';
 import { VirtualOccupancySensorControllerForTest } from './virtual-occupancy-sensor-controller-for-test';
 
 export class VirtualOccupancySensorDeviceForTest extends VirtualOccupancySensorDevice {
@@ -10,8 +10,8 @@ export class VirtualOccupancySensorDeviceForTest extends VirtualOccupancySensorD
     // Create our test controller BEFORE calling super.onInit()
     // This will be immediately overwritten by super.onInit(), so we save it
     const testController = new VirtualOccupancySensorControllerForTest(
-      (state: OccupancyState) => {
-        this.onStateChange(state).catch(this.error);
+      (state: OccupancyState, context: TriggerContext) => {
+        this.onStateChange(state, context).catch(this.error);
       },
       this.log.bind(this),
       this.error.bind(this),

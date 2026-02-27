@@ -1,7 +1,7 @@
 'use strict';
 
 import Homey from 'homey';
-import type { OccupancyState } from '../../lib/types';
+import type { OccupancyState, TriggerContext } from '../../lib/types';
 import { VirtualOccupancySensorDevice } from './device';
 
 module.exports = class VirtualOccupancySensorDriver extends Homey.Driver {
@@ -61,33 +61,41 @@ module.exports = class VirtualOccupancySensorDriver extends Homey.Driver {
     });
   }
 
-  triggerOccupancyStateChanged(device: VirtualOccupancySensorDevice, state: OccupancyState): void {
+  private contextToTokens(context: TriggerContext): Record<string, string | number | null> {
+    return {
+      triggering_device_id: context.deviceId,
+      triggering_device_name: context.deviceName,
+      timeout_seconds: context.timeoutSeconds,
+    };
+  }
+
+  triggerOccupancyStateChanged(device: VirtualOccupancySensorDevice, state: OccupancyState, context: TriggerContext): void {
     this.occupancyStateChangedTrigger
-      .trigger(device as unknown as Homey.Device, {}, { state })
+      .trigger(device as unknown as Homey.Device, this.contextToTokens(context), { state })
       .catch(this.error);
   }
 
-  triggerBecameOccupied(device: VirtualOccupancySensorDevice): void {
+  triggerBecameOccupied(device: VirtualOccupancySensorDevice, context: TriggerContext): void {
     this.becameOccupiedTrigger
-      .trigger(device as unknown as Homey.Device)
+      .trigger(device as unknown as Homey.Device, this.contextToTokens(context))
       .catch(this.error);
   }
 
-  triggerBecameEmpty(device: VirtualOccupancySensorDevice): void {
+  triggerBecameEmpty(device: VirtualOccupancySensorDevice, context: TriggerContext): void {
     this.becameEmptyTrigger
-      .trigger(device as unknown as Homey.Device)
+      .trigger(device as unknown as Homey.Device, this.contextToTokens(context))
       .catch(this.error);
   }
 
-  triggerDoorOpened(device: VirtualOccupancySensorDevice): void {
+  triggerDoorOpened(device: VirtualOccupancySensorDevice, context: TriggerContext): void {
     this.doorOpenedTrigger
-      .trigger(device as unknown as Homey.Device)
+      .trigger(device as unknown as Homey.Device, this.contextToTokens(context))
       .catch(this.error);
   }
 
-  triggerCheckingStarted(device: VirtualOccupancySensorDevice): void {
+  triggerCheckingStarted(device: VirtualOccupancySensorDevice, context: TriggerContext): void {
     this.checkingStartedTrigger
-      .trigger(device as unknown as Homey.Device)
+      .trigger(device as unknown as Homey.Device, this.contextToTokens(context))
       .catch(this.error);
   }
 
