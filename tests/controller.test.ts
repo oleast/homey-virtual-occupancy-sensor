@@ -386,7 +386,9 @@ describe('VirtualOccupancySensorController', () => {
     it('should pass context to callback', () => {
       let capturedContext: TriggerContext | null = null;
       const localController = new VirtualOccupancySensorControllerForTest(
-        (state, context) => { capturedContext = context; },
+        (state, context) => {
+          capturedContext = context;
+        },
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         () => {},
         // eslint-disable-next-line @typescript-eslint/no-empty-function

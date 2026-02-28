@@ -152,6 +152,39 @@ When making changes:
 
 Refer to `CONTRIBUTING.md` for detailed contribution guidelines.
 
+## Quality Checks
+
+After making code changes, agents should run the relevant subset of quality checks based on which files were modified.
+
+### Checks
+
+1. **TypeScript compilation** — `npm run build`
+   Run for any `.ts` file changes, including test files.
+
+2. **ESLint** — `npm run lint`
+   Run for any `.ts` or `.js` file changes. Skip for documentation-only changes.
+
+3. **Tests** — `npm run test:coverage`
+   Run for any `.ts` or `.js` file changes. Skip for documentation-only changes.
+
+4. **Homey app build** — `npx homey app build`
+   Run for any source code changes. This regenerates `app.json` from `.homeycompose/` files and validates the app structure.
+
+5. **Homey app validation** — `npx homey app validate`
+   Run only when app structure or configuration changes (e.g., `.homeycompose/`, `driver.compose.json`).
+   **Note**: This currently fails due to missing required image assets in `/assets/images/`.
+
+### Scope Guidelines
+
+| Change type | build | lint | test | homey build | validate |
+|---|---|---|---|---|---|
+| Documentation only (`.md`) | Skip | Skip | Skip | Skip | Skip |
+| Test files only | Run | Run | Run | Skip | Skip |
+| Source code (`.ts`/`.js`) | Run | Run | Run | Run | Skip |
+| App structure/config | Run | Run | Run | Run | Run* |
+
+\* Validation currently fails due to missing image assets — see note above.
+
 ## Common Tasks
 
 ### Adding New Features
