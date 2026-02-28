@@ -1,4 +1,15 @@
 {
+  "1.1.0": {
+    "en": "Added flow action to manually override occupancy state. Learned motion sensor timeouts are now saved and restored after device restarts. Improved flow card reliability and data cleanup when sensors are removed.",
+    "nl": "Flow-actie toegevoegd om bezettingsstatus handmatig te overschrijven. Aangeleerde time-outs van bewegingssensoren worden nu opgeslagen en hersteld na het herstarten van apparaten. Verbeterde betrouwbaarheid van flow-kaarten en data-opschoning wanneer sensoren worden verwijderd.",
+    "de": "Flow-Aktion zum manuellen Überschreiben des Belegungsstatus hinzugefügt. Gelernte Bewegungssensor-Timeouts werden jetzt nach Geräteneustarts gespeichert und wiederhergestellt. Verbesserte Zuverlässigkeit der Flow-Karten und Datenbereinigung beim Entfernen von Sensoren.",
+    "fr": "Ajout d'une action de flux pour remplacer manuellement l'état d'occupation. Les délais d'expiration appris des capteurs de mouvement sont maintenant sauvegardés et restaurés après le redémarrage des appareils. Fiabilité améliorée des cartes de flux et nettoyage des données lors de la suppression des capteurs.",
+    "no": "Lagt til flow-handling for å manuelt overstyre tilstedeværelsesstatus. Innlærte tidsavbrudd for bevegelsessensorer lagres nå og gjenopprettes etter omstart av enheten. Forbedret pålitelighet for flow-kort og opprydding av data når sensorer fjernes.",
+    "sv": "Lagt till flödesåtgärd för att manuellt åsidosätta närvarostatus. Inlärda tidsgränser för rörelsesensorer sparas nu och återställs efter enhetsomstarter. Förbättrad tillförlitlighet för flödeskort och datarensning när sensorer tas bort.",
+    "da": "Tilføjet flow-handling til manuelt at overskrive tilstedeværelsesstatus. Indlærte timeout-værdier for bevægelsessensorer gemmes nu og gendannes efter genstart af enheden. Forbedret pålidelighed af flow-kort og oprydning af data når sensorer fjernes.",
+    "es": "Añadida acción de flujo para anular manualmente el estado de ocupación. Los tiempos de espera aprendidos de los sensores de movimiento ahora se guardan y restauran después de reiniciar los dispositivos. Mejorada la fiabilidad de las tarjetas de flujo y la limpieza de datos cuando se eliminan sensores.",
+    "it": "Aggiunta azione di flusso per sovrascrivere manualmente lo stato di occupazione. I timeout appresi dei sensori di movimento vengono ora salvati e ripristinati dopo il riavvio dei dispositivi. Migliorata l'affidabilità delle card di flusso e la pulizia dei dati quando i sensori vengono rimossi."
+  },
   "1.0.0": {
     "en": "First version!"
   }
