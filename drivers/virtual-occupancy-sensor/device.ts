@@ -11,6 +11,7 @@ import { getDevicesWithCapability } from '../../lib/homey/device-api';
 import { BaseHomeyDevice, DeviceUpdateInfo } from '../../lib/homey/device';
 import { getAllZones, getZoneIdsForSearch } from '../../lib/homey/zone-api';
 import { CheckingSensorRegistry } from '../../lib/sensors/checking-sensor-registry';
+import { TimeoutStore } from '../../lib/storage';
 
 export interface OnSettingsEvent {
   oldSettings: DeviceSettings;
@@ -132,8 +133,8 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     }
     if (needsMotionSensorReload) {
       this.log('Motion sensor or zone settings changed, updating registry');
-      const motionSensorIds = await this.getMotionsSensorsFromSettings(newSettings);
-      await this.motionSensorRegistry.updateDeviceIds(motionSensorIds);
+      const newMotionSensorIds = await this.getMotionsSensorsFromSettings(newSettings);
+      await this.motionSensorRegistry.updateDeviceIds(newMotionSensorIds);
     }
 
     const currentOccupancyState = this.getCapabilityValue('occupancy_state') as OccupancyState;
@@ -307,6 +308,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
     const motionSensorIds = await this.getMotionsSensorsFromSettings();
     const settings = this.getSettings();
+    const timeoutStore = new TimeoutStore(this, this.log.bind(this), this.error.bind(this));
     this.motionSensorRegistry = new MotionSensorRegistry(
       this.homey,
       settings.motion_timeout * 1000,
@@ -315,6 +317,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       this.handleMotionSensorEvent.bind(this),
       this.log.bind(this),
       this.error.bind(this),
+      timeoutStore,
     );
   }
 
@@ -329,8 +332,8 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
     if (settings.auto_detect_motion_sensors) {
       this.log('Refreshing auto-detected motion sensors after zone change');
-      const motionSensorIds = await this.getMotionsSensorsFromSettings(settings);
-      await this.motionSensorRegistry.updateDeviceIds(motionSensorIds);
+      const newMotionSensorIds = await this.getMotionsSensorsFromSettings(settings);
+      await this.motionSensorRegistry.updateDeviceIds(newMotionSensorIds);
     }
   }
 

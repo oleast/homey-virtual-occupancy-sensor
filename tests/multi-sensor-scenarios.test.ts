@@ -70,6 +70,10 @@ describe('Multi-Sensor Scenarios', () => {
     device.getSettings = () => ({
       motion_timeout: 30,
       auto_learn_timeout: false,
+      auto_detect_motion_sensors: false,
+      auto_detect_door_sensors: false,
+      include_child_zones_motion: false,
+      include_child_zones_contact: false,
       active_on_occupied: true,
       active_on_empty: false,
       active_on_door_open: false,

@@ -8,4 +8,9 @@
 
 # Copilot memories (session-specific)
 memories/session/
-.memory/plans/
+.memory/
+.plans/
+.github/memory/
+.copilot/memory/
+.copilot-memories/
+.agent/

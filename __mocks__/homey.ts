@@ -5,6 +5,8 @@ export class Device extends EventEmitter {
   // Add an index signature to allow setting arbitrary properties if needed
   [key: string]: unknown;
 
+  private _store: Map<string, unknown> = new Map();
+
   log(...args: unknown[]) {
     console.log(...args);
   }
@@ -24,6 +26,20 @@ export class Device extends EventEmitter {
 
   hasCapability(id: string) {
     return true;
+  }
+
+  getStoreValue(key: string): unknown {
+    return this._store.get(key);
+  }
+
+  async setStoreValue(key: string, value: unknown): Promise<void> {
+    this._store.set(key, value);
+    return Promise.resolve();
+  }
+
+  async unsetStoreValue(key: string): Promise<void> {
+    this._store.delete(key);
+    return Promise.resolve();
   }
 
   onInit() {}

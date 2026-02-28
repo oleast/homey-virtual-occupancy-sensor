@@ -66,6 +66,13 @@ describe('VirtualOccupancySensorDevice - Scenarios', () => {
     // Since getSettings was defined in our mock base class, we can overwrite it on the instance
     device.getSettings = () => ({
       motion_timeout: 30,
+      auto_learn_timeout: false,
+      auto_detect_motion_sensors: false,
+      auto_detect_door_sensors: false,
+      include_child_zones_motion: false,
+      include_child_zones_contact: false,
+      active_on_occupied: true,
+      active_on_empty: false,
       active_on_door_open: false,
       active_on_checking: false,
       door_sensors: 'door-1',

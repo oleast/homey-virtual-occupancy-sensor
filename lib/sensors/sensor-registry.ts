@@ -73,6 +73,10 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
     return this.deviceIds.has(deviceId);
   }
 
+  public getDeviceIds(): string[] {
+    return [...this.deviceIds];
+  }
+
   public getCapabilityStates(): Array<TCapabilityType> {
     return Array.from(this.capabilityState.values());
   }
