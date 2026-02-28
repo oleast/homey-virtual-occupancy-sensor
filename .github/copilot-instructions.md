@@ -38,6 +38,14 @@ npm run build
 
 This compiles TypeScript to JavaScript in the `.homeybuild/` directory.
 
+### Building the Homey App
+
+```bash
+npx homey app build
+```
+
+This regenerates `app.json` from `.homeycompose/` files, compiles TypeScript, and validates the app. **Run this after any changes to files in `.homeycompose/` or `drivers/*/driver.compose.json`.**
+
 ### Linting
 
 ```bash
@@ -150,10 +158,13 @@ Refer to `CONTRIBUTING.md` for detailed contribution guidelines.
 
 1. Update `.homeycompose/app.json` for app metadata changes
 2. Implement feature in `app.ts` or new TypeScript files
-3. Run `npm run build` to compile
-4. Run `npm run lint` to ensure code quality
-5. Run `npm run test:coverage` to ensure no regressions
-6. Run `npx homey app validate` to ensure app store compatibility
+3. Run `npm run build` to compile TypeScript
+4. Run `npx homey app build` to regenerate `app.json` from compose files
+5. Run `npm run lint` to ensure code quality
+6. Run `npm run test:coverage` to ensure no regressions
+7. Run `npx homey app validate` to ensure app store compatibility
+
+**Important**: Always run `npx homey app build` after modifying any `.homeycompose/` or `driver.compose.json` files. This regenerates the root `app.json` which is required for the app to function correctly.
 
 ### Fixing Linting Errors
 
