@@ -1,6 +1,6 @@
-import { EventType, OccupancyState } from '../../lib/types';
+import { EventType, OccupancyState, TriggerContext } from '../../lib/types';
 
-export type StateChangeCallback = (state: OccupancyState) => void;
+export type StateChangeCallback = (state: OccupancyState, context: TriggerContext) => void;
 export type TimerCallback = (durationMs: number) => void;
 export type CancelTimerCallback = () => void;
 
@@ -21,63 +21,68 @@ export class VirtualOccupancySensorController {
     this.error = error;
   }
 
-  public registerEvent(eventType: EventType, deviceId: string) {
-    this.log(`Received event: ${eventType} from ${deviceId || 'system'}. Current state: ${this.currentState}`);
+  public registerEvent(eventType: EventType, context: TriggerContext) {
+    this.log(`Received event: ${eventType} from ${context.deviceName} (${context.deviceId}). Current state: ${this.currentState}`);
 
     switch (this.currentState) {
       case 'empty':
-        this.handleEventInEmpty(eventType);
+        this.handleEventInEmpty(eventType, context);
         break;
       case 'occupied':
-        this.handleEventInOccupied(eventType);
+        this.handleEventInOccupied(eventType, context);
         break;
       case 'door_open':
-        this.handleEventInDoorOpen(eventType);
+        this.handleEventInDoorOpen(eventType, context);
         break;
       case 'checking':
-        this.handleEventInChecking(eventType);
+        this.handleEventInChecking(eventType, context);
         break;
       default:
         this.error(`Unknown state: ${this.currentState}`);
     }
   }
 
-  protected transitionTo(newState: OccupancyState) {
+  public forceState(state: OccupancyState, context: TriggerContext) {
+    this.log(`Forcing state to ${state} from ${context.deviceName} (${context.deviceId})`);
+    this.transitionTo(state, context);
+  }
+
+  protected transitionTo(newState: OccupancyState, context: TriggerContext) {
     if (this.currentState === newState) return;
     this.log(`Transitioning from ${this.currentState} to ${newState}`);
     this.currentState = newState;
-    this.onStateChange(newState);
+    this.onStateChange(newState, context);
   }
 
   // --- State Handlers ---
 
-  private handleEventInEmpty(event: EventType) {
+  private handleEventInEmpty(event: EventType, context: TriggerContext) {
     if (event === 'motion_detected') {
-      this.transitionTo('occupied');
+      this.transitionTo('occupied', context);
     } else if (event === 'any_door_open') {
-      this.transitionTo('door_open');
+      this.transitionTo('door_open', context);
     }
   }
 
-  private handleEventInOccupied(event: EventType) {
+  private handleEventInOccupied(event: EventType, context: TriggerContext) {
     if (event === 'any_door_open') {
-      this.transitionTo('door_open');
+      this.transitionTo('door_open', context);
     }
   }
 
-  private handleEventInDoorOpen(event: EventType) {
+  private handleEventInDoorOpen(event: EventType, context: TriggerContext) {
     if (event === 'all_doors_closed') {
-      this.transitionTo('checking');
+      this.transitionTo('checking', context);
     }
   }
 
-  private handleEventInChecking(event: EventType) {
+  private handleEventInChecking(event: EventType, context: TriggerContext) {
     if (event === 'motion_detected') {
-      this.transitionTo('occupied');
+      this.transitionTo('occupied', context);
     } else if (event === 'any_door_open') {
-      this.transitionTo('door_open');
+      this.transitionTo('door_open', context);
     } else if (event === 'timeout') {
-      this.transitionTo('empty');
+      this.transitionTo('empty', context);
     }
   }
 }

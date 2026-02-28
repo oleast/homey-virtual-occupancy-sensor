@@ -9,9 +9,8 @@ import { Device as MockDevice } from '../__mocks__/homey';
 import { MockExternalDevice } from '../__mocks__/mock-external-device';
 
 // Import Class Under Test
-import { DeviceSettings } from '../drivers/virtual-occupancy-sensor/device';
+import { DeviceSettings, OccupancyState } from '../lib/types';
 import { VirtualOccupancySensorDeviceForTest } from './virtual-occupancy-sensor-device-for-test';
-import { OccupancyState } from '../lib/types';
 
 // Setup Mocks
 vi.mock('homey-api'); // Auto-mock from root __mocks__
@@ -67,6 +66,13 @@ describe('VirtualOccupancySensorDevice - Scenarios', () => {
     // Since getSettings was defined in our mock base class, we can overwrite it on the instance
     device.getSettings = () => ({
       motion_timeout: 30,
+      auto_learn_timeout: false,
+      auto_detect_motion_sensors: false,
+      auto_detect_door_sensors: false,
+      include_child_zones_motion: false,
+      include_child_zones_contact: false,
+      active_on_occupied: true,
+      active_on_empty: false,
       active_on_door_open: false,
       active_on_checking: false,
       door_sensors: 'door-1',
@@ -364,6 +370,67 @@ describe('VirtualOccupancySensorDevice - Scenarios', () => {
     // EXPECTED: Should be 'occupied' because motion sensor is still active
     // Someone is clearly still moving in the room!
     expect(lastOccupancyState).toBe('occupied');
+  });
+
+  describe('Flow Action: Set State Directly', () => {
+    it('should start checking timer when setting state to checking via flow', async () => {
+      await createDevice({});
+
+      // Set directly to checking (bypasses normal door open -> close flow)
+      device.setStateFromFlow('checking');
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(lastOccupancyState).toBe('checking');
+
+      // Wait for timeout - should transition to empty
+      await vi.advanceTimersByTimeAsync(31000);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(lastOccupancyState).toBe('empty');
+    });
+
+    it('should cancel checking timer when setting to different state', async () => {
+      await createDevice({});
+
+      device.setStateFromFlow('checking');
+      await vi.advanceTimersByTimeAsync(0);
+      expect(lastOccupancyState).toBe('checking');
+
+      // Before timeout expires, set to occupied
+      await vi.advanceTimersByTimeAsync(15000);
+      device.setStateFromFlow('occupied');
+      await vi.advanceTimersByTimeAsync(0);
+      expect(lastOccupancyState).toBe('occupied');
+
+      // Wait past original timeout - should stay occupied (timer was cancelled)
+      await vi.advanceTimersByTimeAsync(20000);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(lastOccupancyState).toBe('occupied');
+    });
+
+    it('should be no-op when setting same state', async () => {
+      await createDevice({});
+      await forceState('occupied');
+
+      const previousState = lastOccupancyState;
+      device.setStateFromFlow('occupied');
+      await vi.advanceTimersByTimeAsync(0);
+
+      // State should remain the same (no duplicate callback)
+      expect(lastOccupancyState).toBe(previousState);
+    });
+
+    it('should allow setting empty directly (skip checking)', async () => {
+      await createDevice({});
+      await forceState('occupied');
+
+      // Normally would need: door_open -> door_close -> timeout
+      // But flow action can set empty directly
+      device.setStateFromFlow('empty');
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(lastOccupancyState).toBe('empty');
+    });
   });
 
 });

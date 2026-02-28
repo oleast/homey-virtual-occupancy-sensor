@@ -1,37 +1,37 @@
 {
   "id": "reset_state_action",
   "title": {
-    "en": "Reset State",
-    "nl": "Status resetten",
-    "de": "Zustand zurücksetzen",
-    "fr": "Réinitialiser l'état",
-    "no": "Tilbakestill status",
-    "sv": "Återställ status",
-    "da": "Nulstil status",
-    "es": "Restablecer estado",
-    "it": "Reimposta stato"
+    "en": "Trigger 'No Motion Detected' event",
+    "nl": "Activeer 'Geen beweging gedetecteerd' gebeurtenis",
+    "de": "Aktiviere 'Keine Bewegung erkannt' Ereignis",
+    "fr": "Déclencher l'événement 'Aucun mouvement détecté'",
+    "no": "Utløs hendelsen 'Ingen bevegelse oppdaget'",
+    "sv": "Utlös händelsen 'Ingen rörelse upptäckt'",
+    "da": "Udløs hændelsen 'Ingen bevægelse registreret'",
+    "es": "Activar el evento 'No se detectó movimiento'",
+    "it": "Attiva evento 'Nessun movimento rilevato'"
   },
   "titleFormatted": {
-    "en": "Reset state",
-    "nl": "Status resetten",
-    "de": "Zustand zurücksetzen",
-    "fr": "Réinitialiser l'état",
-    "no": "Tilbakestill status",
-    "sv": "Återställ status",
-    "da": "Nulstil status",
-    "es": "Restablecer estado",
-    "it": "Reimposta stato"
+    "en": "Trigger 'No Motion Detected' event",
+    "nl": "Activeer 'Geen beweging gedetecteerd' gebeurtenis",
+    "de": "Aktiviere 'Keine Bewegung erkannt' Ereignis",
+    "fr": "Déclencher l'événement 'Aucun mouvement détecté'",
+    "no": "Utløs hendelsen 'Ingen bevegelse oppdaget'",
+    "sv": "Utlös händelsen 'Ingen rörelse upptäckt'",
+    "da": "Udløs hændelsen 'Ingen bevægelse registreret'",
+    "es": "Activar el evento 'No se detectó movimiento'",
+    "it": "Attiva evento 'Nessun movimento rilevato'"
   },
   "hint": {
-    "en": "Resets the occupancy state to Empty.",
-    "nl": "Zet de bezettingsstatus terug naar Leeg.",
-    "de": "Setzt den Belegungsstatus auf Leer zurück.",
-    "fr": "Réinitialise l'état d'occupation à Vide.",
-    "no": "Tilbakestiller tilstedeværelsesstatusen til Tomt.",
-    "sv": "Återställer närvarostatus till Tomt.",
-    "da": "Nulstiller tilstedeværelsesstatus til Tomt.",
-    "es": "Restablece el estado de ocupación a Vacío.",
-    "it": "Reimposta lo stato di occupazione su Vuoto."
+    "en": "Triggers a 'No Motion Detected' event.",
+    "nl": "Activeert een 'Geen beweging gedetecteerd' gebeurtenis.",
+    "de": "Löst ein 'Keine Bewegung erkannt' Ereignis aus.",
+    "fr": "Déclenche un événement 'Aucun mouvement détecté'.",
+    "no": "Utløser en 'Ingen bevegelse oppdaget'-hendelse.",
+    "sv": "Utlöser en 'Ingen rörelse upptäckt'-händelse.",
+    "da": "Udløser en 'Ingen bevægelse registreret'-hændelse.",
+    "es": "Activa un evento 'No se detectó movimiento'.",
+    "it": "Attiva un evento 'Nessun movimento rilevato'."
   },
   "args": [
     {

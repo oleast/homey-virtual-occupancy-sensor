@@ -41,7 +41,7 @@ export class MockExternalDevice {
     const listener = this.listeners.get(capabilityId);
     if (listener) {
       console.log(`[MockExternalDevice] Triggering listener for ${this.id}`);
-      await listener(value);
+      listener(value);
     } else {
       console.log(`[MockExternalDevice] NO LISTENER found for ${this.id}, cap: ${capabilityId}`);
       console.log('Listeners keys:', Array.from(this.listeners.keys()));

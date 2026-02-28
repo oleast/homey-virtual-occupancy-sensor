@@ -38,6 +38,14 @@ npm run build
 
 This compiles TypeScript to JavaScript in the `.homeybuild/` directory.
 
+### Building the Homey App
+
+```bash
+npx homey app build
+```
+
+This regenerates `app.json` from `.homeycompose/` files, compiles TypeScript, and validates the app. **Run this after any changes to files in `.homeycompose/` or `drivers/*/driver.compose.json`.**
+
 ### Linting
 
 ```bash
@@ -144,16 +152,52 @@ When making changes:
 
 Refer to `CONTRIBUTING.md` for detailed contribution guidelines.
 
+## Quality Checks
+
+After making code changes, agents should run the relevant subset of quality checks based on which files were modified.
+
+### Checks
+
+1. **TypeScript compilation** — `npm run build`
+   Run for any `.ts` file changes, including test files.
+
+2. **ESLint** — `npm run lint`
+   Run for any `.ts` or `.js` file changes. Skip for documentation-only changes.
+
+3. **Tests** — `npm run test:coverage`
+   Run for any `.ts` or `.js` file changes. Skip for documentation-only changes.
+
+4. **Homey app build** — `npx homey app build`
+   Run for any source code changes. This regenerates `app.json` from `.homeycompose/` files and validates the app structure.
+
+5. **Homey app validation** — `npx homey app validate`
+   Run only when app structure or configuration changes (e.g., `.homeycompose/`, `driver.compose.json`).
+   **Note**: This currently fails due to missing required image assets in `/assets/images/`.
+
+### Scope Guidelines
+
+| Change type | build | lint | test | homey build | validate |
+|---|---|---|---|---|---|
+| Documentation only (`.md`) | Skip | Skip | Skip | Skip | Skip |
+| Test files only | Run | Run | Run | Skip | Skip |
+| Source code (`.ts`/`.js`) | Run | Run | Run | Run | Skip |
+| App structure/config | Run | Run | Run | Run | Run* |
+
+\* Validation currently fails due to missing image assets — see note above.
+
 ## Common Tasks
 
 ### Adding New Features
 
 1. Update `.homeycompose/app.json` for app metadata changes
 2. Implement feature in `app.ts` or new TypeScript files
-3. Run `npm run build` to compile
-4. Run `npm run lint` to ensure code quality
-5. Run `npm run test:coverage` to ensure no regressions
-6. Run `npx homey app validate` to ensure app store compatibility
+3. Run `npm run build` to compile TypeScript
+4. Run `npx homey app build` to regenerate `app.json` from compose files
+5. Run `npm run lint` to ensure code quality
+6. Run `npm run test:coverage` to ensure no regressions
+7. Run `npx homey app validate` to ensure app store compatibility
+
+**Important**: Always run `npx homey app build` after modifying any `.homeycompose/` or `driver.compose.json` files. This regenerates the root `app.json` which is required for the app to function correctly.
 
 ### Fixing Linting Errors
 

@@ -9,9 +9,8 @@ import { Device as MockDevice } from '../__mocks__/homey';
 import { MockExternalDevice } from '../__mocks__/mock-external-device';
 
 // Import Class Under Test
-import { DeviceSettings } from '../drivers/virtual-occupancy-sensor/device';
+import { DeviceSettings, OccupancyState } from '../lib/types';
 import { VirtualOccupancySensorDeviceForTest } from './virtual-occupancy-sensor-device-for-test';
-import { OccupancyState } from '../lib/types';
 
 // Setup Mocks
 vi.mock('homey-api'); // Auto-mock from root __mocks__
@@ -71,6 +70,10 @@ describe('Multi-Sensor Scenarios', () => {
     device.getSettings = () => ({
       motion_timeout: 30,
       auto_learn_timeout: false,
+      auto_detect_motion_sensors: false,
+      auto_detect_door_sensors: false,
+      include_child_zones_motion: false,
+      include_child_zones_contact: false,
       active_on_occupied: true,
       active_on_empty: false,
       active_on_door_open: false,

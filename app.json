@@ -1,7 +1,7 @@
 {
   "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
   "id": "no.oleast.virtual-room-occupancy",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "compatibility": ">=12.9.0",
   "sdk": 3,
   "platforms": [
@@ -45,6 +45,13 @@
     "name": "Ole Anders Stokker",
     "email": "olestokk@gmail.com"
   },
+  "contributing": {
+    "donate": {
+      "githubSponsors": {
+        "username": "oleast"
+      }
+    }
+  },
   "support": "https://github.com/oleast/homey-virtual-occupancy-sensor/issues",
   "flow": {
     "triggers": [
@@ -72,6 +79,53 @@
           "es": "Quedó vacío",
           "it": "È diventato vuoto"
         },
+        "tokens": [
+          {
+            "name": "triggering_device_id",
+            "type": "string",
+            "title": {
+              "en": "Device ID",
+              "nl": "Apparaat-ID",
+              "de": "Geräte-ID",
+              "fr": "ID de l'appareil",
+              "no": "Enhets-ID",
+              "sv": "Enhets-ID",
+              "da": "Enheds-ID",
+              "es": "ID del dispositivo",
+              "it": "ID dispositivo"
+            }
+          },
+          {
+            "name": "triggering_device_name",
+            "type": "string",
+            "title": {
+              "en": "Device Name",
+              "nl": "Apparaatnaam",
+              "de": "Gerätename",
+              "fr": "Nom de l'appareil",
+              "no": "Enhetsnavn",
+              "sv": "Enhetsnamn",
+              "da": "Enhedsnavn",
+              "es": "Nombre del dispositivo",
+              "it": "Nome dispositivo"
+            }
+          },
+          {
+            "name": "timeout_seconds",
+            "type": "number",
+            "title": {
+              "en": "Timeout (seconds)",
+              "nl": "Time-out (seconden)",
+              "de": "Zeitüberschreitung (Sekunden)",
+              "fr": "Délai d'attente (secondes)",
+              "no": "Tidsavbrudd (sekunder)",
+              "sv": "Timeout (sekunder)",
+              "da": "Timeout (sekunder)",
+              "es": "Tiempo de espera (segundos)",
+              "it": "Timeout (secondi)"
+            }
+          }
+        ],
         "args": [
           {
             "name": "device",
@@ -104,6 +158,53 @@
           "es": "Quedó ocupado",
           "it": "È diventato occupato"
         },
+        "tokens": [
+          {
+            "name": "triggering_device_id",
+            "type": "string",
+            "title": {
+              "en": "Device ID",
+              "nl": "Apparaat-ID",
+              "de": "Geräte-ID",
+              "fr": "ID de l'appareil",
+              "no": "Enhets-ID",
+              "sv": "Enhets-ID",
+              "da": "Enheds-ID",
+              "es": "ID del dispositivo",
+              "it": "ID dispositivo"
+            }
+          },
+          {
+            "name": "triggering_device_name",
+            "type": "string",
+            "title": {
+              "en": "Device Name",
+              "nl": "Apparaatnaam",
+              "de": "Gerätename",
+              "fr": "Nom de l'appareil",
+              "no": "Enhetsnavn",
+              "sv": "Enhetsnamn",
+              "da": "Enhedsnavn",
+              "es": "Nombre del dispositivo",
+              "it": "Nome dispositivo"
+            }
+          },
+          {
+            "name": "timeout_seconds",
+            "type": "number",
+            "title": {
+              "en": "Timeout (seconds)",
+              "nl": "Time-out (seconden)",
+              "de": "Zeitüberschreitung (Sekunden)",
+              "fr": "Délai d'attente (secondes)",
+              "no": "Tidsavbrudd (sekunder)",
+              "sv": "Timeout (sekunder)",
+              "da": "Timeout (sekunder)",
+              "es": "Tiempo de espera (segundos)",
+              "it": "Timeout (secondi)"
+            }
+          }
+        ],
         "args": [
           {
             "name": "device",
@@ -136,6 +237,53 @@
           "es": "Comenzó a comprobar movimiento",
           "it": "Ha iniziato a controllare il movimento"
         },
+        "tokens": [
+          {
+            "name": "triggering_device_id",
+            "type": "string",
+            "title": {
+              "en": "Device ID",
+              "nl": "Apparaat-ID",
+              "de": "Geräte-ID",
+              "fr": "ID de l'appareil",
+              "no": "Enhets-ID",
+              "sv": "Enhets-ID",
+              "da": "Enheds-ID",
+              "es": "ID del dispositivo",
+              "it": "ID dispositivo"
+            }
+          },
+          {
+            "name": "triggering_device_name",
+            "type": "string",
+            "title": {
+              "en": "Device Name",
+              "nl": "Apparaatnaam",
+              "de": "Gerätename",
+              "fr": "Nom de l'appareil",
+              "no": "Enhetsnavn",
+              "sv": "Enhetsnamn",
+              "da": "Enhedsnavn",
+              "es": "Nombre del dispositivo",
+              "it": "Nome dispositivo"
+            }
+          },
+          {
+            "name": "timeout_seconds",
+            "type": "number",
+            "title": {
+              "en": "Timeout (seconds)",
+              "nl": "Time-out (seconden)",
+              "de": "Zeitüberschreitung (Sekunden)",
+              "fr": "Délai d'attente (secondes)",
+              "no": "Tidsavbrudd (sekunder)",
+              "sv": "Timeout (sekunder)",
+              "da": "Timeout (sekunder)",
+              "es": "Tiempo de espera (segundos)",
+              "it": "Timeout (secondi)"
+            }
+          }
+        ],
         "args": [
           {
             "name": "device",
@@ -168,6 +316,53 @@
           "es": "Puerta abierta",
           "it": "Porta aperta"
         },
+        "tokens": [
+          {
+            "name": "triggering_device_id",
+            "type": "string",
+            "title": {
+              "en": "Device ID",
+              "nl": "Apparaat-ID",
+              "de": "Geräte-ID",
+              "fr": "ID de l'appareil",
+              "no": "Enhets-ID",
+              "sv": "Enhets-ID",
+              "da": "Enheds-ID",
+              "es": "ID del dispositivo",
+              "it": "ID dispositivo"
+            }
+          },
+          {
+            "name": "triggering_device_name",
+            "type": "string",
+            "title": {
+              "en": "Device Name",
+              "nl": "Apparaatnaam",
+              "de": "Gerätename",
+              "fr": "Nom de l'appareil",
+              "no": "Enhetsnavn",
+              "sv": "Enhetsnamn",
+              "da": "Enhedsnavn",
+              "es": "Nombre del dispositivo",
+              "it": "Nome dispositivo"
+            }
+          },
+          {
+            "name": "timeout_seconds",
+            "type": "number",
+            "title": {
+              "en": "Timeout (seconds)",
+              "nl": "Time-out (seconden)",
+              "de": "Zeitüberschreitung (Sekunden)",
+              "fr": "Délai d'attente (secondes)",
+              "no": "Tidsavbrudd (sekunder)",
+              "sv": "Timeout (sekunder)",
+              "da": "Timeout (sekunder)",
+              "es": "Tiempo de espera (segundos)",
+              "it": "Timeout (secondi)"
+            }
+          }
+        ],
         "args": [
           {
             "name": "device",
@@ -200,6 +395,53 @@
           "es": "Estado de ocupación cambiado a [[state]]",
           "it": "Stato di occupazione cambiato in [[state]]"
         },
+        "tokens": [
+          {
+            "name": "triggering_device_id",
+            "type": "string",
+            "title": {
+              "en": "Device ID",
+              "nl": "Apparaat-ID",
+              "de": "Geräte-ID",
+              "fr": "ID de l'appareil",
+              "no": "Enhets-ID",
+              "sv": "Enhets-ID",
+              "da": "Enheds-ID",
+              "es": "ID del dispositivo",
+              "it": "ID dispositivo"
+            }
+          },
+          {
+            "name": "triggering_device_name",
+            "type": "string",
+            "title": {
+              "en": "Device Name",
+              "nl": "Apparaatnaam",
+              "de": "Gerätename",
+              "fr": "Nom de l'appareil",
+              "no": "Enhetsnavn",
+              "sv": "Enhetsnamn",
+              "da": "Enhedsnavn",
+              "es": "Nombre del dispositivo",
+              "it": "Nome dispositivo"
+            }
+          },
+          {
+            "name": "timeout_seconds",
+            "type": "number",
+            "title": {
+              "en": "Timeout (seconds)",
+              "nl": "Time-out (seconden)",
+              "de": "Zeitüberschreitung (Sekunden)",
+              "fr": "Délai d'attente (secondes)",
+              "no": "Tidsavbrudd (sekunder)",
+              "sv": "Timeout (sekunder)",
+              "da": "Timeout (sekunder)",
+              "es": "Tiempo de espera (segundos)",
+              "it": "Timeout (secondi)"
+            }
+          }
+        ],
         "args": [
           {
             "name": "device",
@@ -415,26 +657,26 @@
       {
         "id": "door_closed_action",
         "title": {
-          "en": "Door Closed",
-          "nl": "Deur gesloten",
-          "de": "Tür geschlossen",
-          "fr": "Porte fermée",
-          "no": "Dør lukket",
-          "sv": "Dörr stängd",
-          "da": "Dør lukket",
-          "es": "Puerta cerrada",
-          "it": "Porta chiusa"
+          "en": "Trigger 'All Doors Closed' event",
+          "nl": "Activeer 'Alle deuren gesloten' gebeurtenis",
+          "de": "Aktiviere 'Alle Türen geschlossen' Ereignis",
+          "fr": "Déclencher l'événement 'Toutes les portes fermées'",
+          "no": "Utløs hendelsen 'Alle dører lukket'",
+          "sv": "Utlös händelsen 'Alla dörrar stängda'",
+          "da": "Udløs hændelsen 'Alle døre lukket'",
+          "es": "Activar el evento 'Todas las puertas cerradas'",
+          "it": "Attiva evento 'Tutte le porte chiuse'"
         },
         "titleFormatted": {
-          "en": "Door closed",
-          "nl": "Deur gesloten",
-          "de": "Tür geschlossen",
-          "fr": "Porte fermée",
-          "no": "Dør lukket",
-          "sv": "Dörr stängd",
-          "da": "Dør lukket",
-          "es": "Puerta cerrada",
-          "it": "Porta chiusa"
+          "en": "Trigger 'All Doors Closed' event",
+          "nl": "Activeer 'Alle deuren gesloten' gebeurtenis",
+          "de": "Aktiviere 'Alle Türen geschlossen' Ereignis",
+          "fr": "Déclencher l'événement 'Toutes les portes fermées'",
+          "no": "Utløs hendelsen 'Alle dører lukket'",
+          "sv": "Utlös händelsen 'Alla dörrar stängda'",
+          "da": "Udløs hændelsen 'Alle døre lukket'",
+          "es": "Activar el evento 'Todas las puertas cerradas'",
+          "it": "Attiva evento 'Tutte le porte chiuse'"
         },
         "args": [
           {
@@ -447,26 +689,26 @@
       {
         "id": "door_opened_action",
         "title": {
-          "en": "Door Opened",
-          "nl": "Deur geopend",
-          "de": "Tür geöffnet",
-          "fr": "Porte ouverte",
-          "no": "Dør åpnet",
-          "sv": "Dörr öppnad",
-          "da": "Dør åbnet",
-          "es": "Puerta abierta",
-          "it": "Porta aperta"
+          "en": "Trigger 'Door Open' event",
+          "nl": "Activeer 'Deur open' gebeurtenis",
+          "de": "Aktiviere 'Tür offen' Ereignis",
+          "fr": "Déclencher l'événement 'Porte ouverte'",
+          "no": "Utløs hendelsen 'Dør åpen'",
+          "sv": "Utlös händelsen 'Dörr öppen'",
+          "da": "Udløs hændelsen 'Dør åben'",
+          "es": "Activar el evento 'Puerta abierta'",
+          "it": "Attiva evento 'Porta aperta'"
         },
         "titleFormatted": {
-          "en": "Door opened",
-          "nl": "Deur geopend",
-          "de": "Tür geöffnet",
-          "fr": "Porte ouverte",
-          "no": "Dør åpnet",
-          "sv": "Dörr öppnad",
-          "da": "Dør åbnet",
-          "es": "Puerta abierta",
-          "it": "Porta aperta"
+          "en": "Trigger 'Door Open' event",
+          "nl": "Activeer 'Deur open' gebeurtenis",
+          "de": "Aktiviere 'Tür offen' Ereignis",
+          "fr": "Déclencher l'événement 'Porte ouverte'",
+          "no": "Utløs hendelsen 'Dør åpen'",
+          "sv": "Utlös händelsen 'Dörr öppen'",
+          "da": "Udløs hændelsen 'Dør åben'",
+          "es": "Activar el evento 'Puerta abierta'",
+          "it": "Attiva evento 'Porta aperta'"
         },
         "args": [
           {
@@ -479,26 +721,26 @@
       {
         "id": "motion_detected_action",
         "title": {
-          "en": "Motion Detected",
-          "nl": "Beweging gedetecteerd",
-          "de": "Bewegung erkannt",
-          "fr": "Mouvement détecté",
-          "no": "Bevegelse oppdaget",
-          "sv": "Rörelse upptäckt",
-          "da": "Bevægelse registreret",
-          "es": "Movimiento detectado",
-          "it": "Movimento rilevato"
+          "en": "Trigger 'Motion Detected' event",
+          "nl": "Activeer 'Beweging gedetecteerd' gebeurtenis",
+          "de": "Aktiviere 'Bewegung erkannt' Ereignis",
+          "fr": "Déclencher l'événement 'Mouvement détecté'",
+          "no": "Utløs hendelsen 'Bevegelse oppdaget'",
+          "sv": "Utlös händelsen 'Rörelse upptäckt'",
+          "da": "Udløs hændelsen 'Bevægelse registreret'",
+          "es": "Activar el evento 'Movimiento detectado'",
+          "it": "Attiva evento 'Movimento rilevato'"
         },
         "titleFormatted": {
-          "en": "Motion detected",
-          "nl": "Beweging gedetecteerd",
-          "de": "Bewegung erkannt",
-          "fr": "Mouvement détecté",
-          "no": "Bevegelse oppdaget",
-          "sv": "Rörelse upptäckt",
-          "da": "Bevægelse registreret",
-          "es": "Movimiento detectado",
-          "it": "Movimento rilevato"
+          "en": "Trigger 'Motion Detected' event",
+          "nl": "Activeer 'Beweging gedetecteerd' gebeurtenis",
+          "de": "Aktiviere 'Bewegung erkannt' Ereignis",
+          "fr": "Déclencher l'événement 'Mouvement détecté'",
+          "no": "Utløs hendelsen 'Bevegelse oppdaget'",
+          "sv": "Utlös händelsen 'Rörelse upptäckt'",
+          "da": "Udløs hændelsen 'Bevægelse registreret'",
+          "es": "Activar el evento 'Movimiento detectado'",
+          "it": "Attiva evento 'Movimento rilevato'"
         },
         "args": [
           {
@@ -511,43 +753,159 @@
       {
         "id": "reset_state_action",
         "title": {
-          "en": "Reset State",
-          "nl": "Status resetten",
-          "de": "Zustand zurücksetzen",
-          "fr": "Réinitialiser l'état",
-          "no": "Tilbakestill status",
-          "sv": "Återställ status",
-          "da": "Nulstil status",
-          "es": "Restablecer estado",
-          "it": "Reimposta stato"
+          "en": "Trigger 'No Motion Detected' event",
+          "nl": "Activeer 'Geen beweging gedetecteerd' gebeurtenis",
+          "de": "Aktiviere 'Keine Bewegung erkannt' Ereignis",
+          "fr": "Déclencher l'événement 'Aucun mouvement détecté'",
+          "no": "Utløs hendelsen 'Ingen bevegelse oppdaget'",
+          "sv": "Utlös händelsen 'Ingen rörelse upptäckt'",
+          "da": "Udløs hændelsen 'Ingen bevægelse registreret'",
+          "es": "Activar el evento 'No se detectó movimiento'",
+          "it": "Attiva evento 'Nessun movimento rilevato'"
         },
         "titleFormatted": {
-          "en": "Reset state",
-          "nl": "Status resetten",
-          "de": "Zustand zurücksetzen",
-          "fr": "Réinitialiser l'état",
-          "no": "Tilbakestill status",
-          "sv": "Återställ status",
-          "da": "Nulstil status",
-          "es": "Restablecer estado",
-          "it": "Reimposta stato"
+          "en": "Trigger 'No Motion Detected' event",
+          "nl": "Activeer 'Geen beweging gedetecteerd' gebeurtenis",
+          "de": "Aktiviere 'Keine Bewegung erkannt' Ereignis",
+          "fr": "Déclencher l'événement 'Aucun mouvement détecté'",
+          "no": "Utløs hendelsen 'Ingen bevegelse oppdaget'",
+          "sv": "Utlös händelsen 'Ingen rörelse upptäckt'",
+          "da": "Udløs hændelsen 'Ingen bevægelse registreret'",
+          "es": "Activar el evento 'No se detectó movimiento'",
+          "it": "Attiva evento 'Nessun movimento rilevato'"
         },
         "hint": {
-          "en": "Resets the occupancy state to Empty.",
-          "nl": "Zet de bezettingsstatus terug naar Leeg.",
-          "de": "Setzt den Belegungsstatus auf Leer zurück.",
-          "fr": "Réinitialise l'état d'occupation à Vide.",
-          "no": "Tilbakestiller tilstedeværelsesstatusen til Tomt.",
-          "sv": "Återställer närvarostatus till Tomt.",
-          "da": "Nulstiller tilstedeværelsesstatus til Tomt.",
-          "es": "Restablece el estado de ocupación a Vacío.",
-          "it": "Reimposta lo stato di occupazione su Vuoto."
+          "en": "Triggers a 'No Motion Detected' event.",
+          "nl": "Activeert een 'Geen beweging gedetecteerd' gebeurtenis.",
+          "de": "Löst ein 'Keine Bewegung erkannt' Ereignis aus.",
+          "fr": "Déclenche un événement 'Aucun mouvement détecté'.",
+          "no": "Utløser en 'Ingen bevegelse oppdaget'-hendelse.",
+          "sv": "Utlöser en 'Ingen rörelse upptäckt'-händelse.",
+          "da": "Udløser en 'Ingen bevægelse registreret'-hændelse.",
+          "es": "Activa un evento 'No se detectó movimiento'.",
+          "it": "Attiva un evento 'Nessun movimento rilevato'."
         },
         "args": [
           {
             "name": "device",
             "type": "device",
             "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "set_state_action",
+        "title": {
+          "en": "Set occupancy state",
+          "nl": "Stel bezettingsstatus in",
+          "de": "Belegungsstatus setzen",
+          "fr": "Définir l'état d'occupation",
+          "no": "Sett tilstedeværelsesstatus",
+          "sv": "Ställ in närvarostatus",
+          "da": "Indstil tilstedeværelsesstatus",
+          "es": "Establecer estado de ocupación",
+          "it": "Imposta stato di occupazione"
+        },
+        "titleFormatted": {
+          "en": "Set occupancy state to [[state]]",
+          "nl": "Stel bezettingsstatus in op [[state]]",
+          "de": "Belegungsstatus setzen auf [[state]]",
+          "fr": "Définir l'état d'occupation sur [[state]]",
+          "no": "Sett tilstedeværelsesstatus til [[state]]",
+          "sv": "Ställ in närvarostatus till [[state]]",
+          "da": "Indstil tilstedeværelsesstatus til [[state]]",
+          "es": "Establecer estado de ocupación a [[state]]",
+          "it": "Imposta stato di occupazione su [[state]]"
+        },
+        "hint": {
+          "en": "Manually sets the occupancy state. Warning: This bypasses normal sensor detection and overrides the current state.",
+          "nl": "Stelt de bezettingsstatus handmatig in. Waarschuwing: Dit omzeilt normale sensordetectie en overschrijft de huidige status.",
+          "de": "Setzt den Belegungsstatus manuell. Warnung: Dies umgeht die normale Sensorerkennung und überschreibt den aktuellen Status.",
+          "fr": "Définit manuellement l'état d'occupation. Avertissement: Ceci contourne la détection normale des capteurs et remplace l'état actuel.",
+          "no": "Setter tilstedeværelsesstatusen manuelt. Advarsel: Dette omgår normal sensordeteksjon og overstyrer gjeldende status.",
+          "sv": "Ställer in närvarostatusen manuellt. Varning: Detta kringgår normal sensordetektering och åsidosätter nuvarande status.",
+          "da": "Indstiller tilstedeværelsesstatussen manuelt. Advarsel: Dette omgår normal sensorregistrering og tilsidesætter den aktuelle status.",
+          "es": "Establece manualmente el estado de ocupación. Advertencia: Esto omite la detección normal del sensor y anula el estado actual.",
+          "it": "Imposta manualmente lo stato di occupazione. Avviso: Questo bypassa il normale rilevamento del sensore e sovrascrive lo stato attuale."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          },
+          {
+            "name": "state",
+            "type": "dropdown",
+            "title": {
+              "en": "State",
+              "nl": "Status",
+              "de": "Zustand",
+              "fr": "État",
+              "no": "Status",
+              "sv": "Status",
+              "da": "Status",
+              "es": "Estado",
+              "it": "Stato"
+            },
+            "values": [
+              {
+                "id": "empty",
+                "label": {
+                  "en": "Empty",
+                  "nl": "Leeg",
+                  "de": "Leer",
+                  "fr": "Vide",
+                  "no": "Tomt",
+                  "sv": "Tomt",
+                  "da": "Tomt",
+                  "es": "Vacía",
+                  "it": "Vuota"
+                }
+              },
+              {
+                "id": "occupied",
+                "label": {
+                  "en": "Occupied",
+                  "nl": "Bezet",
+                  "de": "Belegt",
+                  "fr": "Occupé",
+                  "no": "Opptatt",
+                  "sv": "Upptagen",
+                  "da": "Optaget",
+                  "es": "Ocupada",
+                  "it": "Occupata"
+                }
+              },
+              {
+                "id": "door_open",
+                "label": {
+                  "en": "Door Open",
+                  "nl": "Deur open",
+                  "de": "Tür offen",
+                  "fr": "Porte ouverte",
+                  "no": "Dør åpen",
+                  "sv": "Dörr öppen",
+                  "da": "Dør åben",
+                  "es": "Puerta abierta",
+                  "it": "Porta aperta"
+                }
+              },
+              {
+                "id": "checking",
+                "label": {
+                  "en": "Checking",
+                  "nl": "Controleren",
+                  "de": "Prüfen",
+                  "fr": "Vérification",
+                  "no": "Sjekker",
+                  "sv": "Kontrollerar",
+                  "da": "Kontrollerer",
+                  "es": "Comprobando",
+                  "it": "Controllo"
+                }
+              }
+            ]
           }
         ]
       }

@@ -22,6 +22,53 @@
     "es": "Estado de ocupación cambiado a [[state]]",
     "it": "Stato di occupazione cambiato in [[state]]"
   },
+  "tokens": [
+    {
+      "name": "triggering_device_id",
+      "type": "string",
+      "title": {
+        "en": "Device ID",
+        "nl": "Apparaat-ID",
+        "de": "Geräte-ID",
+        "fr": "ID de l'appareil",
+        "no": "Enhets-ID",
+        "sv": "Enhets-ID",
+        "da": "Enheds-ID",
+        "es": "ID del dispositivo",
+        "it": "ID dispositivo"
+      }
+    },
+    {
+      "name": "triggering_device_name",
+      "type": "string",
+      "title": {
+        "en": "Device Name",
+        "nl": "Apparaatnaam",
+        "de": "Gerätename",
+        "fr": "Nom de l'appareil",
+        "no": "Enhetsnavn",
+        "sv": "Enhetsnamn",
+        "da": "Enhedsnavn",
+        "es": "Nombre del dispositivo",
+        "it": "Nome dispositivo"
+      }
+    },
+    {
+      "name": "timeout_seconds",
+      "type": "number",
+      "title": {
+        "en": "Timeout (seconds)",
+        "nl": "Time-out (seconden)",
+        "de": "Zeitüberschreitung (Sekunden)",
+        "fr": "Délai d'attente (secondes)",
+        "no": "Tidsavbrudd (sekunder)",
+        "sv": "Timeout (sekunder)",
+        "da": "Timeout (sekunder)",
+        "es": "Tiempo de espera (segundos)",
+        "it": "Timeout (secondi)"
+      }
+    }
+  ],
   "args": [
     {
       "name": "device",

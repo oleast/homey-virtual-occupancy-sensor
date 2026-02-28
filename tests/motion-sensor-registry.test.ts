@@ -2,7 +2,8 @@ import {
   describe, it, expect, beforeEach, vi, afterEach,
 } from 'vitest';
 
-import { MotionSensorRegistry } from '../lib/sensors/motion-sensor-registry';
+import { MotionSensorRegistry, TimeoutLearningData } from '../lib/sensors/motion-sensor-registry';
+import TimeoutStore from '../lib/storage/timeout-store';
 
 // Mock the parent class dependencies
 vi.mock('homey-api');
@@ -14,15 +15,23 @@ vi.mock('../lib/homey/api', () => ({
   }),
 }));
 
+function createMockTimeoutStore(data: Map<string, TimeoutLearningData> = new Map()): TimeoutStore {
+  return {
+    load: vi.fn().mockReturnValue(data),
+    save: vi.fn().mockResolvedValue(undefined),
+    remove: vi.fn().mockResolvedValue(undefined),
+  } as unknown as TimeoutStore;
+}
+
 describe('MotionSensorRegistry', () => {
   // We test the timeout learning logic by directly invoking the internal tracking
   // Since trackTimeoutLearning is private, we test it through the public interface
   // by simulating the onDeviceEvent callback behavior
 
   let registry: MotionSensorRegistry;
-  let mockOnDeviceEvent: ReturnType<typeof vi.fn>;
-  let mockLog: ReturnType<typeof vi.fn>;
-  let mockError: ReturnType<typeof vi.fn>;
+  let mockOnDeviceEvent: (deviceId: string, value: boolean | string | number) => void;
+  let mockLog: (message: string) => void;
+  let mockError: (message: string, err?: unknown) => void;
   let mockHomey: unknown;
 
   beforeEach(() => {
@@ -46,12 +55,19 @@ describe('MotionSensorRegistry', () => {
     defaultTimeoutMs?: number;
     enableLearning?: boolean;
     deviceIds?: string[];
+    timeoutStore?: TimeoutStore;
+    initializeWithStoredData?: Map<string, TimeoutLearningData>;
   } = {}) {
     const {
       defaultTimeoutMs = 30000,
       enableLearning = true,
       deviceIds = [],
+      timeoutStore,
+      initializeWithStoredData,
     } = options;
+
+    // Create mock store with optional initial data
+    const store = timeoutStore ?? createMockTimeoutStore(initializeWithStoredData ?? new Map());
 
     registry = new MotionSensorRegistry(
       mockHomey as never,
@@ -61,6 +77,7 @@ describe('MotionSensorRegistry', () => {
       mockOnDeviceEvent,
       mockLog,
       mockError,
+      store,
     );
 
     return registry;
@@ -346,12 +363,13 @@ describe('MotionSensorRegistry', () => {
         expect(getLearnedTimeout('motion-1')).toBe(10000);
       });
 
-      it('should handle very short durations', () => {
+      it('should clamp very short durations to minimum 1000ms', () => {
         trackTimeoutLearning('motion-1', true);
         vi.advanceTimersByTime(100); // 100ms
         trackTimeoutLearning('motion-1', false);
 
-        expect(getLearnedTimeout('motion-1')).toBe(100);
+        // Clamped to minimum of 1000ms
+        expect(getLearnedTimeout('motion-1')).toBe(1000);
       });
 
       it('should handle very long durations', () => {
@@ -362,12 +380,317 @@ describe('MotionSensorRegistry', () => {
         expect(getLearnedTimeout('motion-1')).toBe(300000);
       });
 
-      it('should handle zero duration (immediate false after true)', () => {
+      it('should clamp zero duration to minimum 1000ms', () => {
         trackTimeoutLearning('motion-1', true);
         // No time advance
         trackTimeoutLearning('motion-1', false);
 
-        expect(getLearnedTimeout('motion-1')).toBe(0);
+        // Clamped to minimum of 1000ms
+        expect(getLearnedTimeout('motion-1')).toBe(1000);
+      });
+
+      it('should not clamp durations at or above 1000ms', () => {
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(1500); // 1500ms
+        trackTimeoutLearning('motion-1', false);
+
+        // Not clamped - actual value is used
+        expect(getLearnedTimeout('motion-1')).toBe(1500);
+      });
+
+      it('should log the clamped value when duration is below minimum', () => {
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(50); // 50ms
+        trackTimeoutLearning('motion-1', false);
+
+        // Should log 1000ms (clamped), not 50ms (raw)
+        expect(mockLog).toHaveBeenCalledWith(
+          'Learned new minimum timeout for motion-1: 1000 ms (was null ms)',
+        );
+      });
+    });
+
+    describe('TimeoutStore Persistence', () => {
+      it('should call timeoutStore.save when new minimum learned', () => {
+        const mockStore = createMockTimeoutStore();
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1'],
+          timeoutStore: mockStore,
+        });
+
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(15000);
+        trackTimeoutLearning('motion-1', false);
+
+        expect(mockStore.save).toHaveBeenCalledTimes(1);
+        const savedData = (mockStore.save as ReturnType<typeof vi.fn>).mock.calls[0][0];
+        expect(savedData.get('motion-1')).toBe(15000);
+      });
+
+      it('should NOT call timeoutStore.save when duration is longer than existing minimum', () => {
+        const mockStore = createMockTimeoutStore();
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1'],
+          timeoutStore: mockStore,
+        });
+
+        // First cycle: 10 seconds
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(10000);
+        trackTimeoutLearning('motion-1', false);
+
+        // Second cycle: 20 seconds (longer)
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(20000);
+        trackTimeoutLearning('motion-1', false);
+
+        // Save should only have been called once (for initial learning)
+        expect(mockStore.save).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call timeoutStore.save with clamped value for very short durations', () => {
+        const mockStore = createMockTimeoutStore();
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1'],
+          timeoutStore: mockStore,
+        });
+
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(50); // 50ms
+        trackTimeoutLearning('motion-1', false);
+
+        expect(mockStore.save).toHaveBeenCalledTimes(1);
+        const savedData = (mockStore.save as ReturnType<typeof vi.fn>).mock.calls[0][0];
+        expect(savedData.get('motion-1')).toBe(1000); // Clamped to 1000ms
+      });
+
+      it('should call timeoutStore.save for each device independently', () => {
+        const mockStore = createMockTimeoutStore();
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1', 'motion-2'],
+          timeoutStore: mockStore,
+        });
+
+        // Device 1: 10 second cycle
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(10000);
+        trackTimeoutLearning('motion-1', false);
+
+        // Device 2: 20 second cycle
+        trackTimeoutLearning('motion-2', true);
+        vi.advanceTimersByTime(20000);
+        trackTimeoutLearning('motion-2', false);
+
+        expect(mockStore.save).toHaveBeenCalledTimes(2);
+      });
+    });
+
+    describe('init() - Load from Store', () => {
+      it('should load stored data via init()', () => {
+        const storedData = new Map<string, TimeoutLearningData>([
+          ['motion-2', { lastTrueTimestamp: null, learnedTimeoutMs: 8000 }],
+          ['motion-3', { lastTrueTimestamp: null, learnedTimeoutMs: 12000 }],
+        ]);
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-2', 'motion-3'],
+          initializeWithStoredData: storedData,
+        });
+
+        // Data should be loaded from store
+        expect(getLearnedTimeout('motion-2')).toBe(8000);
+        expect(getLearnedTimeout('motion-3')).toBe(12000);
+      });
+
+      it('should NOT trigger timeoutStore.save during init()', () => {
+        const storedData = new Map<string, TimeoutLearningData>([
+          ['motion-1', { lastTrueTimestamp: null, learnedTimeoutMs: 5000 }],
+        ]);
+        const mockStore = createMockTimeoutStore(storedData);
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1'],
+          timeoutStore: mockStore,
+        });
+
+        expect(mockStore.save).not.toHaveBeenCalled();
+        expect(registry.getLearnedTimeout('motion-1')).toBe(5000);
+      });
+
+      it('should handle empty store gracefully', () => {
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1'],
+          initializeWithStoredData: new Map(),
+        });
+
+        expect(getLearnedTimeout('motion-1')).toBeNull();
+        expect(registry.getMinLearnedTimeout(30000)).toBe(30000);
+      });
+
+      it('should allow subsequent learning after restoring data', () => {
+        const storedData = new Map<string, TimeoutLearningData>([
+          ['motion-1', { lastTrueTimestamp: null, learnedTimeoutMs: 20000 }],
+        ]);
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1'],
+          initializeWithStoredData: storedData,
+        });
+
+        expect(getLearnedTimeout('motion-1')).toBe(20000);
+
+        // Now learn a shorter timeout - should update
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(8000);
+        trackTimeoutLearning('motion-1', false);
+
+        expect(getLearnedTimeout('motion-1')).toBe(8000);
+      });
+
+      it('should NOT update restored data if subsequent learning is longer', () => {
+        const storedData = new Map<string, TimeoutLearningData>([
+          ['motion-1', { lastTrueTimestamp: null, learnedTimeoutMs: 5000 }],
+        ]);
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1'],
+          initializeWithStoredData: storedData,
+        });
+
+        // Learn a longer timeout - should NOT update
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(15000);
+        trackTimeoutLearning('motion-1', false);
+
+        expect(getLearnedTimeout('motion-1')).toBe(5000);
+      });
+
+      it('should log message when restoring data', () => {
+        const storedData = new Map<string, TimeoutLearningData>([
+          ['motion-1', { lastTrueTimestamp: null, learnedTimeoutMs: 10000 }],
+          ['motion-2', { lastTrueTimestamp: null, learnedTimeoutMs: 15000 }],
+        ]);
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1', 'motion-2'],
+          initializeWithStoredData: storedData,
+        });
+
+        expect(mockLog).toHaveBeenCalledWith('Restored learned timeouts for 2 sensors');
+      });
+    });
+
+    describe('removeDevice', () => {
+      it('should remove existing device data', () => {
+        // Learn a timeout for a device
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(10000);
+        trackTimeoutLearning('motion-1', false);
+
+        expect(getLearnedTimeout('motion-1')).toBe(10000);
+
+        // Remove the device
+        registry.removeDevice('motion-1');
+
+        expect(getLearnedTimeout('motion-1')).toBeNull();
+      });
+
+      it('should handle non-existent deviceId gracefully (no-op)', () => {
+        // Should not throw
+        expect(() => registry.removeDevice('non-existent-device')).not.toThrow();
+      });
+
+      it('should call timeoutStore.remove when device is removed', () => {
+        const mockStore = createMockTimeoutStore();
+        registry.destroy();
+        registry = createRegistry({ timeoutStore: mockStore });
+
+        // Learn a timeout (triggers save)
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(10000);
+        trackTimeoutLearning('motion-1', false);
+
+        expect(mockStore.save).toHaveBeenCalledTimes(1);
+
+        // Remove the device
+        registry.removeDevice('motion-1');
+
+        // Remove should have been called
+        expect(mockStore.remove).toHaveBeenCalledTimes(1);
+        expect(mockStore.remove).toHaveBeenCalledWith('motion-1');
+      });
+
+      it('should not affect other devices', () => {
+        // Learn timeouts for two devices
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(10000);
+        trackTimeoutLearning('motion-1', false);
+
+        trackTimeoutLearning('motion-2', true);
+        vi.advanceTimersByTime(15000);
+        trackTimeoutLearning('motion-2', false);
+
+        expect(getLearnedTimeout('motion-1')).toBe(10000);
+        expect(getLearnedTimeout('motion-2')).toBe(15000);
+
+        // Remove device1
+        registry.removeDevice('motion-1');
+
+        // device1 data is gone, device2 preserved
+        expect(getLearnedTimeout('motion-1')).toBeNull();
+        expect(getLearnedTimeout('motion-2')).toBe(15000);
+      });
+
+      it('should affect getAllLearnedTimeouts result', () => {
+        // Learn timeouts for two devices
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(10000);
+        trackTimeoutLearning('motion-1', false);
+
+        trackTimeoutLearning('motion-2', true);
+        vi.advanceTimersByTime(15000);
+        trackTimeoutLearning('motion-2', false);
+
+        // Remove one device
+        registry.removeDevice('motion-1');
+
+        const allTimeouts = registry.getAllLearnedTimeouts();
+        expect(allTimeouts.has('motion-1')).toBe(false);
+        expect(allTimeouts.get('motion-2')).toBe(15000);
+      });
+
+      it('should affect getMinLearnedTimeout result', () => {
+        // Learn two timeouts: motion-1=5000ms, motion-2=15000ms
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(5000);
+        trackTimeoutLearning('motion-1', false);
+
+        trackTimeoutLearning('motion-2', true);
+        vi.advanceTimersByTime(15000);
+        trackTimeoutLearning('motion-2', false);
+
+        expect(registry.getMinLearnedTimeout(20000)).toBe(5000);
+
+        // Remove motion-1 (the minimum)
+        registry.removeDevice('motion-1');
+
+        // Min should now be motion-2's timeout
+        expect(registry.getMinLearnedTimeout(20000)).toBe(15000);
       });
     });
 
@@ -386,6 +709,94 @@ describe('MotionSensorRegistry', () => {
         }
 
         expect(getLearnedTimeout('motion-1')).toBeNull();
+      });
+    });
+
+    describe('updateDeviceIds cleanup', () => {
+      it('should remove timeout data for devices no longer in list', async () => {
+        const mockStore = createMockTimeoutStore();
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1', 'motion-2'],
+          timeoutStore: mockStore,
+        });
+
+        // Learn timeouts for both devices
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(10000);
+        trackTimeoutLearning('motion-1', false);
+
+        trackTimeoutLearning('motion-2', true);
+        vi.advanceTimersByTime(15000);
+        trackTimeoutLearning('motion-2', false);
+
+        expect(getLearnedTimeout('motion-1')).toBe(10000);
+        expect(getLearnedTimeout('motion-2')).toBe(15000);
+
+        // Update to only include motion-2
+        await registry.updateDeviceIds(['motion-2']);
+
+        // motion-1 timeout data should be removed
+        expect(getLearnedTimeout('motion-1')).toBeNull();
+        expect(getLearnedTimeout('motion-2')).toBe(15000);
+        expect(mockStore.remove).toHaveBeenCalledWith('motion-1');
+      });
+
+      it('should not remove timeout data for devices still in list', async () => {
+        const mockStore = createMockTimeoutStore();
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1', 'motion-2'],
+          timeoutStore: mockStore,
+        });
+
+        // Learn timeout for motion-1
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(10000);
+        trackTimeoutLearning('motion-1', false);
+
+        // Clear mock call count from save
+        vi.clearAllMocks();
+
+        // Update with same devices
+        await registry.updateDeviceIds(['motion-1', 'motion-2']);
+
+        // No remove calls should have been made
+        expect(mockStore.remove).not.toHaveBeenCalled();
+        expect(getLearnedTimeout('motion-1')).toBe(10000);
+      });
+
+      it('should handle removing multiple devices', async () => {
+        const mockStore = createMockTimeoutStore();
+        registry.destroy();
+        createRegistry({
+          enableLearning: true,
+          deviceIds: ['motion-1', 'motion-2', 'motion-3'],
+          timeoutStore: mockStore,
+        });
+
+        // Learn timeouts for all devices
+        trackTimeoutLearning('motion-1', true);
+        vi.advanceTimersByTime(10000);
+        trackTimeoutLearning('motion-1', false);
+
+        trackTimeoutLearning('motion-2', true);
+        vi.advanceTimersByTime(15000);
+        trackTimeoutLearning('motion-2', false);
+
+        trackTimeoutLearning('motion-3', true);
+        vi.advanceTimersByTime(20000);
+        trackTimeoutLearning('motion-3', false);
+
+        // Update to only include motion-2
+        await registry.updateDeviceIds(['motion-2']);
+
+        // motion-1 and motion-3 should be removed
+        expect(mockStore.remove).toHaveBeenCalledWith('motion-1');
+        expect(mockStore.remove).toHaveBeenCalledWith('motion-3');
+        expect(mockStore.remove).toHaveBeenCalledTimes(2);
       });
     });
   });

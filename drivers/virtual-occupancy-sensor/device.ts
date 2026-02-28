@@ -1,6 +1,8 @@
 import type { HomeyAPIV3Local } from 'homey-api';
 import Homey from 'homey';
-import { EventType, OccupancyState } from '../../lib/types';
+import {
+  DeviceSettings, EventType, OccupancyState, TriggerContext,
+} from '../../lib/types';
 import { VirtualOccupancySensorController } from './controller';
 import { MotionSensorRegistry } from '../../lib/sensors/motion-sensor-registry';
 import { ContactSensorRegistry } from '../../lib/sensors/contact-sensor-registry';
@@ -9,23 +11,7 @@ import { getDevicesWithCapability } from '../../lib/homey/device-api';
 import { BaseHomeyDevice, DeviceUpdateInfo } from '../../lib/homey/device';
 import { getAllZones, getZoneIdsForSearch } from '../../lib/homey/zone-api';
 import { CheckingSensorRegistry } from '../../lib/sensors/checking-sensor-registry';
-
-/* eslint-disable camelcase */
-export interface DeviceSettings {
-  motion_timeout: number;
-  auto_learn_timeout: boolean;
-  auto_detect_motion_sensors: boolean;
-  auto_detect_door_sensors: boolean;
-  include_child_zones_motion: boolean;
-  include_child_zones_contact: boolean;
-  active_on_occupied: boolean;
-  active_on_empty: boolean;
-  active_on_door_open: boolean;
-  active_on_checking: boolean;
-  door_sensors: string;
-  motion_sensors: string;
-}
-/* eslint-enable camelcase */
+import { TimeoutStore } from '../../lib/storage';
 
 export interface OnSettingsEvent {
   oldSettings: DeviceSettings;
@@ -36,24 +22,24 @@ export interface OnSettingsEvent {
 // Interface for driver's flow trigger methods (defined after DeviceSettings but before class)
 /* eslint-disable no-use-before-define */
 interface VirtualOccupancySensorDriverInterface extends Homey.Driver {
-  triggerOccupancyStateChanged(device: VirtualOccupancySensorDevice, state: OccupancyState): void;
-  triggerBecameOccupied(device: VirtualOccupancySensorDevice): void;
-  triggerBecameEmpty(device: VirtualOccupancySensorDevice): void;
-  triggerDoorOpened(device: VirtualOccupancySensorDevice): void;
-  triggerCheckingStarted(device: VirtualOccupancySensorDevice): void;
+  triggerOccupancyStateChanged(device: VirtualOccupancySensorDevice, state: OccupancyState, context: TriggerContext): void;
+  triggerBecameOccupied(device: VirtualOccupancySensorDevice, context: TriggerContext): void;
+  triggerBecameEmpty(device: VirtualOccupancySensorDevice, context: TriggerContext): void;
+  triggerDoorOpened(device: VirtualOccupancySensorDevice, context: TriggerContext): void;
+  triggerCheckingStarted(device: VirtualOccupancySensorDevice, context: TriggerContext): void;
 }
 /* eslint-enable no-use-before-define */
 
 export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   protected controller!: VirtualOccupancySensorController;
-  private motionSensorRegistry: MotionSensorRegistry | null = null;
-  private contactSensorRegistry: ContactSensorRegistry | null = null;
+  private motionSensorRegistry!: MotionSensorRegistry;
+  private contactSensorRegistry!: ContactSensorRegistry;
   private checkingSensorRegistry: CheckingSensorRegistry | null = null;
 
   async onInit() {
     this.controller = new VirtualOccupancySensorController(
-      (state: OccupancyState) => {
-        this.onStateChange(state).catch(this.error);
+      (state: OccupancyState, context: TriggerContext) => {
+        this.onStateChange(state, context).catch(this.error);
       },
       this.log.bind(this),
       this.error.bind(this),
@@ -70,8 +56,8 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     this.log('VirtualOccupancySensorDevice has been deleted');
     this.unsubscribeFromDeviceUpdates();
     await this.unsubscribeFromDeviceManagerEvents();
-    this.motionSensorRegistry?.destroy();
-    this.contactSensorRegistry?.destroy();
+    this.motionSensorRegistry.destroy();
+    this.contactSensorRegistry.destroy();
   }
 
   protected onZoneChanged(): void {
@@ -143,12 +129,12 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     if (needsContactSensorReload) {
       this.log('Door sensor or zone settings changed, updating registry');
       const doorSensorIds = await this.getContactSensorsFromSettings(newSettings);
-      await this.contactSensorRegistry?.updateDeviceIds(doorSensorIds);
+      await this.contactSensorRegistry.updateDeviceIds(doorSensorIds);
     }
     if (needsMotionSensorReload) {
       this.log('Motion sensor or zone settings changed, updating registry');
-      const motionSensorIds = await this.getMotionsSensorsFromSettings(newSettings);
-      await this.motionSensorRegistry?.updateDeviceIds(motionSensorIds);
+      const newMotionSensorIds = await this.getMotionsSensorsFromSettings(newSettings);
+      await this.motionSensorRegistry.updateDeviceIds(newMotionSensorIds);
     }
 
     const currentOccupancyState = this.getCapabilityValue('occupancy_state') as OccupancyState;
@@ -171,8 +157,8 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     }
   }
 
-  protected async onStateChange(state: OccupancyState) {
-    this.log(`Device state changed to: ${state}`);
+  protected async onStateChange(state: OccupancyState, context: TriggerContext) {
+    this.log(`Device state changed to: ${state}, triggered by: ${context.deviceName} (${context.deviceId})`);
 
     if (state !== 'checking' && this.checkingSensorRegistry) {
       this.log('Stopping checking sensor');
@@ -181,7 +167,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     }
 
     await this.setCapabilityValue('occupancy_state', state).catch(this.error);
-    await this.triggerStateChangeFlows(state);
+    await this.triggerStateChangeFlows(state, context);
 
     const settings = this.getSettings() as DeviceSettings;
     let alarmState = false;
@@ -207,27 +193,27 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     await this.setCapabilityValue('alarm_motion', alarmState).catch(this.error);
   }
 
-  private async triggerStateChangeFlows(state: OccupancyState): Promise<void> {
+  private async triggerStateChangeFlows(state: OccupancyState, context: TriggerContext): Promise<void> {
     const driver = this.driver as VirtualOccupancySensorDriverInterface;
 
     if (typeof driver?.triggerOccupancyStateChanged !== 'function') {
       return;
     }
 
-    driver.triggerOccupancyStateChanged(this, state);
+    driver.triggerOccupancyStateChanged(this, state, context);
 
     switch (state) {
       case 'occupied':
-        driver.triggerBecameOccupied(this);
+        driver.triggerBecameOccupied(this, context);
         break;
       case 'empty':
-        driver.triggerBecameEmpty(this);
+        driver.triggerBecameEmpty(this, context);
         break;
       case 'door_open':
-        driver.triggerDoorOpened(this);
+        driver.triggerDoorOpened(this, context);
         break;
       case 'checking':
-        driver.triggerCheckingStarted(this);
+        driver.triggerCheckingStarted(this, context);
         break;
       default:
         break;
@@ -236,7 +222,22 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
   public triggerEventFromFlow(eventType: EventType): void {
     this.log(`Flow action: triggering manual event: ${eventType}`);
-    this.controller.registerEvent(eventType, 'flow_action');
+    const context: TriggerContext = {
+      deviceId: 'flow_action',
+      deviceName: 'Flow Action',
+      timeoutSeconds: null,
+    };
+    this.controller.registerEvent(eventType, context);
+  }
+
+  public setStateFromFlow(state: OccupancyState): void {
+    this.log(`Flow action: setting state to: ${state}`);
+    const context: TriggerContext = {
+      deviceId: 'flow_action',
+      deviceName: 'Flow Action',
+      timeoutSeconds: null,
+    };
+    this.controller.forceState(state, context);
   }
 
   private handleCheckingState() {
@@ -246,7 +247,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     // Don't short-circuit to empty based on current motion sensor state, because:
     // 1. Motion sensor may have timed out while door was still open (user lingered)
     // 2. User may be sitting still and will move again within the timeout period
-    const deviceConfigs = this.motionSensorRegistry?.getDeviceConfigs() || [];
+    const deviceConfigs = this.motionSensorRegistry.getDeviceConfigs() || [];
     this.checkingSensorRegistry = new CheckingSensorRegistry(
       this.homey,
       deviceConfigs,
@@ -258,14 +259,21 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
   private onCheckingTimeout() {
     this.log('Checking sensor timeout reached, determining next state');
-    const isAnyMotionActive = this.motionSensorRegistry?.isAnyStateTrue() ?? false;
+    const isAnyMotionActive = this.motionSensorRegistry.isAnyStateTrue() ?? false;
+
+    const settings = this.getSettings() as DeviceSettings;
+    const context: TriggerContext = {
+      deviceId: 'system',
+      deviceName: 'Checking Timeout',
+      timeoutSeconds: settings.motion_timeout,
+    };
 
     if (isAnyMotionActive) {
       this.log('Motion sensor still active after checking timeout, transitioning to occupied');
-      this.controller.registerEvent('motion_detected', 'system');
+      this.controller.registerEvent('motion_detected', context);
     } else {
       this.log('No motion detected during checking period, transitioning to empty');
-      this.controller.registerEvent('timeout', 'system');
+      this.controller.registerEvent('timeout', context);
     }
   }
 
@@ -300,6 +308,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
 
     const motionSensorIds = await this.getMotionsSensorsFromSettings();
     const settings = this.getSettings();
+    const timeoutStore = new TimeoutStore(this, this.log.bind(this), this.error.bind(this));
     this.motionSensorRegistry = new MotionSensorRegistry(
       this.homey,
       settings.motion_timeout * 1000,
@@ -308,6 +317,7 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       this.handleMotionSensorEvent.bind(this),
       this.log.bind(this),
       this.error.bind(this),
+      timeoutStore,
     );
   }
 
@@ -317,45 +327,52 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     if (settings.auto_detect_door_sensors) {
       this.log('Refreshing auto-detected door sensors after zone change');
       const doorSensorIds = await this.getContactSensorsFromSettings(settings);
-      await this.contactSensorRegistry?.updateDeviceIds(doorSensorIds);
+      await this.contactSensorRegistry.updateDeviceIds(doorSensorIds);
     }
 
     if (settings.auto_detect_motion_sensors) {
       this.log('Refreshing auto-detected motion sensors after zone change');
-      const motionSensorIds = await this.getMotionsSensorsFromSettings(settings);
-      await this.motionSensorRegistry?.updateDeviceIds(motionSensorIds);
+      const newMotionSensorIds = await this.getMotionsSensorsFromSettings(settings);
+      await this.motionSensorRegistry.updateDeviceIds(newMotionSensorIds);
     }
   }
 
-  private async handleContactSensorEvent(deviceId: string, value: boolean | number | string): Promise<void> {
+  private handleContactSensorEvent(deviceId: string, value: boolean | number | string): void {
     if (typeof value !== 'boolean') {
       this.log(`Ignoring non-boolean contact sensor value from ${deviceId}: ${value}`);
       return;
     }
     this.log(`Door event triggered on sensor ${deviceId}, native value:${value}`);
 
+    const settings = this.getSettings() as DeviceSettings;
+    const context = this.contactSensorRegistry.buildContext(deviceId, settings);
+
     if (value) {
       this.log(`Door opened event triggered on sensor ${deviceId}`);
-      this.controller.registerEvent('any_door_open', deviceId);
+      this.controller.registerEvent('any_door_open', context);
     } else {
-      const allDoorsClosed = this.contactSensorRegistry?.isAllStateFalse() ?? false;
+      const allDoorsClosed = this.contactSensorRegistry.isAllStateFalse();
       if (!allDoorsClosed) {
         this.log(`Not all doors are closed after door close on sensor ${deviceId}, ignoring event`);
       } else {
         this.log(`Door closed on sensor ${deviceId}, all doors closed: ${allDoorsClosed}`);
-        this.controller.registerEvent('all_doors_closed', deviceId);
+        this.controller.registerEvent('all_doors_closed', context);
       }
     }
   }
 
-  private async handleMotionSensorEvent(deviceId: string, value: boolean | number | string): Promise<void> {
+  private handleMotionSensorEvent(deviceId: string, value: boolean | number | string): void {
     if (typeof value !== 'boolean') {
       this.log(`Got non-boolean motion sensor value from ${deviceId}: ${value}`);
       return;
     }
     this.log(`Motion event triggered on sensor ${deviceId}, native value: ${value}`);
+
+    const settings = this.getSettings() as DeviceSettings;
+    const context = this.motionSensorRegistry.buildContext(deviceId, settings);
+
     const eventType = value ? 'motion_detected' : 'motion_timeout';
-    this.controller.registerEvent(eventType, deviceId);
+    this.controller.registerEvent(eventType, context);
   }
 
   private async getContactSensorsInZone(includeChildZones: boolean = false): Promise<string[]> {
