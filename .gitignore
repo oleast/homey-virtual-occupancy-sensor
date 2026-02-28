@@ -5,3 +5,7 @@
 .DS_Store
 *.log
 .vscode/
+
+# Copilot memories (session-specific)
+memories/session/
+.memory/plans/

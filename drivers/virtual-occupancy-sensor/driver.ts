@@ -104,6 +104,7 @@ module.exports = class VirtualOccupancySensorDriver extends Homey.Driver {
     this.registerDoorClosedAction();
     this.registerMotionDetectedAction();
     this.registerResetStateAction();
+    this.registerSetStateAction();
   }
 
   registerDoorOpenedAction() {
@@ -139,6 +140,20 @@ module.exports = class VirtualOccupancySensorDriver extends Homey.Driver {
       const device = args.device as VirtualOccupancySensorDevice;
       device.triggerEventFromFlow('timeout');
       return true;
+    });
+  }
+
+  registerSetStateAction() {
+    const setStateAction = this.homey.flow.getActionCard('set_state_action');
+    setStateAction.registerRunListener(async (args) => {
+      const device = args.device as VirtualOccupancySensorDevice;
+      try {
+        device.setStateFromFlow(args.state);
+        return true;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : 'Unknown error';
+        throw new Error(`Failed to set occupancy state: ${message}`);
+      }
     });
   }
 

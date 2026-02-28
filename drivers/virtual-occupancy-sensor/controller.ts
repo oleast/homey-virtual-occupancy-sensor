@@ -42,6 +42,11 @@ export class VirtualOccupancySensorController {
     }
   }
 
+  public forceState(state: OccupancyState, context: TriggerContext) {
+    this.log(`Forcing state to ${state} from ${context.deviceName} (${context.deviceId})`);
+    this.transitionTo(state, context);
+  }
+
   protected transitionTo(newState: OccupancyState, context: TriggerContext) {
     if (this.currentState === newState) return;
     this.log(`Transitioning from ${this.currentState} to ${newState}`);

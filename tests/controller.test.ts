@@ -322,4 +322,108 @@ describe('VirtualOccupancySensorController', () => {
       expect(getLastState()).toBe('occupied');
     });
   });
+
+  describe('forceState', () => {
+    it('should transition to specified state from empty', () => {
+      const localStateChanges: OccupancyState[] = [];
+      const localController = new VirtualOccupancySensorControllerForTest(
+        (state) => localStateChanges.push(state),
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+      );
+      const context: TriggerContext = {
+        deviceId: 'flow_action',
+        deviceName: 'Flow Action',
+        timeoutSeconds: null,
+      };
+
+      localController.forceState('occupied', context);
+      expect(localStateChanges).toContain('occupied');
+    });
+
+    it('should allow any state transition (empty to checking)', () => {
+      const localStateChanges: OccupancyState[] = [];
+      const localController = new VirtualOccupancySensorControllerForTest(
+        (state) => localStateChanges.push(state),
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+      );
+      const context: TriggerContext = {
+        deviceId: 'flow_action',
+        deviceName: 'Flow Action',
+        timeoutSeconds: null,
+      };
+
+      // This transition is normally impossible via events
+      localController.forceState('checking', context);
+      expect(localStateChanges).toContain('checking');
+    });
+
+    it('should not trigger callback when forcing same state', () => {
+      const localStateChanges: OccupancyState[] = [];
+      const localController = new VirtualOccupancySensorControllerForTest(
+        (state) => localStateChanges.push(state),
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+      );
+      const context: TriggerContext = {
+        deviceId: 'flow_action',
+        deviceName: 'Flow Action',
+        timeoutSeconds: null,
+      };
+
+      // Initial state is empty, forcing to empty should be no-op
+      localController.forceState('empty', context);
+      expect(localStateChanges).toHaveLength(0);
+    });
+
+    it('should pass context to callback', () => {
+      let capturedContext: TriggerContext | null = null;
+      const localController = new VirtualOccupancySensorControllerForTest(
+        (state, context) => { capturedContext = context; },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+      );
+      const context: TriggerContext = {
+        deviceId: 'flow_action',
+        deviceName: 'Flow Action',
+        timeoutSeconds: null,
+      };
+
+      localController.forceState('occupied', context);
+      expect(capturedContext).toEqual(context);
+    });
+
+    it('should allow transition from any state to any other state', () => {
+      const localStateChanges: OccupancyState[] = [];
+      const localController = new VirtualOccupancySensorControllerForTest(
+        (state) => localStateChanges.push(state),
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+      );
+      const context: TriggerContext = {
+        deviceId: 'flow_action',
+        deviceName: 'Flow Action',
+        timeoutSeconds: null,
+      };
+
+      // Go through all states in unusual order
+      localController.forceState('checking', context);
+      localController.forceState('door_open', context);
+      localController.forceState('empty', context);
+      localController.forceState('occupied', context);
+
+      expect(localStateChanges).toEqual(['checking', 'door_open', 'empty', 'occupied']);
+    });
+  });
 });

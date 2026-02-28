@@ -1,0 +1,116 @@
+{
+  "id": "set_state_action",
+  "title": {
+    "en": "Set occupancy state",
+    "nl": "Stel bezettingsstatus in",
+    "de": "Belegungsstatus setzen",
+    "fr": "Définir l'état d'occupation",
+    "no": "Sett tilstedeværelsesstatus",
+    "sv": "Ställ in närvarostatus",
+    "da": "Indstil tilstedeværelsesstatus",
+    "es": "Establecer estado de ocupación",
+    "it": "Imposta stato di occupazione"
+  },
+  "titleFormatted": {
+    "en": "Set occupancy state to [[state]]",
+    "nl": "Stel bezettingsstatus in op [[state]]",
+    "de": "Belegungsstatus setzen auf [[state]]",
+    "fr": "Définir l'état d'occupation sur [[state]]",
+    "no": "Sett tilstedeværelsesstatus til [[state]]",
+    "sv": "Ställ in närvarostatus till [[state]]",
+    "da": "Indstil tilstedeværelsesstatus til [[state]]",
+    "es": "Establecer estado de ocupación a [[state]]",
+    "it": "Imposta stato di occupazione su [[state]]"
+  },
+  "hint": {
+    "en": "Manually sets the occupancy state. Warning: This bypasses normal sensor detection and overrides the current state.",
+    "nl": "Stelt de bezettingsstatus handmatig in. Waarschuwing: Dit omzeilt normale sensordetectie en overschrijft de huidige status.",
+    "de": "Setzt den Belegungsstatus manuell. Warnung: Dies umgeht die normale Sensorerkennung und überschreibt den aktuellen Status.",
+    "fr": "Définit manuellement l'état d'occupation. Avertissement: Ceci contourne la détection normale des capteurs et remplace l'état actuel.",
+    "no": "Setter tilstedeværelsesstatusen manuelt. Advarsel: Dette omgår normal sensordeteksjon og overstyrer gjeldende status.",
+    "sv": "Ställer in närvarostatusen manuellt. Varning: Detta kringgår normal sensordetektering och åsidosätter nuvarande status.",
+    "da": "Indstiller tilstedeværelsesstatussen manuelt. Advarsel: Dette omgår normal sensorregistrering og tilsidesætter den aktuelle status.",
+    "es": "Establece manualmente el estado de ocupación. Advertencia: Esto omite la detección normal del sensor y anula el estado actual.",
+    "it": "Imposta manualmente lo stato di occupazione. Avviso: Questo bypassa il normale rilevamento del sensore e sovrascrive lo stato attuale."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    },
+    {
+      "name": "state",
+      "type": "dropdown",
+      "title": {
+        "en": "State",
+        "nl": "Status",
+        "de": "Zustand",
+        "fr": "État",
+        "no": "Status",
+        "sv": "Status",
+        "da": "Status",
+        "es": "Estado",
+        "it": "Stato"
+      },
+      "values": [
+        {
+          "id": "empty",
+          "label": {
+            "en": "Empty",
+            "nl": "Leeg",
+            "de": "Leer",
+            "fr": "Vide",
+            "no": "Tomt",
+            "sv": "Tomt",
+            "da": "Tomt",
+            "es": "Vacía",
+            "it": "Vuota"
+          }
+        },
+        {
+          "id": "occupied",
+          "label": {
+            "en": "Occupied",
+            "nl": "Bezet",
+            "de": "Belegt",
+            "fr": "Occupé",
+            "no": "Opptatt",
+            "sv": "Upptagen",
+            "da": "Optaget",
+            "es": "Ocupada",
+            "it": "Occupata"
+          }
+        },
+        {
+          "id": "door_open",
+          "label": {
+            "en": "Door Open",
+            "nl": "Deur open",
+            "de": "Tür offen",
+            "fr": "Porte ouverte",
+            "no": "Dør åpen",
+            "sv": "Dörr öppen",
+            "da": "Dør åben",
+            "es": "Puerta abierta",
+            "it": "Porta aperta"
+          }
+        },
+        {
+          "id": "checking",
+          "label": {
+            "en": "Checking",
+            "nl": "Controleren",
+            "de": "Prüfen",
+            "fr": "Vérification",
+            "no": "Sjekker",
+            "sv": "Kontrollerar",
+            "da": "Kontrollerer",
+            "es": "Comprobando",
+            "it": "Controllo"
+          }
+        }
+      ]
+    }
+  ]
+}

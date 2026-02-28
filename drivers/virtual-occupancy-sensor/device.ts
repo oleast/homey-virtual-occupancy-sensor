@@ -229,6 +229,16 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     this.controller.registerEvent(eventType, context);
   }
 
+  public setStateFromFlow(state: OccupancyState): void {
+    this.log(`Flow action: setting state to: ${state}`);
+    const context: TriggerContext = {
+      deviceId: 'flow_action',
+      deviceName: 'Flow Action',
+      timeoutSeconds: null,
+    };
+    this.controller.forceState(state, context);
+  }
+
   private handleCheckingState() {
     this.log('Handling checking state');
 
