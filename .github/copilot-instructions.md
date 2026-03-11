@@ -152,6 +152,24 @@ When making changes:
 
 Refer to `CONTRIBUTING.md` for detailed contribution guidelines.
 
+## Versioning & Changelog
+
+Versioning and changelog updates are **fully automated**. When a PR is merged to `main`, the `post-merge-release.md` agentic workflow handles:
+- Determining whether a release is needed (skips docs-only, test-only, CI-only, and Dependabot devDependency changes)
+- Choosing the semver bump level (patch, minor, or major)
+- Updating the `version` field in both `.homeycompose/app.json` and `app.json`
+- Generating changelog entries in all 9 locales and updating `.homeychangelog.json`
+- Committing and tagging the release
+
+**Agents must NOT:**
+- Bump the app version in `.homeycompose/app.json` or `app.json`
+- Edit `.homeychangelog.json`
+
+**Agents SHOULD:**
+- Write clear, descriptive PR titles and descriptions — these drive the automated changelog
+- Use conventional commit messages (`feat:`, `fix:`, `chore:`, `docs:`, `test:`, `ci:`, `refactor:`, etc.)
+- Include `BREAKING CHANGE` in commit body or `!` after type for breaking changes (e.g., `feat!:`)
+
 ## Quality Checks
 
 After making code changes, agents should run the relevant subset of quality checks based on which files were modified.
