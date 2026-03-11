@@ -1,34 +1,31 @@
 ---
-name: Post-Merge Release
+run-name: "Release: ${{ github.event.pull_request.title }}"
 
 on:
   pull_request:
     types: [closed]
     branches: [main]
-
-skip-bots: [github-actions]
-roles: [write, maintainer, admin]
+  roles: [write, maintainer, admin]
+  skip-bots: [github-actions]
 
 permissions:
-  contents: write
+  contents: read
   pull-requests: read
+  actions: read
 
 engine: claude
 
 tools:
-  github:
-    toolsets: [repos, prs]
-  bash:
-    - git:*
-    - cat
-    - grep
-    - jq
-    - gh
-  edit: true
+  bash: true
+  edit:
 
 safe-outputs:
   noop:
-    max: 1
+  create-pull-request:
+    title-prefix: "chore: release "
+    labels: [release]
+    draft: false
+    auto-merge: true
 
 concurrency:
   group: release
@@ -37,130 +34,88 @@ concurrency:
 timeout-minutes: 10
 ---
 
-# Post-Merge Release Agent
+# Post-Merge Release
 
-You are a release automation agent. When a pull request is merged to `main`, you determine whether a release is needed, and if so, bump the version, generate a changelog, and commit the release.
+You are a release automation agent for a Homey smart home app. When a pull request is merged to `main`, determine whether a release is needed. If so, bump the version, generate a multi-locale changelog, and create a release pull request.
 
-## Prerequisites
+## Step 1: Check if PR was merged
 
-Only proceed if the pull request was actually merged:
-- Check `${{ github.event.pull_request.merged }}` is `true`
-- If not merged (i.e. the PR was closed without merging), exit immediately with no action
+Run:
+```
+gh pr view ${{ github.event.pull_request.number }} --json merged --jq '.merged'
+```
+If the result is not `true`, use the `noop` safe output and stop.
 
-## Step 1: Gather Context
+## Step 2: Gather PR context
 
-Collect the following information about the merged PR:
-- **PR title**: `${{ github.event.pull_request.title }}`
-- **PR body**: `${{ github.event.pull_request.body }}`
-- **PR author**: `${{ github.event.pull_request.user.login }}`
-- **Changed files**: Use `gh pr view ${{ github.event.pull_request.number }} --json files --jq '.files[].path'` to get the list
-- **Commit messages**: Use `gh pr view ${{ github.event.pull_request.number }} --json commits --jq '.commits[].messageHeadline'` to get commit messages
+Collect the following using `gh pr view ${{ github.event.pull_request.number }}`:
+- **Title**: `--json title --jq '.title'`
+- **Body**: `--json body --jq '.body'`
+- **Author**: `--json author --jq '.author.login'`
+- **Changed files**: `--json files --jq '.files[].path'`
+- **Commit messages**: `--json commits --jq '.commits[].messageHeadline'`
 
 The project uses **conventional commits** (`feat:`, `fix:`, `chore:`, `docs:`, `test:`, `ci:`, `refactor:`, etc.).
 
-## Step 2: Decide Whether to Release
+## Step 3: Decide whether a release is needed
 
-**DO NOT release** (exit with `noop`) if ANY of the following are true:
-- The PR only changes documentation files (`.md`), test files (`tests/`, `__mocks__/`), CI files (`.github/`), locale files (`locales/`), or other non-functional files
-- OR the PR is from `dependabot[bot]` and only bumps `devDependencies` in `package.json` (not `dependencies`)
-- OR all commit messages use only non-functional prefixes: `docs:`, `test:`, `ci:`, `style:`, `chore:`
+**Skip the release** (use `noop` and stop) if ALL changes are non-functional:
+- Only documentation (`.md`), tests (`tests/`, `__mocks__/`), CI (`.github/`), or locale files (`locales/`)
+- Dependabot PR that only bumps `devDependencies` (not `dependencies`)
+- All commits use non-functional prefixes only: `docs:`, `test:`, `ci:`, `style:`, `chore:`
 
-**DO release** if any of the following are true:
-- Any changes to source code: `app.ts`, `lib/**`, `drivers/**`, `.homeycompose/**`
-- Commit messages include `feat:`, `fix:`, `refactor:`, or `perf:` prefixes
-- The PR is from `dependabot[bot]` but bumps production `dependencies` (not `devDependencies`)
-- Any commit message contains `BREAKING CHANGE` or uses `!` (e.g., `feat!:`)
+**Create a release** if any of these are true:
+- Changes to source code: `app.ts`, `lib/**`, `drivers/**`, `.homeycompose/**`
+- Commits with `feat:`, `fix:`, `refactor:`, or `perf:` prefixes
+- Dependabot bumping production `dependencies`
+- Any `BREAKING CHANGE` or `!` suffix (e.g., `feat!:`)
 
-If no release is needed, use the `noop` safe output and exit.
+If no release is needed, use the `noop` safe output and stop.
 
-## Step 3: Determine Semver Bump Level
+## Step 4: Determine semver bump
 
-Analyze the commits and PR description to choose `patch`, `minor`, or `major`:
-- **major**: Any commit with `BREAKING CHANGE` in the body, or `!` after the type (e.g., `feat!:`)
-- **minor**: Any `feat:` commits, or significant new functionality
-- **patch**: `fix:` commits, `refactor:` changes, dependency bumps, small improvements
-- When in doubt, default to **patch**
+- **major**: `BREAKING CHANGE` in commit body or `!` after type prefix
+- **minor**: Any `feat:` commits or significant new functionality
+- **patch**: `fix:`, `refactor:`, dependency bumps, small improvements
+- Default to **patch** when uncertain
 
-Use the conventional commit prefixes as strong signals but apply your own judgment based on the actual scope of changes.
+## Step 5: Read current version and calculate new version
 
-## Step 4: Read Current Version
+Read `.homeycompose/app.json` and extract the `version` field. This is the source of truth.
 
-Read the file `.homeycompose/app.json` and extract the current `version` field value. This is the source of truth for the app version.
+Calculate the new version by incrementing according to the bump level:
+- **patch**: 1.2.0 → 1.2.1
+- **minor**: 1.2.1 → 1.3.0
+- **major**: 1.2.1 → 2.0.0
 
-## Step 5: Calculate New Version
+## Step 6: Generate changelog
 
-Parse the current version as `MAJOR.MINOR.PATCH` and increment according to the bump level determined in Step 3:
-- **patch**: increment PATCH (e.g., 1.2.0 → 1.2.1)
-- **minor**: increment MINOR, reset PATCH (e.g., 1.2.1 → 1.3.0)
-- **major**: increment MAJOR, reset MINOR and PATCH (e.g., 1.2.1 → 2.0.0)
+Write a concise, user-facing description (1-3 sentences) of what changed. Read `.homeychangelog.json` for examples of the existing style and tone.
 
-## Step 6: Generate Changelog
+Translate the description into **all 9 locales**: `en`, `nl`, `de`, `fr`, `no`, `sv`, `da`, `es`, `it`.
 
-Write a concise, user-facing description of the changes from this PR. The description should:
-- Focus on what changed from the user's perspective
-- Be 1-3 sentences
-- Match the tone and style of existing entries in `.homeychangelog.json`
+## Step 7: Edit files
 
-Then translate this description into ALL 9 supported locales:
-- `en` (English)
-- `nl` (Dutch)
-- `de` (German)
-- `fr` (French)
-- `no` (Norwegian)
-- `sv` (Swedish)
-- `da` (Danish)
-- `es` (Spanish)
-- `it` (Italian)
+Use the `edit` tool to update these three files:
 
-Read `.homeychangelog.json` to see examples of the existing style and translations.
+1. **`.homeycompose/app.json`**: Set `version` to the new version.
+2. **`app.json`** (root): Set `version` to the same new version.
+3. **`.homeychangelog.json`**: Add the new version as the **first key** in the JSON object:
+   ```json
+   {
+     "X.Y.Z": {
+       "en": "...", "nl": "...", "de": "...", "fr": "...",
+       "no": "...", "sv": "...", "da": "...", "es": "...", "it": "..."
+     },
+     ...existing entries...
+   }
+   ```
 
-## Step 7: Update Files
+## Step 8: Create release PR
 
-### 7a: Update `.homeycompose/app.json`
-Edit the `version` field to the new version string.
+Use the `create-pull-request` safe output. Set the PR title to `vX.Y.Z` (the prefix `chore: release ` is added automatically).
 
-### 7b: Update `app.json` (root)
-Edit the `version` field to the same new version string. This file is normally generated from `.homeycompose/app.json`, but both must be updated directly.
-
-### 7c: Update `.homeychangelog.json`
-Read the current contents of `.homeychangelog.json`. Add a new entry for the new version.
-
-The format is a JSON object where keys are version strings and values are objects mapping locale codes to description strings:
-
-```json
-{
-  "X.Y.Z": {
-    "en": "English description.",
-    "nl": "Dutch description.",
-    "de": "German description.",
-    "fr": "French description.",
-    "no": "Norwegian description.",
-    "sv": "Swedish description.",
-    "da": "Danish description.",
-    "es": "Spanish description.",
-    "it": "Italian description."
-  },
-  ...existing entries...
-}
-```
-
-The new version entry MUST be the FIRST key in the JSON object (before existing entries).
-
-If the version key already exists (unlikely but possible), append the new text to each locale's existing text with `. ` (period + space) as separator.
-
-## Step 8: Commit, Tag, and Release
-
-Execute these commands in order:
-
-```bash
-git config --local user.name "github-actions[bot]"
-git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-git add .homeycompose/app.json app.json .homeychangelog.json
-git commit -m "chore: release vX.Y.Z"
-git tag "vX.Y.Z"
-git pull --rebase origin main
-git push origin HEAD --tags
-gh release create "vX.Y.Z" -t "vX.Y.Z" --generate-notes
-```
-
-Replace `X.Y.Z` with the actual new version number calculated in Step 5.
+Include in the PR description:
+- The English changelog entry
+- The semver bump level (patch/minor/major)
+- A reference to the triggering PR: #${{ github.event.pull_request.number }}

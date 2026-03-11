@@ -159,7 +159,7 @@ Versioning and changelog updates are **fully automated**. When a PR is merged to
 - Choosing the semver bump level (patch, minor, or major)
 - Updating the `version` field in both `.homeycompose/app.json` and `app.json`
 - Generating changelog entries in all 9 locales and updating `.homeychangelog.json`
-- Committing and tagging the release
+- Creating an auto-merging release PR with the changes
 
 **Agents must NOT:**
 - Bump the app version in `.homeycompose/app.json` or `app.json`
