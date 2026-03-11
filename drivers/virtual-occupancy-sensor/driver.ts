@@ -26,6 +26,7 @@ module.exports = class VirtualOccupancySensorDriver extends Homey.Driver {
   registerConditionCards() {
     this.registerFlowCardIsOccupied();
     this.registerFlowCardOccupancyStateIs();
+    this.registerIsMotionFromEmptyPaused();
   }
 
   registerFlowCardIsOccupied() {
@@ -105,6 +106,8 @@ module.exports = class VirtualOccupancySensorDriver extends Homey.Driver {
     this.registerMotionDetectedAction();
     this.registerResetStateAction();
     this.registerSetStateAction();
+    this.registerPauseMotionFromEmptyAction();
+    this.registerResumeMotionFromEmptyAction();
   }
 
   registerDoorOpenedAction() {
@@ -154,6 +157,33 @@ module.exports = class VirtualOccupancySensorDriver extends Homey.Driver {
         const message = error instanceof Error ? error.message : 'Unknown error';
         throw new Error(`Failed to set occupancy state: ${message}`);
       }
+    });
+  }
+
+  registerPauseMotionFromEmptyAction() {
+    const pauseAction = this.homey.flow.getActionCard('pause_motion_from_empty_action');
+    pauseAction.registerRunListener(async (args) => {
+      const device = args.device as VirtualOccupancySensorDevice;
+      device.setIgnoreMotionWhenEmpty(true);
+      return true;
+    });
+  }
+
+  registerResumeMotionFromEmptyAction() {
+    const resumeAction = this.homey.flow.getActionCard('resume_motion_from_empty_action');
+    resumeAction.registerRunListener(async (args) => {
+      const device = args.device as VirtualOccupancySensorDevice;
+      device.setIgnoreMotionWhenEmpty(false);
+      return true;
+    });
+  }
+
+  registerIsMotionFromEmptyPaused() {
+    const condition = this.homey.flow.getConditionCard('is_motion_from_empty_paused');
+    condition.registerRunListener(async (args) => {
+      const device = args.device as VirtualOccupancySensorDevice;
+      const settings = device.getSettings();
+      return settings.ignore_motion_when_empty === true;
     });
   }
 

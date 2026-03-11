@@ -1,0 +1,32 @@
+{
+  "id": "pause_motion_from_empty_action",
+  "title": {
+    "en": "Pause motion detection from empty state",
+    "nl": "Pauzeer bewegingsdetectie vanuit lege status",
+    "de": "Bewegungserkennung aus leerem Zustand pausieren",
+    "fr": "Mettre en pause la détection de mouvement depuis l'état vide",
+    "no": "Pause bevegelsesdeteksjon fra tom tilstand",
+    "sv": "Pausa rörelsedetektering från tomt tillstånd",
+    "da": "Sæt bevægelsesregistrering fra tom tilstand på pause",
+    "es": "Pausar detección de movimiento desde estado vacío",
+    "it": "Metti in pausa il rilevamento del movimento dallo stato vuoto"
+  },
+  "titleFormatted": {
+    "en": "Pause motion detection from empty state",
+    "nl": "Pauzeer bewegingsdetectie vanuit lege status",
+    "de": "Bewegungserkennung aus leerem Zustand pausieren",
+    "fr": "Mettre en pause la détection de mouvement depuis l'état vide",
+    "no": "Pause bevegelsesdeteksjon fra tom tilstand",
+    "sv": "Pausa rörelsedetektering från tomt tillstånd",
+    "da": "Sæt bevægelsesregistrering fra tom tilstand på pause",
+    "es": "Pausar detección de movimiento desde estado vacío",
+    "it": "Metti in pausa il rilevamento del movimento dallo stato vuoto"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    }
+  ]
+}

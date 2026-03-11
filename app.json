@@ -526,6 +526,49 @@
     ],
     "conditions": [
       {
+        "id": "is_motion_from_empty_paused",
+        "title": {
+          "en": "Motion from empty is paused",
+          "nl": "Beweging vanuit leeg is gepauzeerd",
+          "de": "Bewegung aus leerem Zustand ist pausiert",
+          "fr": "Le mouvement depuis l'état vide est en pause",
+          "no": "Bevegelse fra tom tilstand er pauset",
+          "sv": "Rörelse från tomt tillstånd är pausad",
+          "da": "Bevægelse fra tom tilstand er sat på pause",
+          "es": "El movimiento desde estado vacío está en pausa",
+          "it": "Il movimento dallo stato vuoto è in pausa"
+        },
+        "titleFormatted": {
+          "en": "Motion from empty !{{is|is not}} paused",
+          "nl": "Beweging vanuit leeg !{{is|is niet}} gepauzeerd",
+          "de": "Bewegung aus leerem Zustand !{{ist|ist nicht}} pausiert",
+          "fr": "Le mouvement depuis l'état vide !{{est|n'est pas}} en pause",
+          "no": "Bevegelse fra tom tilstand !{{er|er ikke}} pauset",
+          "sv": "Rörelse från tomt tillstånd !{{är|är inte}} pausad",
+          "da": "Bevægelse fra tom tilstand !{{er|er ikke}} sat på pause",
+          "es": "El movimiento desde estado vacío !{{está|no está}} en pausa",
+          "it": "Il movimento dallo stato vuoto !{{è|non è}} in pausa"
+        },
+        "hint": {
+          "en": "Checks if motion detection from empty state is currently paused.",
+          "nl": "Controleert of bewegingsdetectie vanuit lege status momenteel is gepauzeerd.",
+          "de": "Prüft, ob die Bewegungserkennung aus leerem Zustand aktuell pausiert ist.",
+          "fr": "Vérifie si la détection de mouvement depuis l'état vide est actuellement en pause.",
+          "no": "Sjekker om bevegelsesdeteksjon fra tom tilstand for tiden er pauset.",
+          "sv": "Kontrollerar om rörelsedetektering från tomt tillstånd för närvarande är pausad.",
+          "da": "Tjekker, om bevægelsesregistrering fra tom tilstand i øjeblikket er sat på pause.",
+          "es": "Comprueba si la detección de movimiento desde estado vacío está actualmente en pausa.",
+          "it": "Controlla se il rilevamento del movimento dallo stato vuoto è attualmente in pausa."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
         "id": "is_occupied",
         "title": {
           "en": "Is occupied",
@@ -751,6 +794,38 @@
         ]
       },
       {
+        "id": "pause_motion_from_empty_action",
+        "title": {
+          "en": "Pause motion detection from empty state",
+          "nl": "Pauzeer bewegingsdetectie vanuit lege status",
+          "de": "Bewegungserkennung aus leerem Zustand pausieren",
+          "fr": "Mettre en pause la détection de mouvement depuis l'état vide",
+          "no": "Pause bevegelsesdeteksjon fra tom tilstand",
+          "sv": "Pausa rörelsedetektering från tomt tillstånd",
+          "da": "Sæt bevægelsesregistrering fra tom tilstand på pause",
+          "es": "Pausar detección de movimiento desde estado vacío",
+          "it": "Metti in pausa il rilevamento del movimento dallo stato vuoto"
+        },
+        "titleFormatted": {
+          "en": "Pause motion detection from empty state",
+          "nl": "Pauzeer bewegingsdetectie vanuit lege status",
+          "de": "Bewegungserkennung aus leerem Zustand pausieren",
+          "fr": "Mettre en pause la détection de mouvement depuis l'état vide",
+          "no": "Pause bevegelsesdeteksjon fra tom tilstand",
+          "sv": "Pausa rörelsedetektering från tomt tillstånd",
+          "da": "Sæt bevægelsesregistrering fra tom tilstand på pause",
+          "es": "Pausar detección de movimiento desde estado vacío",
+          "it": "Metti in pausa il rilevamento del movimento dallo stato vuoto"
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
         "id": "reset_state_action",
         "title": {
           "en": "Trigger 'No Motion Detected' event",
@@ -784,6 +859,38 @@
           "da": "Udløser en 'Ingen bevægelse registreret'-hændelse.",
           "es": "Activa un evento 'No se detectó movimiento'.",
           "it": "Attiva un evento 'Nessun movimento rilevato'."
+        },
+        "args": [
+          {
+            "name": "device",
+            "type": "device",
+            "filter": "driver_id=virtual-occupancy-sensor"
+          }
+        ]
+      },
+      {
+        "id": "resume_motion_from_empty_action",
+        "title": {
+          "en": "Resume motion detection from empty state",
+          "nl": "Hervat bewegingsdetectie vanuit lege status",
+          "de": "Bewegungserkennung aus leerem Zustand fortsetzen",
+          "fr": "Reprendre la détection de mouvement depuis l'état vide",
+          "no": "Gjenoppta bevegelsesdeteksjon fra tom tilstand",
+          "sv": "Återuppta rörelsedetektering från tomt tillstånd",
+          "da": "Genoptag bevægelsesregistrering fra tom tilstand",
+          "es": "Reanudar detección de movimiento desde estado vacío",
+          "it": "Riprendi il rilevamento del movimento dallo stato vuoto"
+        },
+        "titleFormatted": {
+          "en": "Resume motion detection from empty state",
+          "nl": "Hervat bewegingsdetectie vanuit lege status",
+          "de": "Bewegungserkennung aus leerem Zustand fortsetzen",
+          "fr": "Reprendre la détection de mouvement depuis l'état vide",
+          "no": "Gjenoppta bevegelsesdeteksjon fra tom tilstand",
+          "sv": "Återuppta rörelsedetektering från tomt tillstånd",
+          "da": "Genoptag bevægelsesregistrering fra tom tilstand",
+          "es": "Reanudar detección de movimiento desde estado vacío",
+          "it": "Riprendi il rilevamento del movimento dallo stato vuoto"
         },
         "args": [
           {
@@ -1047,6 +1154,33 @@
                 "it": "Quando abilitato, il sensore apprende il tempo cieco dei tuoi sensori di movimento osservando quanto tempo rimangono attivi. Funziona meglio con un singolo sensore di movimento. Con più sensori di movimento con timeout diversi, il valore appreso potrebbe essere impreciso e causare un rilevamento prematuro di 'vuoto'."
               },
               "value": true
+            },
+            {
+              "id": "ignore_motion_when_empty",
+              "type": "checkbox",
+              "label": {
+                "en": "Ignore motion when empty",
+                "nl": "Beweging negeren wanneer leeg",
+                "de": "Bewegung ignorieren wenn leer",
+                "fr": "Ignorer le mouvement lorsque vide",
+                "no": "Ignorer bevegelse når tomt",
+                "sv": "Ignorera rörelse när tomt",
+                "da": "Ignorer bevægelse når tomt",
+                "es": "Ignorar movimiento cuando vacío",
+                "it": "Ignora movimento quando vuoto"
+              },
+              "hint": {
+                "en": "When enabled, motion sensor events will not trigger occupancy when the room is currently empty. Useful to prevent false occupancy from robot vacuums or pets.",
+                "nl": "Indien ingeschakeld, zullen bewegingssensorgebeurtenissen geen bezetting activeren wanneer de kamer momenteel leeg is. Handig om valse bezetting door robotstofzuigers of huisdieren te voorkomen.",
+                "de": "Wenn aktiviert, lösen Bewegungssensor-Ereignisse keine Belegung aus, wenn der Raum derzeit leer ist. Nützlich, um falsche Belegung durch Saugroboter oder Haustiere zu verhindern.",
+                "fr": "Lorsque activé, les événements du capteur de mouvement ne déclencheront pas l'occupation lorsque la pièce est actuellement vide. Utile pour empêcher la fausse occupation par les aspirateurs robots ou les animaux.",
+                "no": "Når aktivert, vil bevegelsessensorhendelser ikke utløse tilstedeværelse når rommet er tomt. Nyttig for å forhindre falsk tilstedeværelse fra robotstøvsugere eller kjæledyr.",
+                "sv": "När aktiverad kommer rörelsesensorhändelser inte att utlösa närvaro när rummet är tomt. Användbart för att förhindra falsk närvaro från robotdammsugare eller husdjur.",
+                "da": "Når aktiveret, vil bevægelsessensorhændelser ikke udløse tilstedeværelse, når rummet er tomt. Nyttigt for at forhindre falsk tilstedeværelse fra robotstøvsugere eller kæledyr.",
+                "es": "Cuando está habilitado, los eventos del sensor de movimiento no activarán la ocupación cuando la habitación está actualmente vacía. Útil para evitar falsa ocupación por aspiradoras robot o mascotas.",
+                "it": "Quando abilitato, gli eventi del sensore di movimento non attiveranno l'occupazione quando la stanza è attualmente vuota. Utile per prevenire falsa occupazione da aspirapolvere robot o animali domestici."
+              },
+              "value": false
             },
             {
               "id": "auto_detect_motion_sensors",

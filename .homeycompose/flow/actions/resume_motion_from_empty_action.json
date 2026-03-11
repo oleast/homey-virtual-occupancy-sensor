@@ -1,0 +1,32 @@
+{
+  "id": "resume_motion_from_empty_action",
+  "title": {
+    "en": "Resume motion detection from empty state",
+    "nl": "Hervat bewegingsdetectie vanuit lege status",
+    "de": "Bewegungserkennung aus leerem Zustand fortsetzen",
+    "fr": "Reprendre la détection de mouvement depuis l'état vide",
+    "no": "Gjenoppta bevegelsesdeteksjon fra tom tilstand",
+    "sv": "Återuppta rörelsedetektering från tomt tillstånd",
+    "da": "Genoptag bevægelsesregistrering fra tom tilstand",
+    "es": "Reanudar detección de movimiento desde estado vacío",
+    "it": "Riprendi il rilevamento del movimento dallo stato vuoto"
+  },
+  "titleFormatted": {
+    "en": "Resume motion detection from empty state",
+    "nl": "Hervat bewegingsdetectie vanuit lege status",
+    "de": "Bewegungserkennung aus leerem Zustand fortsetzen",
+    "fr": "Reprendre la détection de mouvement depuis l'état vide",
+    "no": "Gjenoppta bevegelsesdeteksjon fra tom tilstand",
+    "sv": "Återuppta rörelsedetektering från tomt tillstånd",
+    "da": "Genoptag bevægelsesregistrering fra tom tilstand",
+    "es": "Reanudar detección de movimiento desde estado vacío",
+    "it": "Riprendi il rilevamento del movimento dallo stato vuoto"
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    }
+  ]
+}
