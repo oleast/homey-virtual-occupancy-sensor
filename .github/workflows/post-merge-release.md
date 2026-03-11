@@ -13,7 +13,9 @@ permissions:
   pull-requests: read
   actions: read
 
-engine: claude
+engine:
+  id: copilot
+  model: claude-sonnet-4
 
 tools:
   bash: true
