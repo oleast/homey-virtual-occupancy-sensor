@@ -135,6 +135,33 @@
           "value": true
         },
         {
+          "id": "ignore_motion_when_empty",
+          "type": "checkbox",
+          "label": {
+            "en": "Ignore motion when empty",
+            "nl": "Beweging negeren wanneer leeg",
+            "de": "Bewegung ignorieren wenn leer",
+            "fr": "Ignorer le mouvement lorsque vide",
+            "no": "Ignorer bevegelse når tomt",
+            "sv": "Ignorera rörelse när tomt",
+            "da": "Ignorer bevægelse når tomt",
+            "es": "Ignorar movimiento cuando vacío",
+            "it": "Ignora movimento quando vuoto"
+          },
+          "hint": {
+            "en": "When enabled, motion sensor events will not trigger occupancy when the room is currently empty. Useful to prevent false occupancy from robot vacuums or pets.",
+            "nl": "Indien ingeschakeld, zullen bewegingssensorgebeurtenissen geen bezetting activeren wanneer de kamer momenteel leeg is. Handig om valse bezetting door robotstofzuigers of huisdieren te voorkomen.",
+            "de": "Wenn aktiviert, lösen Bewegungssensor-Ereignisse keine Belegung aus, wenn der Raum derzeit leer ist. Nützlich, um falsche Belegung durch Saugroboter oder Haustiere zu verhindern.",
+            "fr": "Lorsque activé, les événements du capteur de mouvement ne déclencheront pas l'occupation lorsque la pièce est actuellement vide. Utile pour empêcher la fausse occupation par les aspirateurs robots ou les animaux.",
+            "no": "Når aktivert, vil bevegelsessensorhendelser ikke utløse tilstedeværelse når rommet er tomt. Nyttig for å forhindre falsk tilstedeværelse fra robotstøvsugere eller kjæledyr.",
+            "sv": "När aktiverad kommer rörelsesensorhändelser inte att utlösa närvaro när rummet är tomt. Användbart för att förhindra falsk närvaro från robotdammsugare eller husdjur.",
+            "da": "Når aktiveret, vil bevægelsessensorhændelser ikke udløse tilstedeværelse, når rummet er tomt. Nyttigt for at forhindre falsk tilstedeværelse fra robotstøvsugere eller kæledyr.",
+            "es": "Cuando está habilitado, los eventos del sensor de movimiento no activarán la ocupación cuando la habitación está actualmente vacía. Útil para evitar falsa ocupación por aspiradoras robot o mascotas.",
+            "it": "Quando abilitato, gli eventi del sensore di movimento non attiveranno l'occupazione quando la stanza è attualmente vuota. Utile per prevenire falsa occupazione da aspirapolvere robot o animali domestici."
+          },
+          "value": false
+        },
+        {
           "id": "auto_detect_motion_sensors",
           "type": "checkbox",
           "label": {

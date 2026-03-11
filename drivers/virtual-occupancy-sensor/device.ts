@@ -240,6 +240,11 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     this.controller.forceState(state, context);
   }
 
+  public setIgnoreMotionWhenEmpty(enabled: boolean): void {
+    this.log(`Flow action: setting ignore_motion_when_empty to: ${enabled}`);
+    this.setSettings({ ignore_motion_when_empty: enabled }).catch(this.error);
+  }
+
   private handleCheckingState() {
     this.log('Handling checking state');
 
@@ -372,6 +377,14 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     const context = this.motionSensorRegistry.buildContext(deviceId, settings);
 
     const eventType = value ? 'motion_detected' : 'motion_timeout';
+
+    if (eventType === 'motion_detected'
+      && settings.ignore_motion_when_empty
+      && this.getCapabilityValue('occupancy_state') === 'empty') {
+      this.log(`Ignoring motion_detected from ${deviceId}: ignore_motion_when_empty is enabled and state is empty`);
+      return;
+    }
+
     this.controller.registerEvent(eventType, context);
   }
 

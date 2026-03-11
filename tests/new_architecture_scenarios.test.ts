@@ -39,6 +39,13 @@ describe('VirtualOccupancySensorDevice - Scenarios', () => {
       return Promise.resolve();
     });
 
+    vi.spyOn(MockDevice.prototype, 'getCapabilityValue').mockImplementation((id: string) => {
+      if (id === 'occupancy_state') {
+        return lastOccupancyState;
+      }
+      return null;
+    });
+
     motionSensor = new MockExternalDevice('motion-1', ['alarm_motion']);
     doorSensor = new MockExternalDevice('door-1', ['alarm_contact']);
 
@@ -67,6 +74,7 @@ describe('VirtualOccupancySensorDevice - Scenarios', () => {
     device.getSettings = () => ({
       motion_timeout: 30,
       auto_learn_timeout: false,
+      ignore_motion_when_empty: false,
       auto_detect_motion_sensors: false,
       auto_detect_door_sensors: false,
       include_child_zones_motion: false,
@@ -430,6 +438,110 @@ describe('VirtualOccupancySensorDevice - Scenarios', () => {
       await vi.advanceTimersByTimeAsync(0);
 
       expect(lastOccupancyState).toBe('empty');
+    });
+  });
+
+  describe('Ignore Motion When Empty', () => {
+    it('should ignore motion_detected when setting enabled and state is empty', async () => {
+      await createDevice({ ignore_motion_when_empty: true });
+      expect(lastOccupancyState).toBe('empty');
+
+      await motionSensor.setCapabilityValue('alarm_motion', true);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(lastOccupancyState).toBe('empty');
+    });
+
+    it('should allow motion_detected when setting disabled and state is empty', async () => {
+      await createDevice({ ignore_motion_when_empty: false });
+      expect(lastOccupancyState).toBe('empty');
+
+      await motionSensor.setCapabilityValue('alarm_motion', true);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(lastOccupancyState).toBe('occupied');
+    });
+
+    it('should allow motion_detected when setting enabled but state is checking', async () => {
+      await createDevice({ ignore_motion_when_empty: true });
+      await forceState('checking');
+
+      await motionSensor.setCapabilityValue('alarm_motion', true);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(lastOccupancyState).toBe('occupied');
+    });
+
+    it('should not suppress motion_timeout events when setting is enabled and state is empty', async () => {
+      await createDevice({ ignore_motion_when_empty: true });
+      expect(lastOccupancyState).toBe('empty');
+
+      await motionSensor.setCapabilityValue('alarm_motion', false);
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(lastOccupancyState).toBe('empty');
+    });
+
+    it('should transition to occupied when motion_detected triggered from flow despite setting', async () => {
+      await createDevice({ ignore_motion_when_empty: true });
+      expect(lastOccupancyState).toBe('empty');
+
+      device.triggerEventFromFlow('motion_detected');
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(lastOccupancyState).toBe('occupied');
+    });
+
+    it('should respect setting change mid-scenario', async () => {
+      await createDevice({ ignore_motion_when_empty: true });
+      expect(lastOccupancyState).toBe('empty');
+
+      // Motion while guard is enabled → stays empty
+      await motionSensor.setCapabilityValue('alarm_motion', true);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(lastOccupancyState).toBe('empty');
+
+      // Reset motion
+      await motionSensor.setCapabilityValue('alarm_motion', false);
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Disable the guard mid-scenario
+      device.getSettings = () => ({
+        motion_timeout: 30,
+        auto_learn_timeout: false,
+        ignore_motion_when_empty: false,
+        auto_detect_motion_sensors: false,
+        auto_detect_door_sensors: false,
+        include_child_zones_motion: false,
+        include_child_zones_contact: false,
+        active_on_occupied: true,
+        active_on_empty: false,
+        active_on_door_open: false,
+        active_on_checking: false,
+        door_sensors: 'door-1',
+        motion_sensors: 'motion-1',
+      });
+
+      // Motion with guard disabled → transitions to occupied
+      await motionSensor.setCapabilityValue('alarm_motion', true);
+      await vi.advanceTimersByTimeAsync(0);
+      expect(lastOccupancyState).toBe('occupied');
+    });
+
+    it('should call setSettings when setIgnoreMotionWhenEmpty is called', async () => {
+      await createDevice({});
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const setSettingsSpy = vi.spyOn(device, 'setSettings' as any)
+        .mockResolvedValue(undefined);
+
+      device.setIgnoreMotionWhenEmpty(true);
+
+      expect(setSettingsSpy).toHaveBeenCalledWith({ ignore_motion_when_empty: true });
+
+      device.setIgnoreMotionWhenEmpty(false);
+
+      expect(setSettingsSpy).toHaveBeenCalledWith({ ignore_motion_when_empty: false });
     });
   });
 

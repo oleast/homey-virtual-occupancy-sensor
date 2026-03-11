@@ -1,0 +1,43 @@
+{
+  "id": "is_motion_from_empty_paused",
+  "title": {
+    "en": "Motion from empty is paused",
+    "nl": "Beweging vanuit leeg is gepauzeerd",
+    "de": "Bewegung aus leerem Zustand ist pausiert",
+    "fr": "Le mouvement depuis l'état vide est en pause",
+    "no": "Bevegelse fra tom tilstand er pauset",
+    "sv": "Rörelse från tomt tillstånd är pausad",
+    "da": "Bevægelse fra tom tilstand er sat på pause",
+    "es": "El movimiento desde estado vacío está en pausa",
+    "it": "Il movimento dallo stato vuoto è in pausa"
+  },
+  "titleFormatted": {
+    "en": "Motion from empty !{{is|is not}} paused",
+    "nl": "Beweging vanuit leeg !{{is|is niet}} gepauzeerd",
+    "de": "Bewegung aus leerem Zustand !{{ist|ist nicht}} pausiert",
+    "fr": "Le mouvement depuis l'état vide !{{est|n'est pas}} en pause",
+    "no": "Bevegelse fra tom tilstand !{{er|er ikke}} pauset",
+    "sv": "Rörelse från tomt tillstånd !{{är|är inte}} pausad",
+    "da": "Bevægelse fra tom tilstand !{{er|er ikke}} sat på pause",
+    "es": "El movimiento desde estado vacío !{{está|no está}} en pausa",
+    "it": "Il movimento dallo stato vuoto !{{è|non è}} in pausa"
+  },
+  "hint": {
+    "en": "Checks if motion detection from empty state is currently paused.",
+    "nl": "Controleert of bewegingsdetectie vanuit lege status momenteel is gepauzeerd.",
+    "de": "Prüft, ob die Bewegungserkennung aus leerem Zustand aktuell pausiert ist.",
+    "fr": "Vérifie si la détection de mouvement depuis l'état vide est actuellement en pause.",
+    "no": "Sjekker om bevegelsesdeteksjon fra tom tilstand for tiden er pauset.",
+    "sv": "Kontrollerar om rörelsedetektering från tomt tillstånd för närvarande är pausad.",
+    "da": "Tjekker, om bevægelsesregistrering fra tom tilstand i øjeblikket er sat på pause.",
+    "es": "Comprueba si la detección de movimiento desde estado vacío está actualmente en pausa.",
+    "it": "Controlla se il rilevamento del movimento dallo stato vuoto è attualmente in pausa."
+  },
+  "args": [
+    {
+      "name": "device",
+      "type": "device",
+      "filter": "driver_id=virtual-occupancy-sensor"
+    }
+  ]
+}

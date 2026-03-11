@@ -5,6 +5,7 @@ export type EventType = 'any_door_open' | 'all_doors_closed' | 'motion_detected'
 export interface DeviceSettings {
   motion_timeout: number;
   auto_learn_timeout: boolean;
+  ignore_motion_when_empty: boolean;
   auto_detect_motion_sensors: boolean;
   auto_detect_door_sensors: boolean;
   include_child_zones_motion: boolean;

@@ -32,6 +32,10 @@ export class Device extends EventEmitter {
     return this._store.get(key);
   }
 
+  async setSettings(settings: Record<string, unknown>) {
+    return Promise.resolve();
+  }
+
   async setStoreValue(key: string, value: unknown): Promise<void> {
     this._store.set(key, value);
     return Promise.resolve();
