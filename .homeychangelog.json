@@ -1,4 +1,15 @@
 {
+  "1.2.1": {
+    "en": "Fixed token errors when triggering flows with null timeout values.",
+    "nl": "Vaste token-fouten opgelost bij het activeren van flows met null timeout-waarden.",
+    "de": "Token-Fehler beim Auslösen von Flows mit null-Timeout-Werten behoben.",
+    "fr": "Correction des erreurs de jeton lors du déclenchement des flux avec des valeurs de délai d'expiration null.",
+    "no": "Fikset token-feil ved utløsning av flows med null timeout-verdier.",
+    "sv": "Fixade token-fel vid utlösning av flöden med null timeout-värden.",
+    "da": "Rettede token-fejl ved udløsning af flows med null timeout-værdier.",
+    "es": "Se corrigieron los errores de token al activar flujos con valores de tiempo de espera null.",
+    "it": "Risolti errori di token quando si attivano i flussi con valori di timeout null."
+  },
   "1.2.0": {
     "en": "Added 'Ignore motion when empty' setting to prevent false occupancy detection from robot vacuums. Added flow actions to pause and resume motion detection from empty state dynamically. Added flow condition to check if motion detection from empty is paused.",
     "nl": "Instelling 'Beweging negeren wanneer leeg' toegevoegd om valse bezettingsdetectie door robotstofzuigers te voorkomen. Flow-acties toegevoegd om bewegingsdetectie vanuit lege status dynamisch te pauzeren en te hervatten. Flow-conditie toegevoegd om te controleren of bewegingsdetectie vanuit leeg gepauzeerd is.",
