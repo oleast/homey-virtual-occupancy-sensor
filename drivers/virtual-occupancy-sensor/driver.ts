@@ -62,11 +62,11 @@ module.exports = class VirtualOccupancySensorDriver extends Homey.Driver {
     });
   }
 
-  private contextToTokens(context: TriggerContext): Record<string, string | number | null> {
+  private contextToTokens(context: TriggerContext): Record<string, string | number> {
     return {
       triggering_device_id: context.deviceId,
       triggering_device_name: context.deviceName,
-      timeout_seconds: context.timeoutSeconds,
+      timeout_seconds: context.timeoutSeconds ?? 0,
     };
   }
 
