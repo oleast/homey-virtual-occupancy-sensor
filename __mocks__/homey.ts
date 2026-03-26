@@ -70,10 +70,32 @@ export class Device extends EventEmitter {
   };
 }
 
+export class Driver extends EventEmitter {
+  log(...args: unknown[]) {
+    console.log(...args);
+  }
+
+  error(...args: unknown[]) {
+    console.error(...args);
+  }
+
+  homey = {
+    flow: {
+      getDeviceTriggerCard: () => ({
+        trigger: async () => true,
+        registerRunListener: () => {},
+      }),
+      getConditionCard: () => ({ registerRunListener: () => {} }),
+      getActionCard: () => ({ registerRunListener: () => {} }),
+    },
+  };
+}
+
 export class FlowCardDeviceTrigger {}
 
 const Homey = {
   Device,
+  Driver,
   FlowCardDeviceTrigger,
 };
 
