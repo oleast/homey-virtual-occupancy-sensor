@@ -74,7 +74,7 @@ jobs:
           GH_AW_INFO_ENGINE_NAME: "GitHub Copilot CLI"
           GH_AW_INFO_MODEL: "claude-sonnet-4"
           GH_AW_INFO_VERSION: ""
-          GH_AW_INFO_AGENT_VERSION: "latest"
+          GH_AW_INFO_AGENT_VERSION: "v1.0.21"
           GH_AW_INFO_CLI_VERSION: "v0.57.2"
           GH_AW_INFO_WORKFLOW_NAME: "Post-Merge Release"
           GH_AW_INFO_EXPERIMENTAL: "false"
@@ -317,7 +317,7 @@ jobs:
             const { main } = require('/opt/gh-aw/actions/checkout_pr_branch.cjs');
             await main();
       - name: Install GitHub Copilot CLI
-        run: /opt/gh-aw/actions/install_copilot_cli.sh latest
+        run: /opt/gh-aw/actions/install_copilot_cli.sh v1.0.21
       - name: Install awf binary
         run: bash /opt/gh-aw/actions/install_awf_binary.sh v0.23.0
       - name: Determine automatic lockdown mode for GitHub MCP Server
