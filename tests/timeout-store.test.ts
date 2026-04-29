@@ -168,6 +168,14 @@ describe('TimeoutStore', () => {
     });
   });
 
+  describe('clear()', () => {
+    it('should call unsetStoreValue with the store key', async () => {
+      await store.clear();
+
+      expect(mockProvider.unsetStoreValue).toHaveBeenCalledWith(STORE_KEY);
+    });
+  });
+
   describe('round-trip', () => {
     it('should preserve data through save and load cycle', async () => {
       const originalData = new Map<string, number | null>([

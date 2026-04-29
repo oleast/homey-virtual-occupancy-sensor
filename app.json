@@ -1034,7 +1034,8 @@
       "class": "sensor",
       "capabilities": [
         "alarm_motion",
-        "occupancy_state"
+        "occupancy_state",
+        "button_reset_learned_timeouts"
       ],
       "capabilitiesOptions": {
         "alarm_motion": {
@@ -1475,6 +1476,36 @@
     }
   ],
   "capabilities": {
+    "button_reset_learned_timeouts": {
+      "type": "boolean",
+      "title": {
+        "en": "Reset learned timeouts",
+        "nl": "Geleerde timeouts resetten",
+        "de": "Erlernte Timeouts zurücksetzen",
+        "fr": "Réinitialiser les délais appris",
+        "no": "Tilbakestill lærte tidsavbrudd",
+        "sv": "Återställ inlärda tidsgränser",
+        "da": "Nulstil indlærte timeouts",
+        "es": "Restablecer tiempos aprendidos",
+        "it": "Reimposta i timeout appresi"
+      },
+      "desc": {
+        "en": "Clear all learned motion sensor timeout data",
+        "nl": "Alle geleerde time-outgegevens van bewegingssensoren wissen",
+        "de": "Alle erlernten Bewegungssensor-Timeout-Daten löschen",
+        "fr": "Effacer toutes les données de délai de capteur de mouvement apprises",
+        "no": "Slett alle lærte tidsavbruddsdata for bevegelsessensor",
+        "sv": "Rensa alla inlärda tidsgränsdata för rörelsesensor",
+        "da": "Slet alle indlærte tidsudløbsdata for bevægelsessensor",
+        "es": "Borrar todos los datos de tiempo de espera aprendidos del sensor de movimiento",
+        "it": "Cancella tutti i dati di timeout del sensore di movimento appresi"
+      },
+      "setable": true,
+      "getable": false,
+      "maintenanceAction": true,
+      "insights": false,
+      "uiComponent": null
+    },
     "occupancy_state": {
       "type": "enum",
       "title": {
