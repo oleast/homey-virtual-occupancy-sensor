@@ -28,6 +28,12 @@ export class Device extends EventEmitter {
     return true;
   }
 
+  async addCapability(id: string) {
+    return Promise.resolve();
+  }
+
+  registerCapabilityListener(id: string, listener: (...args: unknown[]) => void) {}
+
   getStoreValue(key: string): unknown {
     return this._store.get(key);
   }

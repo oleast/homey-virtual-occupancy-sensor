@@ -58,8 +58,8 @@ export class MotionSensorRegistry extends BooleanSensorRegistry {
 
     const now = Date.now();
 
-    if (value === true) {
-      // Motion detected - record the timestamp
+    if (value === true && data.lastTrueTimestamp === null) {
+      // Motion detected - record the timestamp (only on fresh transition)
       data.lastTrueTimestamp = now;
     } else if (value === false && data.lastTrueTimestamp !== null) {
       // Motion ended - calculate duration
@@ -109,6 +109,14 @@ export class MotionSensorRegistry extends BooleanSensorRegistry {
     this.timeoutStore.remove(deviceId).catch((err) => {
       this.error(`Failed to remove timeout for device ${deviceId}`, err);
     });
+  }
+
+  /**
+   * Clears all learned timeout data from memory and storage.
+   */
+  public async clearAllLearnedTimeouts(): Promise<void> {
+    this.timeoutLearning.clear();
+    await this.timeoutStore.clear();
   }
 
   /**

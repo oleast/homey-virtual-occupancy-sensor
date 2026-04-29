@@ -68,4 +68,11 @@ export default class TimeoutStore {
     delete stored[deviceId];
     await this.store.save(stored);
   }
+
+  /**
+   * Clears all stored timeout data.
+   */
+  async clear(): Promise<void> {
+    await this.store.clear();
+  }
 }

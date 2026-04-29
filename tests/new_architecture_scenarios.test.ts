@@ -380,6 +380,101 @@ describe('VirtualOccupancySensorDevice - Scenarios', () => {
     expect(lastOccupancyState).toBe('occupied');
   });
 
+  /**
+   * BUG SCENARIO E: Corrupted learned timeout from re-triggers causes stuck-in-occupied
+   *
+   * User's exact scenario:
+   * 1. Motion sensor has ~60s native timeout but re-triggers mid-period
+   * 2. Without fix: learned timeout = last-retrigger-to-false (~6s), NOT native timeout (~60s)
+   * 3. User exits room: occupied → door_open → door_close → checking
+   * 4. Checking timer uses corrupted learned timeout (6s)
+   * 5. Timer fires while motion still true (native 60s hasn't elapsed)
+   * 6. isAnyStateTrue() → true → transitions back to occupied
+   * 7. Motion finally goes false ~54s later, but motion_timeout in occupied is ignored
+   * 8. STUCK in occupied forever
+   *
+   * With fix (first-true-to-false learning):
+   * - Learned timeout = 60s (native timeout, re-triggers ignored)
+   * - Checking timer fires after 60s
+   * - By then, motion sensor already went false
+   * - isAnyStateTrue() → false → transitions to empty ✓
+   */
+  it('BUG SCENARIO E: Corrupted learned timeout from re-triggers causes stuck-in-occupied', async () => {
+    // Enable auto-learning, use 60s as fallback
+    await createDevice({ motion_timeout: 60, auto_learn_timeout: true });
+
+    // === LEARNING CYCLE: Teach the sensor its native timeout ===
+    // T=0s: Motion detected (first true)
+    await motionSensor.setCapabilityValue('alarm_motion', true);
+    expect(lastOccupancyState).toBe('occupied');
+
+    // T=54s: Re-trigger (Zigbee sends another true mid-period)
+    // With fix: this does NOT reset lastTrueTimestamp
+    // Without fix: this resets lastTrueTimestamp to T=54
+    await vi.advanceTimersByTimeAsync(54000);
+    await motionSensor.setCapabilityValue('alarm_motion', true);
+
+    // T=60s: Motion sensor native timeout → sends false
+    // With fix: learned timeout = 60000ms (T=60 - T=0)
+    // Without fix: learned timeout = 6000ms (T=60 - T=54) ← CORRUPTED
+    await vi.advanceTimersByTimeAsync(6000);
+    await motionSensor.setCapabilityValue('alarm_motion', false);
+    await vi.advanceTimersByTimeAsync(0);
+
+    // State is still occupied (motion_timeout in occupied is ignored by controller)
+    expect(lastOccupancyState).toBe('occupied');
+
+    // === EXIT SCENARIO: User leaves the room ===
+    // Motion detected again (user starts moving to leave)
+    await motionSensor.setCapabilityValue('alarm_motion', true);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(lastOccupancyState).toBe('occupied');
+
+    // T+2s: Door opens
+    await vi.advanceTimersByTimeAsync(2000);
+    await doorSensor.setCapabilityValue('alarm_contact', true);
+    expect(lastOccupancyState).toBe('door_open');
+
+    // T+4s: Motion re-triggers as user walks past sensor toward door
+    await vi.advanceTimersByTimeAsync(2000);
+    await motionSensor.setCapabilityValue('alarm_motion', true);
+    expect(lastOccupancyState).toBe('door_open');
+
+    // T+6s: Door closes behind user → checking
+    // Checking timer starts with learned timeout
+    // With fix: checking timeout = 60s
+    // Without fix: checking timeout = 6s
+    await vi.advanceTimersByTimeAsync(2000);
+    await doorSensor.setCapabilityValue('alarm_contact', false);
+    await vi.advanceTimersByTimeAsync(0);
+    expect(lastOccupancyState).toBe('checking');
+
+    // T+12s (6s into checking): With corrupted timeout, checking would fire HERE
+    // Motion sensor is still true (native timeout hasn't elapsed)
+    // Without fix: isAnyStateTrue() → true → occupied → STUCK
+    await vi.advanceTimersByTimeAsync(7000);
+    await vi.advanceTimersByTimeAsync(0);
+
+    // With fix: Still in checking (learned timeout is 60s, not 6s)
+    expect(lastOccupancyState).toBe('checking');
+
+    // T+60s from motion true: Motion sensor native timeout expires → false
+    // This is ~54s after the motion true event during exit
+    await vi.advanceTimersByTimeAsync(47000); // Total ~60s from exit motion true
+    await motionSensor.setCapabilityValue('alarm_motion', false);
+    await vi.advanceTimersByTimeAsync(0);
+
+    // Still in checking (waiting for checking timer to fire)
+    expect(lastOccupancyState).toBe('checking');
+
+    // Checking timer fires at 60s after entering checking state
+    // Motion already went false → isAnyStateTrue() → false → empty ✓
+    await vi.advanceTimersByTimeAsync(7000); // Remaining time until 60s checking timeout
+    await vi.advanceTimersByTimeAsync(0);
+
+    expect(lastOccupancyState).toBe('empty');
+  });
+
   describe('Flow Action: Set State Directly', () => {
     it('should start checking timer when setting state to checking via flow', async () => {
       await createDevice({});

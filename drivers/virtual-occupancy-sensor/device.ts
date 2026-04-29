@@ -48,6 +48,10 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     await this.initCapabilities();
     await this.setInitialCapabilityStates();
     await this.initSensorRegistries();
+    this.registerCapabilityListener('button_reset_learned_timeouts', async () => {
+      this.log('Resetting all learned timeouts');
+      await this.motionSensorRegistry.clearAllLearnedTimeouts();
+    });
     await this.subscribeToDeviceUpdates();
     await this.subscribeToDeviceManagerEvents();
   }
@@ -290,6 +294,10 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     if (!this.hasCapability('occupancy_state')) {
       this.log('Adding missing capability: occupancy_state');
       await this.addCapability('occupancy_state');
+    }
+    if (!this.hasCapability('button_reset_learned_timeouts')) {
+      this.log('Adding missing capability: button_reset_learned_timeouts');
+      await this.addCapability('button_reset_learned_timeouts');
     }
   }
 
