@@ -5,7 +5,7 @@ export type TimerCallback = (durationMs: number) => void;
 export type CancelTimerCallback = () => void;
 
 export class VirtualOccupancySensorController {
-  private currentState: OccupancyState = 'empty';
+  private currentState: OccupancyState;
   private onStateChange: StateChangeCallback;
   private log: (message: string) => void;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -15,10 +15,12 @@ export class VirtualOccupancySensorController {
     onStateChange: StateChangeCallback,
     log: (message: string) => void,
     error: (message: string, error?: unknown) => void,
+    initialState: OccupancyState = 'empty',
   ) {
     this.onStateChange = onStateChange;
     this.log = log;
     this.error = error;
+    this.currentState = initialState;
   }
 
   public registerEvent(eventType: EventType, context: TriggerContext) {

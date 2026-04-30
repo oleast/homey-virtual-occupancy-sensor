@@ -425,4 +425,126 @@ describe('Device Persistence - Registry Auto-Save Integration', () => {
       expect(stored.data['motion-1']).toBe(10000);
     });
   });
+
+  describe('State restoration on init', () => {
+    async function createDeviceWithPersistedState(
+      persistedState: string | null,
+      settingsOverride: Partial<DeviceSettings> = {},
+    ) {
+      device = new VirtualOccupancySensorDeviceForTest();
+      device.getCapabilityValue = vi.fn((id: string) => {
+        if (id === 'occupancy_state') return persistedState;
+        return null;
+      });
+      device.getSettings = () => ({
+        motion_timeout: 30,
+        auto_learn_timeout: true,
+        auto_detect_motion_sensors: false,
+        auto_detect_door_sensors: false,
+        include_child_zones_motion: false,
+        include_child_zones_contact: false,
+        active_on_occupied: true,
+        active_on_empty: false,
+        active_on_door_open: false,
+        active_on_checking: false,
+        door_sensors: 'door-1',
+        motion_sensors: 'motion-1,motion-2',
+        ...settingsOverride,
+      });
+
+      await device.onInit();
+      await vi.advanceTimersByTimeAsync(0);
+      return device;
+    }
+
+    it('should restore occupied state on init', async () => {
+      await createDeviceWithPersistedState('occupied');
+
+      const setCalls = vi.mocked(MockDevice.prototype.setCapabilityValue).mock.calls;
+      const occupancyStateCalls = setCalls.filter(([cap]) => cap === 'occupancy_state');
+      const alarmMotionCalls = setCalls.filter(([cap]) => cap === 'alarm_motion');
+
+      expect(occupancyStateCalls[0]).toEqual(['occupancy_state', 'occupied']);
+      expect(alarmMotionCalls[0]).toEqual(['alarm_motion', true]);
+    });
+
+    it('should default to empty when no persisted state exists', async () => {
+      await createDeviceWithPersistedState(null);
+
+      const setCalls = vi.mocked(MockDevice.prototype.setCapabilityValue).mock.calls;
+      const occupancyStateCalls = setCalls.filter(([cap]) => cap === 'occupancy_state');
+      const alarmMotionCalls = setCalls.filter(([cap]) => cap === 'alarm_motion');
+
+      expect(occupancyStateCalls[0]).toEqual(['occupancy_state', 'empty']);
+      expect(alarmMotionCalls[0]).toEqual(['alarm_motion', false]);
+    });
+
+    it('should map checking to door_open on init', async () => {
+      await createDeviceWithPersistedState('checking');
+
+      const setCalls = vi.mocked(MockDevice.prototype.setCapabilityValue).mock.calls;
+      const occupancyStateCalls = setCalls.filter(([cap]) => cap === 'occupancy_state');
+
+      expect(occupancyStateCalls[0]).toEqual(['occupancy_state', 'door_open']);
+    });
+
+    it('should transition from door_open to checking when doors are closed on init', async () => {
+      await createDeviceWithPersistedState('door_open');
+
+      const setCalls = vi.mocked(MockDevice.prototype.setCapabilityValue).mock.calls;
+      const occupancyStateCalls = setCalls.filter(([cap]) => cap === 'occupancy_state');
+
+      expect(occupancyStateCalls[0]).toEqual(['occupancy_state', 'door_open']);
+      const checkingCall = occupancyStateCalls.find(([, val]) => val === 'checking');
+      expect(checkingCall).toBeDefined();
+    });
+
+    it('should not fire flow triggers during init restoration', async () => {
+      const driverMock = {
+        triggerOccupancyStateChanged: vi.fn(),
+        triggerBecameOccupied: vi.fn(),
+        triggerBecameEmpty: vi.fn(),
+        triggerDoorOpened: vi.fn(),
+        triggerCheckingStarted: vi.fn(),
+      };
+
+      device = new VirtualOccupancySensorDeviceForTest();
+      Object.defineProperty(device, 'driver', { value: driverMock, writable: true });
+      device.getCapabilityValue = vi.fn((id: string) => {
+        if (id === 'occupancy_state') return 'occupied';
+        return null;
+      });
+      device.getSettings = () => ({
+        motion_timeout: 30,
+        auto_learn_timeout: true,
+        auto_detect_motion_sensors: false,
+        auto_detect_door_sensors: false,
+        include_child_zones_motion: false,
+        include_child_zones_contact: false,
+        active_on_occupied: true,
+        active_on_empty: false,
+        active_on_door_open: false,
+        active_on_checking: false,
+        door_sensors: 'door-1',
+        motion_sensors: 'motion-1,motion-2',
+      });
+
+      await device.onInit();
+      await vi.advanceTimersByTimeAsync(0);
+
+      expect(driverMock.triggerBecameOccupied).not.toHaveBeenCalled();
+      expect(driverMock.triggerOccupancyStateChanged).not.toHaveBeenCalled();
+    });
+
+    it('should set alarm_motion based on settings for restored state', async () => {
+      await createDeviceWithPersistedState('occupied', {
+        active_on_occupied: false,
+      });
+
+      const setCalls = vi.mocked(MockDevice.prototype.setCapabilityValue).mock.calls;
+      const alarmMotionCalls = setCalls.filter(([cap]) => cap === 'alarm_motion');
+
+      expect(alarmMotionCalls[0]).toEqual(['alarm_motion', false]);
+    });
+  });
 });

@@ -35,18 +35,19 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   private motionSensorRegistry!: MotionSensorRegistry;
   private contactSensorRegistry!: ContactSensorRegistry;
   private checkingSensorRegistry: CheckingSensorRegistry | null = null;
+  private initializing = true;
 
   async onInit() {
+    await this.initCapabilities();
+    const restoredState = await this.setInitialCapabilityStates();
     this.controller = new VirtualOccupancySensorController(
       (state: OccupancyState, context: TriggerContext) => {
         this.onStateChange(state, context).catch(this.error);
       },
       this.log.bind(this),
       this.error.bind(this),
+      restoredState,
     );
-    this.log('VirtualOccupancySensorDevice has been initialized');
-    await this.initCapabilities();
-    await this.setInitialCapabilityStates();
     await this.initSensorRegistries();
     this.registerCapabilityListener('button_reset_learned_timeouts', async () => {
       this.log('Resetting all learned timeouts');
@@ -54,6 +55,8 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     });
     await this.subscribeToDeviceUpdates();
     await this.subscribeToDeviceManagerEvents();
+    this.initializing = false;
+    this.log('VirtualOccupancySensorDevice has been initialized');
   }
 
   async onDeleted() {
@@ -198,6 +201,10 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
   }
 
   private async triggerStateChangeFlows(state: OccupancyState, context: TriggerContext): Promise<void> {
+    if (this.initializing) {
+      return;
+    }
+
     const driver = this.driver as VirtualOccupancySensorDriverInterface;
 
     if (typeof driver?.triggerOccupancyStateChanged !== 'function') {
@@ -301,24 +308,49 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
     }
   }
 
-  private async setInitialCapabilityStates() {
-    // Homey persists state, so usually we don't want to reset unless necessary.
-    // However, the FSM starts in 'empty'. So if persisted state is 'occupied' or 'door_open',
-    // we need to reset it to 'empty' on init.
-    await this.setCapabilityValue('alarm_motion', false).catch(this.error);
-    await this.setCapabilityValue('occupancy_state', 'empty').catch(this.error);
+  private async setInitialCapabilityStates(): Promise<OccupancyState> {
+    const persisted = this.getCapabilityValue('occupancy_state') as OccupancyState | null;
+
+    let resolvedState: OccupancyState;
+    switch (persisted) {
+      case 'occupied':
+      case 'empty':
+      case 'door_open':
+        resolvedState = persisted;
+        break;
+      case 'checking':
+        resolvedState = 'door_open';
+        break;
+      default:
+        resolvedState = 'empty';
+        break;
+    }
+
+    this.log(`State restoration: persisted=${persisted}, resolved=${resolvedState}`);
+
+    const settings = this.getSettings() as DeviceSettings;
+    let alarmState = false;
+    switch (resolvedState) {
+      case 'occupied':
+        alarmState = settings.active_on_occupied;
+        break;
+      case 'empty':
+        alarmState = settings.active_on_empty;
+        break;
+      case 'door_open':
+        alarmState = settings.active_on_door_open;
+        break;
+      default:
+        break;
+    }
+
+    await this.setCapabilityValue('alarm_motion', alarmState).catch(this.error);
+    await this.setCapabilityValue('occupancy_state', resolvedState).catch(this.error);
+
+    return resolvedState;
   }
 
   private async initSensorRegistries() {
-    const doorSensorIds = await this.getContactSensorsFromSettings();
-    this.contactSensorRegistry = new ContactSensorRegistry(
-      this.homey,
-      doorSensorIds,
-      this.handleContactSensorEvent.bind(this),
-      this.log.bind(this),
-      this.error.bind(this),
-    );
-
     const motionSensorIds = await this.getMotionsSensorsFromSettings();
     const settings = this.getSettings();
     const timeoutStore = new TimeoutStore(this, this.log.bind(this), this.error.bind(this));
@@ -332,6 +364,17 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       this.error.bind(this),
       timeoutStore,
     );
+    await this.motionSensorRegistry.waitForListeners();
+
+    const doorSensorIds = await this.getContactSensorsFromSettings();
+    this.contactSensorRegistry = new ContactSensorRegistry(
+      this.homey,
+      doorSensorIds,
+      this.handleContactSensorEvent.bind(this),
+      this.log.bind(this),
+      this.error.bind(this),
+    );
+    await this.contactSensorRegistry.waitForListeners();
   }
 
   private async refreshAutoDetectedSensors() {
