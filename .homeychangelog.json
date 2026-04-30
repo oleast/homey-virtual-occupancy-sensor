@@ -1,4 +1,15 @@
 {
+  "1.2.2": {
+    "en": "Fixed learned motion sensor timeouts being too short when sensors triggered consecutive motion events. Added a button to reset learned timeouts.",
+    "nl": "Geleerde time-outs van bewegingssensoren waren te kort opgelost wanneer sensoren opeenvolgende bewegingsgebeurtenissen activeerden. Een knop toegevoegd om geleerde time-outs te resetten.",
+    "de": "Behobene gelernte Bewegungssensor-Timeouts, die zu kurz waren, wenn Sensoren aufeinanderfolgende Bewegungsereignisse auslösten. Eine Schaltfläche zum Zurücksetzen gelernter Timeouts hinzugefügt.",
+    "fr": "Correction des délais d'expiration appris des capteurs de mouvement qui étaient trop courts lorsque les capteurs déclenchaient des événements de mouvement consécutifs. Ajout d'un bouton pour réinitialiser les délais d'expiration appris.",
+    "no": "Fikset innlærte tidsavbrudd for bevegelsessensorer som var for korte når sensorer utløste påfølgende bevegelseshendelser. Lagt til en knapp for å tilbakestille innlærte tidsavbrudd.",
+    "sv": "Fixade inlärda tidsgränser för rörelsesensorer som var för korta när sensorer utlöste på varandra följande rörelsehändelser. Lade till en knapp för att återställa inlärda tidsgränser.",
+    "da": "Rettede indlærte timeout-værdier for bevægelsessensorer, der var for korte, når sensorer udløste på hinanden følgende bevægelseshændelser. Tilføjede en knap til at nulstille indlærte timeout-værdier.",
+    "es": "Se corrigieron los tiempos de espera aprendidos de los sensores de movimiento que eran demasiado cortos cuando los sensores activaban eventos de movimiento consecutivos. Se añadió un botón para restablecer los tiempos de espera aprendidos.",
+    "it": "Corretti i timeout appresi dei sensori di movimento che erano troppo brevi quando i sensori attivavano eventi di movimento consecutivi. Aggiunto un pulsante per ripristinare i timeout appresi."
+  },
   "1.2.1": {
     "en": "Fixed token errors when triggering flows with null timeout values.",
     "nl": "Vaste token-fouten opgelost bij het activeren van flows met null timeout-waarden.",
