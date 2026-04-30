@@ -7,18 +7,30 @@ export class VirtualOccupancySensorDeviceForTest extends VirtualOccupancySensorD
   protected declare controller: VirtualOccupancySensorControllerForTest;
 
   async onInit() {
-    // Create our test controller BEFORE calling super.onInit()
-    // This will be immediately overwritten by super.onInit(), so we save it
-    const testController = new VirtualOccupancySensorControllerForTest(
+    await super.onInit();
+    // Create test controller AFTER super.onInit() with the resolved state
+    const persistedState = this.getCapabilityValue('occupancy_state') as OccupancyState | null;
+    let restoredState: OccupancyState;
+    switch (persistedState) {
+      case 'occupied':
+      case 'empty':
+      case 'door_open':
+        restoredState = persistedState;
+        break;
+      case 'checking':
+        restoredState = 'door_open';
+        break;
+      default:
+        restoredState = 'empty';
+    }
+    this.controller = new VirtualOccupancySensorControllerForTest(
       (state: OccupancyState, context: TriggerContext) => {
         this.onStateChange(state, context).catch(this.error);
       },
       this.log.bind(this),
       this.error.bind(this),
+      restoredState,
     );
-    await super.onInit();
-    // Override the controller with our test controller after super.onInit()
-    this.controller = testController;
   }
 
   public forceOccupancyState(state: OccupancyState) {

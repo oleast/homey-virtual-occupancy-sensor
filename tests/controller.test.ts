@@ -47,6 +47,91 @@ describe('VirtualOccupancySensorController', () => {
     });
   });
 
+  describe('Initial State with initialState parameter', () => {
+    it('should start in occupied state when initialized with occupied', () => {
+      const changes: OccupancyState[] = [];
+      const ctrl = new VirtualOccupancySensorControllerForTest(
+        (state) => {
+          changes.push(state);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        'occupied',
+      );
+      expect(changes).toHaveLength(0);
+      ctrl.registerEvent('any_door_open', ctx('door-1'));
+      expect(changes).toEqual(['door_open']);
+    });
+
+    it('should start in door_open state when initialized with door_open', () => {
+      const changes: OccupancyState[] = [];
+      const ctrl = new VirtualOccupancySensorControllerForTest(
+        (state) => {
+          changes.push(state);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        'door_open',
+      );
+      expect(changes).toHaveLength(0);
+      ctrl.registerEvent('all_doors_closed', ctx('door-1'));
+      expect(changes).toEqual(['checking']);
+    });
+
+    it('should start in checking state when initialized with checking', () => {
+      const changes: OccupancyState[] = [];
+      const ctrl = new VirtualOccupancySensorControllerForTest(
+        (state) => {
+          changes.push(state);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        'checking',
+      );
+      expect(changes).toHaveLength(0);
+      ctrl.registerEvent('motion_detected', ctx('motion-1'));
+      expect(changes).toEqual(['occupied']);
+    });
+
+    it('should ignore motion_detected when already initialized as occupied', () => {
+      const changes: OccupancyState[] = [];
+      const ctrl = new VirtualOccupancySensorControllerForTest(
+        (state) => {
+          changes.push(state);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        'occupied',
+      );
+      ctrl.registerEvent('motion_detected', ctx('motion-1'));
+      expect(changes).toHaveLength(0);
+    });
+
+    it('should ignore motion_timeout when initialized as occupied', () => {
+      const changes: OccupancyState[] = [];
+      const ctrl = new VirtualOccupancySensorControllerForTest(
+        (state) => {
+          changes.push(state);
+        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
+        'occupied',
+      );
+      ctrl.registerEvent('motion_timeout', ctx('motion-1'));
+      expect(changes).toHaveLength(0);
+    });
+  });
+
   describe('setOccupancyState', () => {
     it('should transition to the specified state', async () => {
       await controller.setOccupancyState('occupied');

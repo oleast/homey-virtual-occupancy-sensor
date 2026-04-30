@@ -17,6 +17,7 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
   protected onDeviceEvent: DeviceEvent;
   protected log: (message: string) => void;
   protected error: (message: string, error?: unknown) => void;
+  private pendingListeners: Promise<void>[] = [];
 
   constructor(
     homey: HomeyInstance,
@@ -38,9 +39,13 @@ export class SensorRegistry<TCapabilityType extends number | string | boolean> {
 
     for (const id of deviceIdsSet) {
       this.log(`Adding listener for device ${id}`);
-      // eslint-disable-next-line @typescript-eslint/no-floating-promises
-      this.addListener(id);
+      this.pendingListeners.push(this.addListener(id));
     }
+  }
+
+  public async waitForListeners(): Promise<void> {
+    await Promise.all(this.pendingListeners);
+    this.pendingListeners = [];
   }
 
   public async updateDeviceIds(deviceIds: string[]): Promise<void> {
