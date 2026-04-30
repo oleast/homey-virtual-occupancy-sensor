@@ -1,4 +1,15 @@
 {
+  "1.2.3": {
+    "en": "Fixed virtual occupancy sensor state not being properly restored after an app restart.",
+    "nl": "Virtuele bezettingssensorstatus wordt nu correct hersteld na een app-opstart.",
+    "de": "Der Status des virtuellen Belegungssensors wird nach einem App-Neustart jetzt korrekt wiederhergestellt.",
+    "fr": "L'état du capteur d'occupation virtuel est maintenant correctement restauré après un redémarrage de l'application.",
+    "no": "Tilstanden til den virtuelle tilstedeværelsessensoren gjenopprettes nå korrekt etter app-omstart.",
+    "sv": "Statusen för den virtuella närvarosensorn återställs nu korrekt efter en app-omstart.",
+    "da": "Tilstanden for den virtuelle tilstedeværelsessensor genoprettes nu korrekt efter genstart af appen.",
+    "es": "El estado del sensor de ocupación virtual ahora se restaura correctamente después de reiniciar la aplicación.",
+    "it": "Lo stato del sensore di occupazione virtuale viene ora ripristinato correttamente dopo il riavvio dell'app."
+  },
   "1.2.2": {
     "en": "Fixed learned motion sensor timeouts being too short when sensors triggered consecutive motion events. Added a button to reset learned timeouts.",
     "nl": "Geleerde time-outs van bewegingssensoren waren te kort opgelost wanneer sensoren opeenvolgende bewegingsgebeurtenissen activeerden. Een knop toegevoegd om geleerde time-outs te resetten.",
