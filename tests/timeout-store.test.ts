@@ -55,10 +55,12 @@ describe('TimeoutStore', () => {
       expect(result.get('device-1')).toEqual({
         lastTrueTimestamp: null,
         learnedTimeoutMs: 5000,
+        seenFalse: false,
       });
       expect(result.get('device-2')).toEqual({
         lastTrueTimestamp: null,
         learnedTimeoutMs: 10000,
+        seenFalse: false,
       });
     });
 

@@ -426,6 +426,204 @@ describe('Device Persistence - Registry Auto-Save Integration', () => {
     });
   });
 
+  describe('Disable auto-learn clears learned timeouts', () => {
+    it('should clear all learned timeouts when auto_learn_timeout is disabled', async () => {
+      await createDevice();
+
+      // Learn a timeout
+      await motionSensor1.setCapabilityValue('alarm_motion', true);
+      await vi.advanceTimersByTimeAsync(10000);
+      await motionSensor1.setCapabilityValue('alarm_motion', false);
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Verify data exists
+      let stored = device.getStoreValue('learnedMotionTimeouts') as {
+        version: number;
+        data: Record<string, number>;
+      };
+      expect(stored.data['motion-1']).toBe(10000);
+
+      // Disable auto-learn
+      await device.callOnSettings({
+        oldSettings: {
+          motion_timeout: 30,
+          auto_learn_timeout: true,
+          auto_detect_motion_sensors: false,
+          auto_detect_door_sensors: false,
+          include_child_zones_motion: false,
+          include_child_zones_contact: false,
+          active_on_occupied: true,
+          active_on_empty: false,
+          active_on_door_open: false,
+          active_on_checking: false,
+          door_sensors: 'door-1',
+          motion_sensors: 'motion-1,motion-2',
+        },
+        newSettings: {
+          motion_timeout: 30,
+          auto_learn_timeout: false,
+          auto_detect_motion_sensors: false,
+          auto_detect_door_sensors: false,
+          include_child_zones_motion: false,
+          include_child_zones_contact: false,
+          active_on_occupied: true,
+          active_on_empty: false,
+          active_on_door_open: false,
+          active_on_checking: false,
+          door_sensors: 'door-1',
+          motion_sensors: 'motion-1,motion-2',
+        },
+        changedKeys: ['auto_learn_timeout'],
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Verify all learned data is cleared (store is unset)
+      stored = device.getStoreValue('learnedMotionTimeouts') as unknown;
+      expect(stored).toBeUndefined();
+    });
+
+    it('should stop learning new timeouts after auto_learn_timeout is disabled', async () => {
+      await createDevice();
+
+      // Disable auto-learn
+      await device.callOnSettings({
+        oldSettings: {
+          motion_timeout: 30,
+          auto_learn_timeout: true,
+          auto_detect_motion_sensors: false,
+          auto_detect_door_sensors: false,
+          include_child_zones_motion: false,
+          include_child_zones_contact: false,
+          active_on_occupied: true,
+          active_on_empty: false,
+          active_on_door_open: false,
+          active_on_checking: false,
+          door_sensors: 'door-1',
+          motion_sensors: 'motion-1,motion-2',
+        },
+        newSettings: {
+          motion_timeout: 30,
+          auto_learn_timeout: false,
+          auto_detect_motion_sensors: false,
+          auto_detect_door_sensors: false,
+          include_child_zones_motion: false,
+          include_child_zones_contact: false,
+          active_on_occupied: true,
+          active_on_empty: false,
+          active_on_door_open: false,
+          active_on_checking: false,
+          door_sensors: 'door-1',
+          motion_sensors: 'motion-1,motion-2',
+        },
+        changedKeys: ['auto_learn_timeout'],
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Trigger a motion cycle — should NOT be tracked
+      await motionSensor1.setCapabilityValue('alarm_motion', true);
+      await vi.advanceTimersByTimeAsync(10000);
+      await motionSensor1.setCapabilityValue('alarm_motion', false);
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Verify nothing was learned
+      const stored = device.getStoreValue('learnedMotionTimeouts') as {
+        version: number;
+        data: Record<string, number>;
+      } | undefined;
+      if (stored) {
+        expect(Object.keys(stored.data)).toHaveLength(0);
+      }
+    });
+
+    it('should resume learning when auto_learn_timeout is re-enabled', async () => {
+      await createDevice();
+
+      // Disable auto-learn
+      await device.callOnSettings({
+        oldSettings: {
+          motion_timeout: 30,
+          auto_learn_timeout: true,
+          auto_detect_motion_sensors: false,
+          auto_detect_door_sensors: false,
+          include_child_zones_motion: false,
+          include_child_zones_contact: false,
+          active_on_occupied: true,
+          active_on_empty: false,
+          active_on_door_open: false,
+          active_on_checking: false,
+          door_sensors: 'door-1',
+          motion_sensors: 'motion-1,motion-2',
+        },
+        newSettings: {
+          motion_timeout: 30,
+          auto_learn_timeout: false,
+          auto_detect_motion_sensors: false,
+          auto_detect_door_sensors: false,
+          include_child_zones_motion: false,
+          include_child_zones_contact: false,
+          active_on_occupied: true,
+          active_on_empty: false,
+          active_on_door_open: false,
+          active_on_checking: false,
+          door_sensors: 'door-1',
+          motion_sensors: 'motion-1,motion-2',
+        },
+        changedKeys: ['auto_learn_timeout'],
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Re-enable auto-learn
+      await device.callOnSettings({
+        oldSettings: {
+          motion_timeout: 30,
+          auto_learn_timeout: false,
+          auto_detect_motion_sensors: false,
+          auto_detect_door_sensors: false,
+          include_child_zones_motion: false,
+          include_child_zones_contact: false,
+          active_on_occupied: true,
+          active_on_empty: false,
+          active_on_door_open: false,
+          active_on_checking: false,
+          door_sensors: 'door-1',
+          motion_sensors: 'motion-1,motion-2',
+        },
+        newSettings: {
+          motion_timeout: 30,
+          auto_learn_timeout: true,
+          auto_detect_motion_sensors: false,
+          auto_detect_door_sensors: false,
+          include_child_zones_motion: false,
+          include_child_zones_contact: false,
+          active_on_occupied: true,
+          active_on_empty: false,
+          active_on_door_open: false,
+          active_on_checking: false,
+          door_sensors: 'door-1',
+          motion_sensors: 'motion-1,motion-2',
+        },
+        changedKeys: ['auto_learn_timeout'],
+      });
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Trigger a motion cycle — should now be tracked
+      // Need initial false to arm learning (seenFalse guard)
+      await motionSensor1.setCapabilityValue('alarm_motion', false);
+      await vi.advanceTimersByTimeAsync(0);
+      await motionSensor1.setCapabilityValue('alarm_motion', true);
+      await vi.advanceTimersByTimeAsync(12000);
+      await motionSensor1.setCapabilityValue('alarm_motion', false);
+      await vi.advanceTimersByTimeAsync(0);
+
+      // Verify timeout was learned
+      const stored = device.getStoreValue('learnedMotionTimeouts') as {
+        version: number;
+        data: Record<string, number>;
+      };
+      expect(stored.data['motion-1']).toBe(12000);
+    });
+  });
+
   describe('State restoration on init', () => {
     async function createDeviceWithPersistedState(
       persistedState: string | null,

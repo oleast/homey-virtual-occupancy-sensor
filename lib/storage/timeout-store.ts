@@ -36,6 +36,7 @@ export default class TimeoutStore {
         result.set(deviceId, {
           lastTrueTimestamp: null,
           learnedTimeoutMs: timeoutMs,
+          seenFalse: false,
         });
       }
     }
