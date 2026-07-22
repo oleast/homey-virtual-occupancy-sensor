@@ -1,4 +1,15 @@
 {
+  "1.2.4": {
+    "en": "Fixed learned motion sensor timeouts still being used when the auto-learn timeout feature was disabled.",
+    "nl": "Geleerde time-outs van bewegingssensoren worden niet meer gebruikt wanneer de automatische leer-time-out functie uitgeschakeld is.",
+    "de": "Behoben: Gelernte Bewegungssensor-Timeouts wurden weiterhin verwendet, obwohl die automatische Lern-Timeout-Funktion deaktiviert war.",
+    "fr": "Correction des délais d'expiration appris des capteurs de mouvement qui continuaient à être utilisés lorsque la fonction d'apprentissage automatique était désactivée.",
+    "no": "Fikset at innlærte tidsavbrudd for bevegelsessensorer fortsatt ble brukt når funksjonen for automatisk innlæring av tidsavbrudd var deaktivert.",
+    "sv": "Fixade att inlärda tidsgränser för rörelsesensorer fortfarande användes när funktionen för automatisk inlärning av tidsgränser var inaktiverad.",
+    "da": "Rettede at indlærte timeout-værdier for bevægelsessensorer stadig blev brugt, når funktionen for automatisk indlæring af timeout var deaktiveret.",
+    "es": "Corregido el uso de los tiempos de espera aprendidos de los sensores de movimiento cuando la función de aprendizaje automático de tiempos de espera estaba desactivada.",
+    "it": "Risolto il problema per cui i timeout appresi dei sensori di movimento venivano ancora utilizzati quando la funzione di apprendimento automatico dei timeout era disabilitata."
+  },
   "1.2.3": {
     "en": "Fixed virtual occupancy sensor state not being properly restored after an app restart.",
     "nl": "Virtuele bezettingssensorstatus wordt nu correct hersteld na een app-opstart.",
