@@ -144,6 +144,14 @@ export class VirtualOccupancySensorDevice extends BaseHomeyDevice {
       await this.motionSensorRegistry.updateDeviceIds(newMotionSensorIds);
     }
 
+    if (changedKeys.includes('auto_learn_timeout')) {
+      this.motionSensorRegistry.setEnableLearning(newSettings.auto_learn_timeout);
+      if (!newSettings.auto_learn_timeout) {
+        this.log('Auto-learn disabled, clearing all learned timeouts');
+        await this.motionSensorRegistry.clearAllLearnedTimeouts();
+      }
+    }
+
     const currentOccupancyState = this.getCapabilityValue('occupancy_state') as OccupancyState;
     this.log(`Current occupancy state while changing settings: ${currentOccupancyState}`);
     if (changedKeys.includes('active_on_checking') && currentOccupancyState === 'checking') {

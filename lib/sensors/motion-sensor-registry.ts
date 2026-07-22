@@ -11,6 +11,7 @@ const MIN_LEARNED_TIMEOUT_MS = 1000;
 export interface TimeoutLearningData {
   lastTrueTimestamp: number | null;
   learnedTimeoutMs: number | null;
+  seenFalse: boolean;
 }
 
 export class MotionSensorRegistry extends BooleanSensorRegistry {
@@ -52,14 +53,18 @@ export class MotionSensorRegistry extends BooleanSensorRegistry {
   private trackTimeoutLearning(deviceId: string, value: boolean): void {
     let data = this.timeoutLearning.get(deviceId);
     if (!data) {
-      data = { lastTrueTimestamp: null, learnedTimeoutMs: null };
+      data = { lastTrueTimestamp: null, learnedTimeoutMs: null, seenFalse: false };
       this.timeoutLearning.set(deviceId, data);
     }
 
     const now = Date.now();
 
-    if (value === true && data.lastTrueTimestamp === null) {
-      // Motion detected - record the timestamp (only on fresh transition)
+    if (value === false) {
+      data.seenFalse = true;
+    }
+
+    if (value === true && data.lastTrueTimestamp === null && data.seenFalse) {
+      // Motion detected - record the timestamp (only on fresh transition after seeing false)
       data.lastTrueTimestamp = now;
     } else if (value === false && data.lastTrueTimestamp !== null) {
       // Motion ended - calculate duration
@@ -119,6 +124,10 @@ export class MotionSensorRegistry extends BooleanSensorRegistry {
     await this.timeoutStore.clear();
   }
 
+  public setEnableLearning(enabled: boolean): void {
+    this.enableLearning = enabled;
+  }
+
   /**
    * Updates the list of device IDs and cleans up removed devices.
    *
@@ -155,14 +164,14 @@ export class MotionSensorRegistry extends BooleanSensorRegistry {
       const defaultTimeout = this.defaultMotionTimeoutMs;
       return {
         id,
-        timeoutMs: learnedTimeout ?? defaultTimeout,
+        timeoutMs: (this.enableLearning && learnedTimeout) ? learnedTimeout : defaultTimeout,
       };
     });
   }
 
   public override buildContext(deviceId: string, settings: DeviceSettings): TriggerContext {
     const learnedTimeout = this.getLearnedTimeout(deviceId);
-    const timeoutMs = learnedTimeout ?? (settings.motion_timeout * 1000);
+    const timeoutMs = (this.enableLearning && learnedTimeout) ? learnedTimeout : (settings.motion_timeout * 1000);
     const timeoutSeconds = Math.round(timeoutMs / 1000);
 
     return {
